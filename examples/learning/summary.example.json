@@ -1,0 +1,39 @@
+{
+  "task_id": "synthetic-task",
+  "episode_id": "synthetic-position",
+  "through_seq": 7,
+  "lessons": [
+    {
+      "kind": "avoid_attempt",
+      "summary": "Synthetic only: moving this fixture root did not resolve its visible placement.",
+      "evidence_ids": [
+        "synthetic-2",
+        "synthetic-3",
+        "synthetic-4"
+      ],
+      "action": {
+        "capability": "fixture.root_offset",
+        "parameters": {
+          "local_y": -0.01
+        }
+      }
+    },
+    {
+      "kind": "recipe",
+      "summary": "Synthetic only: the second recorded placement was observed to match this exact fixture.",
+      "evidence_ids": [
+        "synthetic-4",
+        "synthetic-5",
+        "synthetic-6",
+        "synthetic-7"
+      ],
+      "action": {
+        "capability": "fixture.visible_offset",
+        "parameters": {
+          "local_y": -0.01,
+          "anchor": "fixture-head"
+        }
+      }
+    }
+  ]
+}

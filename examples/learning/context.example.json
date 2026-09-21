@@ -1,0 +1,11 @@
+{
+  "project_id": "synthetic-project-NOT-A-REAL-AVATAR",
+  "operation": "attachment",
+  "asset_digest": "synthetic-asset",
+  "target_digest": "synthetic-target",
+  "provider": "fixture",
+  "provider_version": "1",
+  "profile_digest": "NONE",
+  "settings_digest": "synthetic-settings",
+  "executor_version": "fixture-only-1"
+}

@@ -1,0 +1,637 @@
+{
+  "task_id": "sample-not-an-executed-task",
+  "task_revision": 1,
+  "mode": "workflow_test",
+  "phase": "INTAKE",
+  "start_contract": {
+    "questions_version": "rc1-five-start-platform-performance-contract",
+    "confirmed": false,
+    "visualization": null,
+    "size_budget": {
+      "metric": "sdk_uncompressed_bytes",
+      "hard_limit_bytes": 300000000,
+      "working_limit_bytes": 270000000,
+      "gate_completion": true,
+      "gate_upload": false,
+      "applies_to_platforms": [
+        "PC"
+      ],
+      "projected_bytes": {
+        "sdk_uncompressed_bytes": {}
+      },
+      "actual_bytes": {
+        "sdk_uncompressed_bytes": {}
+      },
+      "evidence": [],
+      "sdk_receipt_requirement": "one current_sdk_build_report receipt per applies_to_platforms entry, closed to the same final measurement and canonical job source"
+    },
+    "content_priority": {
+      "required_resource_ids": [
+        "outfit-white"
+      ],
+      "optional_resource_ids": [
+        "hair-alt"
+      ],
+      "optional_failure_action": "isolate_and_continue",
+      "extra_over_budget_action": "apply_frozen_removal_order_or_pause",
+      "requested_affected_chest_states": [
+        "small",
+        "default",
+        "large"
+      ],
+      "affected_chest_states": [
+        "small",
+        "default",
+        "large"
+      ],
+      "requested_affected_chest_states_override": {
+        "explicit": false,
+        "source": null
+      }
+    },
+    "base_optimization": {
+      "auto_apply": true,
+      "copy_scope": "task_generated_copies_only",
+      "preserve_author_sources": true,
+      "texture_max_size": {
+        "clothing_main_color": 1024,
+        "clothing_normal": 1024,
+        "mask_ao": 512,
+        "reflection_cubemap": 256
+      },
+      "protected_quality": [
+        "face",
+        "eyes",
+        "skin",
+        "primary_hair"
+      ],
+      "aao_cleanup": "proven_unused_only",
+      "auto_continue_after_success": true
+    },
+    "performance_contract": {
+      "policy_mode": "measured_best_effort",
+      "platforms": [
+        "PC"
+      ],
+      "target_rank": {
+        "PC": "Good"
+      },
+      "metric_caps": {},
+      "rank_handling": {
+        "PC": {
+          "Poor": "block",
+          "VeryPoor": "block"
+        }
+      },
+      "gate_completion": true,
+      "gate_upload": false,
+      "allowed_actions": [
+        "selected_variants_only",
+        "generated_copy_texture_limits",
+        "remove_proven_unreferenced_generated_assets",
+        "semantic_safe_dedupe",
+        "aao_proven_unused_only"
+      ],
+      "protected_features": [
+        "outfit_part_controls",
+        "blendshapes_and_chest_states",
+        "material_animations",
+        "provider_writers",
+        "physbones",
+        "contacts",
+        "particles",
+        "audio"
+      ],
+      "headroom_policy": {
+        "gate_completion": true,
+        "gate_upload": true,
+        "platforms": {
+          "PC": {
+            "expression_parameter_bits": {
+              "limit": 256,
+              "reserve": 16
+            },
+            "physbone_components": {
+              "limit": 256,
+              "reserve": 16
+            }
+          }
+        }
+      },
+      "headroom_limit_rule": "limit is the current official platform hard limit and cannot be raised; only positive reserve below limit is task-configurable",
+      "official_sdk_hard_metric_limits_snapshot": {
+        "expression_parameter_bits": 256,
+        "physbone_components": 256,
+        "physbone_colliders": 256,
+        "contacts": 256,
+        "raycasts": 80
+      },
+      "baseline_measurements": {},
+      "final_measurements": {},
+      "baseline_requirement": "complete current SDK baseline performance and build reports for every platform before INSTALLING; final measurements remain empty until the unified final batch",
+      "measurement_lifecycle_requirement": "baseline stores measured_utc, frozen_at_phase PREFLIGHT and canonical hashed receipt; final time is later and baseline/final/job sources are disjoint; every SDK-bearing record matches assembly_manifest.sdk_context.current_vrcsdk_version",
+      "evidence": [
+        "example only: replace with Start Card question 3 confirmation source before confirmed=true"
+      ]
+    },
+    "menu_plan": {
+      "visible_label_language": "zh-CN",
+      "translate_internal_parameters": false,
+      "clothing_integration_strategy": "provider_parts_menu_first",
+      "allow_synthetic_universal_clothing_categories": false,
+      "allow_parallel_outfit_selector_and_parts_trees": false,
+      "root_page_id": "root",
+      "control_budget": {
+        "max_controls_per_page": 8
+      },
+      "provider_sources": [
+        {
+          "id": "author-existing",
+          "source": "author_existing_menu_safe_link"
+        }
+      ],
+      "outfit_menu_integrations": [
+        {
+          "resource_id": "outfit-white",
+          "provider_id": "author-existing",
+          "provider_parts_menu_status": "usable",
+          "strategy": "reuse_provider_parts_menu",
+          "menu_entry_control_id": "white-outfit-parts-entry",
+          "added_control_ids": [],
+          "evidence": [
+            "author parts-menu asset and provider linkage verified read-only"
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "id": "root",
+          "controls": [
+            {
+              "id": "white-outfit-parts-entry",
+              "label": "白色套装部件",
+              "label_language": "zh-CN",
+              "type": "submenu",
+              "submenu_page_id": "outfit-white-parts",
+              "provider_id": "author-existing",
+              "resource_id": "outfit-white",
+              "semantic_role": "outfit_parts_menu"
+            }
+          ]
+        },
+        {
+          "id": "outfit-white-parts",
+          "controls": [
+            {
+              "id": "white-top-toggle",
+              "label": "上衣",
+              "label_language": "zh-CN",
+              "type": "toggle",
+              "resource_id": "outfit-white",
+              "semantic_role": "outfit_part_control",
+              "internal_parameter": "Author_White_Top",
+              "provider_id": "author-existing",
+              "return_state_policy": "preserve_user_choice",
+              "return_state_policy_source": "provider",
+              "return_state_policy_evidence": [
+                "author Saved/default semantics verified read-only"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "assembly_manifest": {
+      "target_platform": [
+        "PC"
+      ],
+      "target_avatar": {
+        "id": "target-avatar-id",
+        "version": "author-version",
+        "source": "absolute-source-path"
+      },
+      "sdk_context": {
+        "current_vrcsdk_version": "replace-with-read-only-discovered-version",
+        "authoritative": true,
+        "source": "resolved Unity package manifest plus current VRCSDK panel",
+        "evidence": [
+          {
+            "source": "absolute-path-to-resolved-sdk-version-receipt.json",
+            "observed": true
+          }
+        ]
+      },
+      "default_combination": {
+        "outfit": "outfit-white",
+        "hair": "original",
+        "accessories": [],
+        "source": "user_preference_or_read_only_discovery"
+      },
+      "resources": [
+        {
+          "id": "outfit-white",
+          "kind": "outfit",
+          "main_outfit": true,
+          "version": "author-version",
+          "source": "absolute-source-path",
+          "requirement": "required"
+        },
+        {
+          "id": "hair-alt",
+          "kind": "soft_wearable",
+          "version": "author-version",
+          "source": "absolute-source-path",
+          "requirement": "optional"
+        }
+      ]
+    },
+    "batch_cadence": "preflight_all_install_all_smoke_only_then_unified_acceptance",
+    "delivery_layers": [
+      "local_prefab"
+    ],
+    "upload_authority": {
+      "authorized": false,
+      "private": true
+    }
+  },
+  "project_path": null,
+  "unity_instance": null,
+  "base_prefab": null,
+  "candidate": null,
+  "candidate_revision": null,
+  "candidate_sha256": null,
+  "platform_candidates": {
+    "PC": {
+      "candidate": null,
+      "candidate_revision": null,
+      "candidate_sha256": null
+    }
+  },
+  "platform_final_validations": {},
+  "platform_menu_validations": {},
+  "scene_candidate": null,
+  "local_decision_candidate": null,
+  "local_decision": "NEEDS_OBSERVATION",
+  "upload_authorized": false,
+  "private": true,
+  "cancelled": false,
+  "resources": [
+    {
+      "id": "outfit-white",
+      "source": "absolute-source-path",
+      "kind": "outfit",
+      "main_outfit": true,
+      "selected": true,
+      "requirement": "required",
+      "status": "PREFLIGHT_PENDING",
+      "affected_chest_states": [
+        "small",
+        "default",
+        "large"
+      ],
+      "expected_parts": [
+        {
+          "id": "top",
+          "required_check_id": "part-top-visible"
+        },
+        {
+          "id": "skirt",
+          "required_check_id": "part-skirt-visible"
+        },
+        {
+          "id": "shoes",
+          "required_check_id": "part-shoes-visible"
+        }
+      ],
+      "preflight": {
+        "covers_chest": true,
+        "breast_adjustment": {
+          "status": "PENDING",
+          "method": null,
+          "supported_states": [],
+          "evidence_layer": "preflight_support_mapping",
+          "evidence": []
+        },
+        "performance_impact": {
+          "source_inventory": {
+            "source": "read-only source inventory path",
+            "verified": false
+          },
+          "estimate": {
+            "added_meshes": 0,
+            "added_material_slots": 0,
+            "added_triangles": 0,
+            "added_texture_memory_bytes": 0,
+            "dynamics": {
+              "physbone_components": 0,
+              "physbone_transforms": 0,
+              "physbone_colliders": 0,
+              "physbone_collision_checks": 0,
+              "contacts": 0,
+              "particles": 0,
+              "audio_sources": 0
+            }
+          },
+          "dependencies": [],
+          "mitigation": [
+            "fill from verified preflight; do not plan to an exact component limit"
+          ],
+          "headroom_after_estimate": {
+            "source": "cumulative performance budget worksheet",
+            "platforms": {
+              "PC": {
+                "expression_parameter_bits_remaining": 0,
+                "physbone_components_remaining": 0,
+                "meets_frozen_reserve": false
+              }
+            }
+          },
+          "admission": {
+            "decision": "REJECT",
+            "reason": "example remains rejected until inventory and headroom are verified",
+            "evidence": "pending preflight"
+          }
+        }
+      },
+      "required": [
+        {
+          "id": "part-top-visible",
+          "kind": "visual",
+          "affected_chest_states": [
+            "small",
+            "default",
+            "large"
+          ],
+          "satisfaction": "per_state_current_candidate_visual_observation"
+        },
+        {
+          "id": "part-skirt-visible",
+          "kind": "visual"
+        },
+        {
+          "id": "part-shoes-visible",
+          "kind": "visual"
+        },
+        {
+          "id": "outfit-risk-pose",
+          "kind": "pose"
+        },
+        {
+          "id": "outfit-toggle-restore",
+          "kind": "behavior"
+        }
+      ],
+      "observations": [
+        {
+          "id": "outfit-white-chest-small-final",
+          "resource_id": "outfit-white",
+          "check_id": "part-top-visible",
+          "kind": "visual",
+          "chest_state": "small",
+          "candidate": null,
+          "candidate_revision": null,
+          "candidate_sha256": null,
+          "layer": "post_ndmf_processed_candidate",
+          "status": "NEEDS_OBSERVATION",
+          "observed": false,
+          "evidence": [],
+          "note": null
+        },
+        {
+          "id": "outfit-white-chest-default-final",
+          "resource_id": "outfit-white",
+          "check_id": "part-top-visible",
+          "kind": "visual",
+          "chest_state": "default",
+          "candidate": null,
+          "candidate_revision": null,
+          "candidate_sha256": null,
+          "layer": "post_ndmf_processed_candidate",
+          "status": "NEEDS_OBSERVATION",
+          "observed": false,
+          "evidence": [],
+          "note": null
+        },
+        {
+          "id": "outfit-white-chest-large-final",
+          "resource_id": "outfit-white",
+          "check_id": "part-top-visible",
+          "kind": "visual",
+          "chest_state": "large",
+          "candidate": null,
+          "candidate_revision": null,
+          "candidate_sha256": null,
+          "layer": "post_ndmf_processed_candidate",
+          "status": "NEEDS_OBSERVATION",
+          "observed": false,
+          "evidence": [],
+          "note": null
+        }
+      ]
+    },
+    {
+      "id": "hair-alt",
+      "source": "absolute-source-path",
+      "kind": "soft_wearable",
+      "selected": true,
+      "requirement": "optional",
+      "status": "PREFLIGHT_PENDING",
+      "required": [
+        {
+          "id": "hair-visible-default",
+          "kind": "visual"
+        },
+        {
+          "id": "hair-toggle-restore",
+          "kind": "behavior"
+        }
+      ],
+      "observations": []
+    }
+  ],
+  "base_optimization": {
+    "status": "PLANNED",
+    "policy_applied": null,
+    "author_sources_unchanged": null,
+    "candidate": null,
+    "candidate_revision": null,
+    "candidate_sha256": null,
+    "evidence": [
+      {
+        "source": "generated-copy-inventory-or-receipt",
+        "verified": false
+      }
+    ]
+  },
+  "extra_optimization": {
+    "status": "NOT_REQUESTED",
+    "user_authorized": false,
+    "authorization_source": null,
+    "policy": null,
+    "candidate": null,
+    "candidate_revision": null,
+    "candidate_sha256": null,
+    "evidence": []
+  },
+  "performance_measurement_jobs": {
+    "PC": {
+      "job_id": null,
+      "platform": "PC",
+      "candidate": null,
+      "candidate_revision": null,
+      "candidate_sha256": null,
+      "sdk_version": null,
+      "status": "NOT_DISPATCHED",
+      "dispatch_count": 0,
+      "poll_count": 0,
+      "timeout_action": "poll_same_job",
+      "last_poll_utc": null,
+      "completed_utc": null,
+      "result_evidence": [],
+      "result_evidence_required_fields": [
+        "kind",
+        "platform",
+        "candidate",
+        "candidate_revision",
+        "candidate_sha256",
+        "sdk_version",
+        "layer",
+        "source"
+      ],
+      "result_evidence_source_closure": "exactly match this platform final performance report and SDK build report sources; never reuse another platform source",
+      "terminal_requirement": "final acceptance requires status SUCCEEDED and dispatch_count exactly 1",
+      "rule": "job_id binds platform+candidate+revision+sha256+sdk_version; dispatch once; on timeout poll the same job_id instead of rebuilding"
+    }
+  },
+  "batch_state": "WAIT_START_CONTRACT",
+  "final_validation": {
+    "candidate": null,
+    "candidate_revision": null,
+    "candidate_sha256": null,
+    "status": "NEEDS_OBSERVATION",
+    "evidence": []
+  },
+  "menu_validation": {
+    "candidate": null,
+    "candidate_revision": null,
+    "candidate_sha256": null,
+    "layer": "post_ndmf",
+    "menu_artifact_sha256": null,
+    "status": "NEEDS_OBSERVATION",
+      "checks": {
+        "unexpected_root_injections": [],
+        "redundant_parallel_outfit_parts_paths": [],
+      "auto_pagination_detected": false,
+      "page_control_counts": {},
+      "observed_control_ids": {},
+      "observed_controls": {},
+      "observed_paths": [],
+      "cycle_pages": [],
+      "unreachable_pages": [],
+      "empty_pages": [],
+      "unbound_controls": [],
+      "multiple_default_groups": [],
+      "undeclared_parameters": [],
+      "parameter_type_mismatches": [],
+      "mixed_visible_label_languages": [],
+      "observed_visible_label_languages": [],
+      "path_results": [],
+      "control_results": [],
+      "outfit_parts_menu_results": [
+        {
+          "resource_id": "outfit-white",
+          "provider_id": "author-existing",
+          "provider_parts_menu_status": "usable",
+          "strategy": "reuse_provider_parts_menu",
+          "semantic_role": "outfit_parts_menu",
+          "planned_control_id": "white-outfit-parts-entry",
+          "planned_path": [
+            "white-outfit-parts-entry"
+          ],
+          "observed_control_id": null,
+          "observed_path": [],
+          "reachable": false,
+          "internal_control_effects_observed": false,
+          "status": "PENDING",
+          "evidence": []
+        }
+      ],
+      "path_walk_observed": false,
+      "control_effects_observed": false,
+      "default_state_observed": false,
+      "restore_a_b_a_default_observed": false,
+      "restore_a_b_a_default_status": "PENDING",
+      "restore_a_b_a_default_reason": null,
+      "restore_sequence": [],
+      "provider_trace_complete": false,
+      "outfit_part_return_state_results": [
+        {
+          "control_id": "white-top-toggle",
+          "resource_id": "outfit-white",
+          "provider_id": "author-existing",
+          "return_state_policy": "preserve_user_choice",
+          "counterpart_outfit_id": "original-outfit",
+          "sequence": [
+            "outfit-white",
+            "white-top-toggle",
+            "original-outfit",
+            "outfit-white",
+            "observe_expected",
+            "restore"
+          ],
+          "expected_return_state": "user_choice_preserved",
+          "observed": false,
+          "outcome": "PENDING",
+          "restore_observed": false,
+          "state_checks": {
+            "part_state_matches_policy": false,
+            "no_residual_parts": false,
+            "body_mask_correct": false,
+            "footwear_and_foot_shape_correct": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    "evidence": []
+  },
+  "waiting_question": null,
+  "build_succeeded": false,
+  "remote_pending": false,
+  "upload_authority": {
+    "account_id": null,
+    "display_name": null,
+    "release": "private",
+    "candidate": null,
+    "candidate_revision": null,
+    "candidate_sha256": null
+  },
+  "upload_target": {
+    "prefab": null,
+    "prefab_sha256": null,
+    "derived_from_candidate_sha256": null,
+    "blueprint_id": null
+  },
+  "upload_remote": {
+    "status": "NOT_SUBMITTED",
+    "id": null,
+    "name": null,
+    "authorId": null,
+    "release": null,
+    "version": null,
+    "pendingUpload": false,
+    "windowsAsset": false,
+    "completedUtc": null
+  },
+  "upload_result": null,
+  "upload_outcome": null,
+  "note": "示例不是通过证据；用实时 Unity 观测填写；不要复制 sample ID 到真实任务。",
+  "learning": {
+    "enabled": true,
+    "store": "local_user_data",
+    "episode_id": null,
+    "used_lesson_ids": [],
+    "last_captured_event_id": null,
+    "capture_complete": false
+  }
+}
