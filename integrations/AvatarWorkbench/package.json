@@ -1,6 +1,6 @@
 {
   "name": "com.codex.avatar-workbench",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "displayName": "改模工作台 / Avatar Workbench",
   "description": "Editor-only Avatar Workbench: selectable API models, isolated material previews, screenshot feedback and existing workflow handoff.",
   "unity": "2022.3",

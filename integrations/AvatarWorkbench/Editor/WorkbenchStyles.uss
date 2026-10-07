@@ -392,3 +392,33 @@
 .aw-curated .aw-gallery-pick { flex-direction: row-reverse; }
 .aw-curated .aw-gallery-pick > .unity-base-field__input { flex-grow: 0; flex-shrink: 0; width: 22px; min-width: 22px; margin-right: 6px; }
 .aw-curated .aw-gallery-pick > .unity-base-field__label { flex-grow: 1; min-width: 0; }
+
+.aw-source-content { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; min-height: 0; }
+.aw-source-toolbar { height: 31px; flex-shrink: 0; margin-bottom: 5px; min-width: 0; }
+.aw-source-toolbar TextField { min-width: 0; flex-grow: 1; flex-shrink: 1; flex-basis: 0; margin-right: 6px; }
+.aw-source-toolbar .unity-base-field__label { min-width: 40px; width: 40px; }
+.aw-curated .aw-source-toolbar Button { height: 27px; min-height: 27px; padding: 0 8px; font-size: 11px; }
+.aw-source-toolbar Toggle { flex-shrink: 0; margin-right: 5px; }
+.aw-source-split { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-height: 0; min-width: 0; }
+.aw-source-sidebar { width: 164px; flex-shrink: 0; min-height: 0; padding: 7px; margin-right: 9px; border-radius: 8px; background-color: #1a1e27; }
+.aw-source-section { font-size: 12px; -unity-font-style: bold; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-source-results { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; min-height: 0; }
+.aw-curated .aw-source-record { height: 51px; min-height: 51px; padding: 7px; margin: 2px 0; border-width: 1px; border-color: #353e4c; background-color: #282e39; align-items: stretch; }
+.aw-curated .aw-source-record.aw-source-current { background-color: #44313c; border-color: #d88597; }
+.aw-source-record-name { font-size: 12px; color: #ecf0f7; -unity-font-style: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-source-record .aw-muted { font-size: 10px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-curated .aw-source-sidebar > Button { height: 25px; min-height: 25px; font-size: 11px; padding: 0 5px; margin-top: 5px; }
+.aw-source-empty { flex-grow: 1; flex-shrink: 1; color: var(--aw-muted); font-size: 13px; white-space: normal; -unity-text-align: middle-center; padding: 10px; }
+.aw-source-footer { height: 34px; flex-shrink: 0; margin-top: 5px; min-width: 0; }
+.aw-curated .aw-source-footer Button { height: 27px; min-height: 27px; font-size: 11px; padding: 0 8px; }
+.aw-source-status { height: 17px; flex-shrink: 0; font-size: 11px; color: var(--aw-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-share-paste { height: 49px; margin-bottom: 5px; flex-shrink: 0; min-width: 0; }
+.aw-share-paste TextField { min-width: 0; flex-grow: 1; flex-shrink: 1; flex-basis: 0; height: 49px; margin-right: 7px; }
+.aw-share-paste .unity-base-field__label { min-width: 56px; width: 56px; }
+.aw-curated .aw-share-paste Button { height: 45px; min-height: 45px; width: 90px; }
+.aw-cloud-file-row { height: 40px; padding: 0 7px; border-bottom-width: 1px; border-bottom-color: #3b4351; background-color: #282e39; min-width: 0; }
+.aw-cloud-file-name { min-width: 0; flex-shrink: 1; flex-basis: 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 7px; }
+.aw-curated .aw-cloud-file-row Button { height: 25px; min-height: 25px; padding: 0 7px; font-size: 11px; }
+.aw-curated.aw-icon-rail .aw-source-sidebar { width: 118px; margin-right: 5px; }
+.aw-curated.aw-icon-rail .aw-material-modes Button { padding: 0 7px; font-size: 11px; }
+.aw-curated.aw-short-window .aw-source-status { height: 15px; }

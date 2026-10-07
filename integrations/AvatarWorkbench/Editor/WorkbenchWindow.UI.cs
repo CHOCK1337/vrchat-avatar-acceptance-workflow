@@ -54,10 +54,14 @@ namespace AvatarWorkbench
         {
             var panel = Pane(0); panel.name = "materials-panel";
             var modes = Row(); modes.AddToClassList("aw-material-modes");
-            localMaterialTab = MakeButton("本地素材", () => SelectMaterialSource("local"), "materials-local-tab");
+            localMaterialTab = MakeButton("本次素材", () => SelectMaterialSource("local"), "materials-local-tab");
+            directoryTab = MakeButton("读取目录", () => SelectMaterialSource("directory"), "materials-directory-tab");
+            panTab = MakeButton("百度网盘", () => SelectMaterialSource("baidu"), "materials-baidu-tab");
             boothMaterialTab = MakeButton("BOOTH 找素材", () => SelectMaterialSource("booth"), "materials-booth-tab");
-            modes.Add(localMaterialTab); modes.Add(boothMaterialTab); panel.Add(modes);
+            modes.Add(localMaterialTab); modes.Add(directoryTab); modes.Add(panTab); modes.Add(boothMaterialTab); panel.Add(modes);
             localMaterialContent = BuildLocalMaterials(); localMaterialContent.AddToClassList("aw-material-content"); panel.Add(localMaterialContent);
+            directoryContent = BuildDirectorySources(); panel.Add(directoryContent);
+            panContent = BuildBaiduSources(); panel.Add(panContent);
             boothMaterialContent = BuildBoothMaterials(); panel.Add(boothMaterialContent);
             SelectMaterialSource(materialSource, false);
             return panel;
@@ -138,7 +142,7 @@ namespace AvatarWorkbench
             rootVisualElement.EnableInClassList("aw-compact-landscape", false);
             targetField.style.display = width < 620 ? DisplayStyle.None : DisplayStyle.Flex;
             placeholder.text = width < 620 ? "写一句修改需求…" : "例如：把头发改成黑色，保留原来的发饰。";
-            bool boothFocus = materialSource == "booth" && activePanel == "materials";
+            bool boothFocus = materialSource != "local" && activePanel == "materials";
             rootVisualElement.EnableInClassList("aw-booth-full", boothFocus);
             rootVisualElement.EnableInClassList("aw-booth-compact-grid", false);
             tabBar.style.display = DisplayStyle.Flex;

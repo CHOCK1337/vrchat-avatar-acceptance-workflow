@@ -29,6 +29,7 @@ namespace AvatarWorkbench
         Vector2 dragStart;
         bool drawing, comparing, busy, restoring, disposed;
         string toast = "选择角色后显示真实画面。", sourceNotice = "暂无预览", receiptSignature = "";
+        string toastFeedbackId = "";
         DateTime taskTime;
         int historyIndex = -1;
         ObjectField targetField;
@@ -70,7 +71,7 @@ namespace AvatarWorkbench
             ReleaseGraphics();
         }
         void BeforeReload() { SaveState(); poll?.Pause(); StopSceneSync(); StopCodexConnection(); ReleaseGraphics(); }
-        void OnBecameInvisible() { windowVisible = false; StopPreviewCamera(); CloseRadialMenu(); poll?.Pause(); sceneRefreshJob?.Pause(); StopBoothRequests(true); }
+        void OnBecameInvisible() { windowVisible = false; CancelSourceRead(); StopPreviewCamera(); CloseRadialMenu(); poll?.Pause(); sceneRefreshJob?.Pause(); StopBoothRequests(true); }
         void OnLostFocus() { StopPreviewCamera(); CloseRadialMenu(); }
         void OnBecameVisible() { windowVisible = true; poll?.Resume(); if (followScene && preview == null) sceneBindingPending = true; if (refreshPending || sceneBindingPending) QueueSceneRefresh(); canvas?.MarkDirtyRepaint(); }
         void ReleaseGraphics()
@@ -109,7 +110,7 @@ namespace AvatarWorkbench
         static Label Wrapped(string text) { var l = new Label(text) { enableRichText = false }; l.style.whiteSpace = WhiteSpace.Normal; l.style.flexShrink = 0; l.style.minWidth = 0; return l; }
         Button MakeButton(string text, Action action, string name) { return new Button(() => TryAction(action)) { text = text, name = name }; }
         void TryAction(Action action) { try { action(); } catch (Exception e) { Toast("这一步没有完成：" + e.Message); } }
-        void Toast(string text) { toast = text; if (noticeLabel != null) { noticeLabel.text = text; noticeLabel.tooltip = text; } }
+        void Toast(string text) { toast = text; if (text == "已发送给 Codex，等待它实际读取；不用再复制粘贴。" && activeDeliveryReceipt != null) toastFeedbackId = WorkbenchData.Text(activeDeliveryReceipt["feedback_id"]); if (noticeLabel != null) { noticeLabel.text = text; noticeLabel.tooltip = text; } }
         static string KindName(string kind) { switch (kind) { case "base": case "body": case "avatar": return "素体"; case "outfit": return "衣服"; case "hair": return "发型"; case "makeup": return "妆容"; case "accessory": return "饰品"; case "plugin": return "插件"; default: return "素材"; } }
 
         public void UseSelection()
@@ -247,6 +248,7 @@ namespace AvatarWorkbench
                 ["task_revision"] = task["task_revision"]?.DeepClone(), ["candidate"] = c, ["target"] = t, ["snapshot_id"] = Guid.NewGuid().ToString("N"), ["resource_id"] = selectedId,
                 ["selected_resources"] = new JArray(resources.Where(ResourceRequested).Select(x => x.Json())),
                 ["selected_product_references"] = new JArray(boothReferences.Select(x => x.DeepClone())),
+                ["selected_source_references"] = SourceReferences(),
                 ["known_controls"] = (sourcePreview ?? preview)?.RenderedControls?.DeepClone() ?? new JObject { ["status"] = "unknown", ["preview_output"] = (sourcePreview ?? preview)?.SceneProxyCount > 0 ? "existing_ndmf_scene_preview" : "source_meshes", ["note"] = "可复用已有场景功能预览；未读取开关数值，不推断最终构建。" } };
         }
         void RefreshAll()
@@ -432,6 +434,7 @@ namespace AvatarWorkbench
             // Resource selection belongs to this feedback, while target/image belong to the frozen frame.
             context["selected_resources"] = Context()["selected_resources"]?.DeepClone(); context["resource_id"] = selectedId;
             context["selected_product_references"] = new JArray(boothReferences.Select(x => x.DeepClone()));
+            context["selected_source_references"] = SourceReferences();
             byte[] bytes = frozen.EncodeToPNG(); string folder = Path.Combine(WorkbenchData.Space(WorkbenchData.Text(context["binding"])), "drafts"); Directory.CreateDirectory(folder);
             string file = Path.Combine(folder, Guid.NewGuid().ToString("N") + ".png"); File.WriteAllBytes(file, bytes);
             image["path"] = file; image["sha256"] = WorkbenchData.Hash(bytes); image["width"] = frozen.width; image["height"] = frozen.height;
@@ -455,6 +458,7 @@ namespace AvatarWorkbench
                 ["candidate"] = context["candidate"]?.DeepClone(), ["snapshot_id"] = context["snapshot_id"]?.DeepClone(),
                 ["target"] = context["target"]?.DeepClone(), ["selected_resources"] = context["selected_resources"]?.DeepClone(),
                 ["selected_product_references"] = context["selected_product_references"]?.DeepClone() ?? new JArray(),
+                ["selected_source_references"] = context["selected_source_references"]?.DeepClone() ?? new JArray(),
                 ["resource_id"] = context["resource_id"]?.DeepClone(), ["image"] = image?.DeepClone(), ["known_controls"] = context["known_controls"]?.DeepClone(),
                 ["rect"] = image != null && annotation.width > .001f && annotation.height > .001f ? new JObject { ["x"] = annotation.x, ["y"] = annotation.y, ["w"] = annotation.width, ["h"] = annotation.height } : null,
                 ["category"] = image == null ? "change" : "visual", ["message"] = message, ["status"] = "received", ["execution_started"] = false,
@@ -566,6 +570,14 @@ namespace AvatarWorkbench
         {
             if (feedbackPanel == null) return;
             feedbackPanel.Clear(); entries = entries ?? WorkbenchData.Feedback(BindingPath);
+            var sentEntry = string.IsNullOrEmpty(toastFeedbackId) ? null : entries.FirstOrDefault(x => WorkbenchData.Text(x["id"]) == toastFeedbackId);
+            if (toast == "已发送给 Codex，等待它实际读取；不用再复制粘贴。" && sentEntry != null)
+            {
+                string latestStatus = WorkbenchData.Text(sentEntry["status"]);
+                if (latestStatus == "addressed") Toast("Codex 已回应，可在“需求与回复”查看；回应不代表模型修复通过。");
+                else if (latestStatus == "seen") Toast("Codex 已实际读取，等待后续回应。");
+                else if (latestStatus == "processing_feedback") Toast("Codex 已确认正在处理，请查看实际回应与模型。");
+            }
             int waiting = entries.Count(x => WorkbenchData.Text(x["status"]) != "addressed");
             feedbackTab.text = "需求与回复" + (waiting > 0 ? " (" + waiting + ")" : "");
             feedbackPanel.Add(Heading("我的请求"));

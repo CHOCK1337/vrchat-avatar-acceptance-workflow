@@ -109,13 +109,16 @@ namespace AvatarWorkbench
 
         void SelectMaterialSource(string value, bool save = true)
         {
-            materialSource = value == "booth" ? "booth" : "local";
+            materialSource = new[] { "local", "booth", "directory", "baidu" }.Contains(value) ? value : "local";
             if (localMaterialContent == null || boothMaterialContent == null) return;
             localMaterialContent.style.display = materialSource == "local" ? DisplayStyle.Flex : DisplayStyle.None;
             boothMaterialContent.style.display = materialSource == "booth" ? DisplayStyle.Flex : DisplayStyle.None;
+            if (directoryContent != null) directoryContent.style.display = materialSource == "directory" ? DisplayStyle.Flex : DisplayStyle.None;
+            if (panContent != null) panContent.style.display = materialSource == "baidu" ? DisplayStyle.Flex : DisplayStyle.None;
+            directoryTab?.EnableInClassList("aw-tab-active", materialSource == "directory"); panTab?.EnableInClassList("aw-tab-active", materialSource == "baidu");
             localMaterialTab.EnableInClassList("aw-tab-active", materialSource == "local"); boothMaterialTab.EnableInClassList("aw-tab-active", materialSource == "booth");
             if (materialSource != "booth") StopBoothRequests(true);
-            else if (save) activePanel = "materials";
+            if (save) activePanel = "materials";
             if (save && materialPanel != null && previewPanel != null && resultPanel != null) ApplyLayout(position.width, position.height);
             if (save) QueueSave();
         }
@@ -526,7 +529,7 @@ namespace AvatarWorkbench
         void RestoreBoothState(JObject state)
         {
             if (state == null) return;
-            materialSource = ProductText(state, "material_source", "local") == "booth" ? "booth" : "local";
+            string mode = ProductText(state, "material_source", "local"); materialSource = new[] { "local", "booth", "directory", "baidu" }.Contains(mode) ? mode : "local";
             boothQuery = ProductText(state, "query", ""); boothSelectedId = ProductText(state, "selected_id", "");
             boothCategory = Mathf.Clamp((int?)state["category"] ?? 0, 0, BoothCategories.Length - 1); boothSort = Mathf.Clamp((int?)state["sort"] ?? 0, 0, BoothSortNames.Length - 1);
             boothMaxPrice = Math.Max(0, (int?)state["max_price"] ?? 0); boothUsageAcknowledged = (bool?)state["usage_ack"] ?? false; boothShowingReferences = (bool?)state["show_references"] ?? false;

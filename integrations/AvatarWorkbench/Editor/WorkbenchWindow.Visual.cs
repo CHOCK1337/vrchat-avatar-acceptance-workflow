@@ -73,7 +73,7 @@ namespace AvatarWorkbench
             libraryRoot = new VisualElement { name = "local-materials-panel" }; libraryRoot.AddToClassList("aw-library");
             var header = Row(); header.AddToClassList("aw-library-heading"); header.Add(Heading("本次素材"));
             resourceCount = new Label { enableRichText = false }; resourceCount.AddToClassList("aw-muted"); resourceCount.style.flexGrow = 1; header.Add(resourceCount);
-            header.Add(MakeButton("添加素材 ▾", () => { var menu = new GenericMenu(); menu.AddItem(new GUIContent("选择 Prefab / 安装包…"), false, () => TryAction(PickResource)); menu.AddItem(new GUIContent("选择本次素材目录…"), false, () => TryAction(PickResourceFolder)); menu.ShowAsContext(); }, "add-resource"));
+            header.Add(MakeButton("添加素材 ▾", () => { var menu = new GenericMenu(); menu.AddItem(new GUIContent("选择 Prefab / 安装包…"), false, () => TryAction(PickResource)); menu.AddItem(new GUIContent("读取素材目录…"), false, () => SelectMaterialSource("directory")); menu.AddItem(new GUIContent("添加百度网盘分享…"), false, () => SelectMaterialSource("baidu")); menu.ShowAsContext(); }, "add-resource"));
             header.Add(MakeButton("双素材预览", OpenResourceGallery, "open-resource-gallery")); libraryRoot.Add(header);
             search = new TextField("筛选") { name = "resource-search", value = resourceFilter }; search.AddToClassList("aw-library-search"); search.style.flexGrow = 1;
             search.RegisterValueChangedCallback(e => { resourceFilter = e.newValue; UpdateResourceList(); }); header.Insert(2, search); resourceCount.style.display = DisplayStyle.None;
@@ -139,6 +139,7 @@ namespace AvatarWorkbench
         }
         void ReleaseVisualUi()
         {
+            ReleaseSourceUi();
             libraryLoading?.Pause(); libraryLoading = null;
             if (cards != null && libraryResize != null) cards.UnregisterCallback(libraryResize);
             libraryResize = null; libraryAssets.Clear();

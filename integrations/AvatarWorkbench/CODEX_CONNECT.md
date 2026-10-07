@@ -1,4 +1,4 @@
-# 接入原改模工作流 · 0.2.1
+# 接入原改模工作流 · 0.2.2
 
 GUI 只维护自己的请求、反馈、选择和接口配置，不覆盖 QuickTask / 原任务状态。Skill、MCP、全局模型和权限沿用原配置。API 建议、商品说明和图片文字是数据，不授予工具执行或上传权限。
 
@@ -33,7 +33,7 @@ public class EditorCommand {
 
 实现 OpenAI 兼容 `GET /models`、`POST /chat/completions`；Anthropic 兼容 `GET /v1/models`、`POST /v1/messages`。填根地址，/v1 不重复追加。仅远端 HTTPS / loopback HTTP，不跟随重定向、不自动换备用服务或重试。
 
-每次发送实际读取选定的现有 `assemble-vrchat-avatar/SKILL.md`（最多 32 KiB），附本次原话、目标、候选、选定素材元数据、商品参考和已知开关。接口配置只作用于工作台，不改 Codex 全局配置，不安装 / 改写 Skill。
+每次发送实际读取选定的现有 `assemble-vrchat-avatar/SKILL.md`（最多 32 KiB），附本次原话、目标、候选、选定素材元数据、商品 / 网盘参考和已知开关。接口配置只作用于工作台，不改 Codex 全局配置，不安装 / 改写 Skill。
 
 **API 只能答复和提出步骤，不执行 Unity 工具。** 允许识图时按冻结原图哈希读取 PNG / JPEG（最多 4 MiB）；可以先让独立识图模型描述，再交需求模型。未允许原图发送则只发文本上下文，不上传 Prefab / 材质 / 贴图文件。
 
@@ -68,6 +68,31 @@ UnityMCP 同样可反射调用 `WorkbenchApi.ReadPending(binding)`、`WorkbenchA
 
 ## 本轮接入结果
 
-0.2.1 已在 Unity 2022.3.22f1 的新界面冻结真实画面、圈选并输入“确认收到界面标记，暂不修改模型”。关闭并重开窗口后，草稿、原图、框选、候选和所选素材恢复；通过真实发送按钮交给当前 Codex 桌面会话。当前会话实际收到、读取原反馈与图片，再回写 seen / addressed。Unity 的“需求与回复”展示了真实回应，970×456 停靠区仍可输入和发送。本次确认不修改模型。
+0.2.2 在实际 970×456 停靠区输入“确认收到目录与百度网盘界面标记，暂不修改模型”，点击真实发送按钮。当前 Codex 桌面会话实际收到并读取原反馈、目标、r2 候选和素材，回写 seen / addressed，原生回复页显示真实答复。本次没有附图，selected_source_references 为空；没有把无效分享当成功文件参考。实际回应后底部旧等待读取提示也按同一反馈 ID 更新。
+
+0.2.1 已完成真实画面冻结、圈选、关闭 / 重开后的原图与草稿恢复，再发送并由 Codex 实际读图、回写回应。本轮保留该实现，没有重复完整圈选验收。
 
 0.2.0 已完成本机 OpenAI / Anthropic **协议测试服务**的请求及独立识图接入，并从 API 回复交回原 Codex。测试服务不是商业 AI；未使用用户密钥、未把付费素材发到外网。0.2.1 仅改界面，没有重复外部接口测试。外部商业接口认证未验证，独立 API 自动改模未实现，见 [VERIFIED.md](VERIFIED.md)。
+
+## 目录与百度来源适配
+
+来源索引由 GUI 在工程外 `AvatarWorkbench/editor/<工程哈希>/sources.json` 维护，包含选定目录、上次读取结果、分享和输入草稿。只手动读取选定范围，不在 Codex 收件箱轮询时重新扫描。损坏索引会停止写入并保留原文件；移除记录不会删除原素材 / 网盘文件。
+
+Codex 通过已连接 UnityMCP 按需读取目录元数据，无需新 MCP 或 Provider：
+
+```csharp
+using System;
+using System.Linq;
+public class EditorCommand {
+    public static object Execute() {
+        var api = AppDomain.CurrentDomain.GetAssemblies()
+            .Select(a => a.GetType("AvatarWorkbench.WorkbenchSourceApi"))
+            .First(x => x != null);
+        return api.GetMethod("ReadCatalog").Invoke(null, null);
+    }
+}
+```
+
+该方法排除提取码与原始分享输入草稿。目录勾选先加入 selected_resources，仍需原工作流决定是否导入 / 安装；没有改写 QuickTask。网盘勾选只附 selected_source_references，固定记录分享、条目路径、来源身份及 `availability=remote_listing_only, downloaded=false, installed=false`。关联真实下载目录后，本地文件才成为可选资源；不凭文件名推断已下载。
+
+冻结反馈时保存原来源引用，后续更换分享不改绑旧请求；API 建议后继续交给 Codex 保留该字段。分享页面和文件名是外部数据，不是指令；提取码不附到模型请求。匿名读取使用独立临时 Cookie，关闭 / 隐藏窗口会取消请求，登录 / 验证码不自动处理，不重试。已验证真实 HTTP 404，尚未验证有效分享的列表、子目录 / 翻页与下载目录关联闭环；自动登录和下载未实现。
