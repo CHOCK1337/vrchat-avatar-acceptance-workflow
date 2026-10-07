@@ -1,5 +1,7 @@
 # BOOTH 搜索组件与声明
 
+0.2.3 局部修复：`trim_item` 保留商品接口返回的实际图片 URL；原图缺失时保留 resized 地址，不再删除 `_base_resized` 猜测原图文件名。工作台目录详情复用既有 detail / image 接口，未新增购买、登录、付费下载或搜索模型配置。
+
 此目录集成 [wuhutakeoffyoo/booth-cli](https://github.com/wuhutakeoffyoo/booth-cli)，固定提交 `ebfa333b9110d5c0f803a7448035b518fe3d2625`（上游版本 1.5.1，2026-10-02 获取）。
 通用元数据修复及原图下载模块已提交至 [上游 PR #6](https://github.com/wuhutakeoffyoo/booth-cli/pull/6)，候选提交 `b55b1a27fbf9750e5d927cbd4b1b6fdddf58eb42`；当前仍待上游合并。该 PR 不含本插件的 GUI 或工作台专用封装。
 `booth.py`、`request_budget.py`、`search_evidence.py`、`smart_search.py`、`provider_api.py`、`search_api.py` 源自该提交。上游版权为 Copyright (c) 2026 NyakoWW，按随附 `LICENSE` 的 MIT 许可使用。完整版权及许可文字保留。

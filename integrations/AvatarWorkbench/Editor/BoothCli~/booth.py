@@ -425,7 +425,9 @@ def trim_item(raw, desc_len=DEFAULT_DESC_LEN):
     for img in raw.get("images") or []:
         u = (img or {}).get("original") or (img or {}).get("resized")
         if u:
-            images.append(u.replace("_base_resized", ""))
+            # A resized URL is a real server value too; guessing an original
+            # by rewriting its filename can produce a 403 or the wrong image.
+            images.append(u)
     variations = []
     for v in raw.get("variations") or []:
         name = " / ".join(str(v.get(f"field{i}")) for i in range(1, 7)

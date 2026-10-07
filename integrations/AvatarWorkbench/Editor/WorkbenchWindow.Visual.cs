@@ -128,7 +128,7 @@ namespace AvatarWorkbench
         static bool IsLibraryAsset(string path) => (path ?? "").StartsWith("Assets/", StringComparison.Ordinal) || (path ?? "").StartsWith("Packages/", StringComparison.Ordinal);
         Texture LibraryCover(ResourceCard resource)
         {
-            if (!string.IsNullOrEmpty(resource.thumbnail)) return Thumbnail(resource);
+            if (!string.IsNullOrEmpty(resource.thumbnail)) { var cover = Thumbnail(resource); if (cover) return cover; }
             if (!IsLibraryAsset(resource.path)) return null;
             if (!libraryAssets.TryGetValue(resource.id, out var asset)) libraryAssets[resource.id] = asset = AssetDatabase.LoadAssetAtPath<Object>(resource.path);
             return asset ? AssetPreview.GetAssetPreview(asset) : null;

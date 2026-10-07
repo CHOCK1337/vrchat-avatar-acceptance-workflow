@@ -14,7 +14,7 @@ namespace AvatarWorkbench
         internal static string FilePath => Path.Combine(Path.GetDirectoryName(WorkbenchData.WindowFile), "sources.json");
         internal static JObject Load()
         {
-            var value = File.Exists(FilePath) ? WorkbenchData.Read(FilePath) : new JObject();
+            var value = File.Exists(FilePath) ? WorkbenchCatalogMetadata.ReadJson(FilePath, 8 * 1024 * 1024) : new JObject();
             foreach (string key in new[] { "directories", "shares", "references" })
             {
                 if (value[key] != null && !(value[key] is JArray)) throw new IOException("来源索引格式有误，原记录已保留：" + key);
@@ -24,7 +24,7 @@ namespace AvatarWorkbench
         }
         internal static void Save(JObject value)
         {
-            if (Encoding.UTF8.GetByteCount(value.ToString()) > 1900 * 1024) throw new IOException("目录索引太大，请移除不用的目录记录或缩小读取范围；素材文件不会删除。");
+            if (Encoding.UTF8.GetByteCount(value.ToString()) > 7500 * 1024) throw new IOException("目录索引太大，请移除不用的目录记录或缩小读取范围；素材文件不会删除。");
             WorkbenchData.Write(FilePath, value);
         }
         internal static string DirectoryPath(string value)
@@ -49,12 +49,12 @@ namespace AvatarWorkbench
         internal static JObject Scan(string scope, string project, bool recursive, CancellationToken cancellation, Progress progress)
         {
             scope = DirectoryPath(scope);
-            var results = new JArray(); var stack = new Stack<Tuple<string, int>>(); stack.Push(Tuple.Create(scope, 0));
-            int skipped = 0; bool limited = false;
+            var results = new JArray(); var pending = new Queue<Tuple<string, int>>(); pending.Enqueue(Tuple.Create(scope, 0));
+            int skipped = 0; bool limited = false; var scopeFiles = new List<string>();
             var exclude = new HashSet<string>(new[] { "Library", "Temp", "Logs", "obj", ".git", "node_modules", ".avatar-workbench-update" }, StringComparer.OrdinalIgnoreCase);
-            while (stack.Count > 0)
+            while (pending.Count > 0)
             {
-                cancellation.ThrowIfCancellationRequested(); var next = stack.Pop();
+                cancellation.ThrowIfCancellationRequested(); var next = pending.Dequeue();
                 if (progress.Directories >= 512 || progress.Files >= 20000 || results.Count >= 300) { limited = true; break; }
                 Interlocked.Increment(ref progress.Directories);
                 var files = new List<string>();
@@ -67,7 +67,7 @@ namespace AvatarWorkbench
                         var attributes = File.GetAttributes(path); if ((attributes & FileAttributes.ReparsePoint) != 0) { skipped++; continue; }
                         if ((attributes & FileAttributes.Directory) != 0)
                         {
-                            if (recursive && next.Item2 < 8 && !exclude.Contains(Path.GetFileName(path))) stack.Push(Tuple.Create(path, next.Item2 + 1));
+                            if (recursive && next.Item2 < 8 && !exclude.Contains(Path.GetFileName(path))) pending.Enqueue(Tuple.Create(path, next.Item2 + 1));
                             else if (recursive && next.Item2 >= 8) limited = true;
                             continue;
                         }
@@ -75,7 +75,7 @@ namespace AvatarWorkbench
                     }
                 }
                 catch (IOException) { skipped++; } catch (UnauthorizedAccessException) { skipped++; }
-                var covers = files.Where(p => new[] { ".png", ".jpg", ".jpeg" }.Contains(Path.GetExtension(p).ToLowerInvariant())).ToArray();
+                scopeFiles.AddRange(files);
                 bool plugin = false;
                 foreach (string path in files.OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
                 {
@@ -84,11 +84,8 @@ namespace AvatarWorkbench
                     string kind = extension == ".prefab" ? "prefab" : extension == ".unitypackage" ? "package" : new[] { ".zip", ".7z", ".rar", ".tar", ".gz" }.Contains(extension) ? "archive" : "";
                     if (string.IsNullOrEmpty(kind)) continue;
                     if (results.Count >= 300) { limited = true; break; }
-                    string stem = Path.GetFileNameWithoutExtension(path);
-                    string cover = covers.FirstOrDefault(p => string.Equals(Path.GetFileNameWithoutExtension(p), stem, StringComparison.OrdinalIgnoreCase))
-                        ?? covers.FirstOrDefault(p => new[] { "cover", "thumbnail", "封面", "folder" }.Contains(Path.GetFileNameWithoutExtension(p).ToLowerInvariant()));
                     long bytes = 0; try { bytes = new FileInfo(path).Length; } catch (IOException) { }
-                    results.Add(Entry(path, project, kind, cover, bytes)); Interlocked.Increment(ref progress.Found);
+                    results.Add(Entry(path, project, kind, null, bytes)); Interlocked.Increment(ref progress.Found);
                 }
                 if (plugin && results.Count < 300)
                 {
@@ -96,6 +93,7 @@ namespace AvatarWorkbench
                     results.Add(Entry(next.Item1, project, "plugin", null, 0)); Interlocked.Increment(ref progress.Found);
                 }
             }
+            WorkbenchCatalogMetadata.Enrich(results, scopeFiles, scope, cancellation);
             return new JObject { ["items"] = results, ["directories_read"] = progress.Directories, ["files_read"] = progress.Files,
                 ["skipped"] = skipped, ["limited"] = limited, ["read_at"] = WorkbenchData.Now };
         }

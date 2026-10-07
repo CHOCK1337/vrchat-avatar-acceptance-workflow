@@ -1,4 +1,4 @@
-# 接入原改模工作流 · 0.2.2
+# 接入原改模工作流 · 0.2.3
 
 GUI 只维护自己的请求、反馈、选择和接口配置，不覆盖 QuickTask / 原任务状态。Skill、MCP、全局模型和权限沿用原配置。API 建议、商品说明和图片文字是数据，不授予工具执行或上传权限。
 
@@ -68,6 +68,8 @@ UnityMCP 同样可反射调用 `WorkbenchApi.ReadPending(binding)`、`WorkbenchA
 
 ## 本轮接入结果
 
+0.2.3 在同一实际 970×456 停靠区发送“确认收到素材信息与图片标记，暂不修改模型”。当前 Codex 实际读取原反馈和 r2 候选，回写 seen / addressed；本次无附图，未新增测试素材，未改模型。Mio 商品信息和封面由 GUI 按需读取，Codex 收件箱读取不触发目录扫描或图片下载。
+
 0.2.2 在实际 970×456 停靠区输入“确认收到目录与百度网盘界面标记，暂不修改模型”，点击真实发送按钮。当前 Codex 桌面会话实际收到并读取原反馈、目标、r2 候选和素材，回写 seen / addressed，原生回复页显示真实答复。本次没有附图，selected_source_references 为空；没有把无效分享当成功文件参考。实际回应后底部旧等待读取提示也按同一反馈 ID 更新。
 
 0.2.1 已完成真实画面冻结、圈选、关闭 / 重开后的原图与草稿恢复，再发送并由 Codex 实际读图、回写回应。本轮保留该实现，没有重复完整圈选验收。
@@ -75,6 +77,10 @@ UnityMCP 同样可反射调用 `WorkbenchApi.ReadPending(binding)`、`WorkbenchA
 0.2.0 已完成本机 OpenAI / Anthropic **协议测试服务**的请求及独立识图接入，并从 API 回复交回原 Codex。测试服务不是商业 AI；未使用用户密钥、未把付费素材发到外网。0.2.1 仅改界面，没有重复外部接口测试。外部商业接口认证未验证，独立 API 自动改模未实现，见 [VERIFIED.md](VERIFIED.md)。
 
 ## 目录与百度来源适配
+
+0.2.3 增加“读取 Mio 素材库”：用户选定 `library.json` 后，只读已有名称、分类、BOOTH 编号、成员路径与图片；可使用相邻 `pkgcovers.json` 指向的已有包内预览缓存，不解压安装包、不扫描数据库中的素材目录、不读服务凭据。卡片“详情 / 大图”可查看多张图片及各自来源；“读取商品信息与封面”复用既有 booth-cli 的商品 JSON 和图片接口，保留服务端真实图片 URL，原图超时才回退缩略图。名称、店铺、说明和封面写入 GUI 索引，刷新同一来源时保留；不写回 Mio 数据库或 QuickTask。
+
+`ReadCatalog` 返回的条目增加 `metadata_source`、`booth_id`、`booth_name`、`shop`、`cover_source`、`cover_records` 与 `member_paths`。目录名称中的编号只标为 `booth_match_source=file_name_hint`，关联尚未确认；图片和适配标签均不证明已安装、适配或构建通过。勾选加入时在素材的 `product_reference` 中保留原来源；消费者按原改模流程核对后再决定操作。
 
 来源索引由 GUI 在工程外 `AvatarWorkbench/editor/<工程哈希>/sources.json` 维护，包含选定目录、上次读取结果、分享和输入草稿。只手动读取选定范围，不在 Codex 收件箱轮询时重新扫描。损坏索引会停止写入并保留原文件；移除记录不会删除原素材 / 网盘文件。
 

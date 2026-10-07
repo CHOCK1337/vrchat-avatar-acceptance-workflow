@@ -296,9 +296,14 @@ namespace AvatarWorkbench
             if (!string.IsNullOrEmpty(r.thumbnail))
             {
                 string path = WorkbenchData.Resolve(r.thumbnail, string.IsNullOrEmpty(taskPath) ? WorkbenchData.Project : Path.GetDirectoryName(taskPath));
-                if (thumbnails.TryGetValue(path, out var texture)) return texture;
-                if (thumbnails.Count >= 24) { var key = thumbnails.Keys.First(); Object.DestroyImmediate(thumbnails[key]); thumbnails.Remove(key); }
-                try { texture = WorkbenchData.LoadImage(path); thumbnails[path] = texture; return texture; } catch (IOException) { }
+                string key = WorkbenchCoverImage.Fingerprint(path);
+                if (thumbnails.TryGetValue(key, out var texture)) return texture;
+                if (thumbnails.Count >= 32) {
+                    var visible = rootVisualElement.Query<Image>().ToList().Select(i => i.image).ToArray();
+                    string evict = thumbnails.Keys.FirstOrDefault(k => !thumbnails[k] || !visible.Contains(thumbnails[k]));
+                    if (evict == null) return null; Object.DestroyImmediate(thumbnails[evict]); thumbnails.Remove(evict);
+                }
+                try { texture = WorkbenchCoverImage.Load(path, 600); thumbnails[key] = texture; return texture; } catch (IOException) { thumbnails[key] = null; return null; } catch (UnauthorizedAccessException) { thumbnails[key] = null; return null; }
             }
             return string.IsNullOrEmpty(r.path) ? EditorGUIUtility.IconContent("Prefab Icon").image : AssetDatabase.GetCachedIcon(r.path);
         }
@@ -571,7 +576,9 @@ namespace AvatarWorkbench
             if (feedbackPanel == null) return;
             feedbackPanel.Clear(); entries = entries ?? WorkbenchData.Feedback(BindingPath);
             var sentEntry = string.IsNullOrEmpty(toastFeedbackId) ? null : entries.FirstOrDefault(x => WorkbenchData.Text(x["id"]) == toastFeedbackId);
-            if (toast == "已发送给 Codex，等待它实际读取；不用再复制粘贴。" && sentEntry != null)
+            bool receiptToast = toast == "已发送给 Codex，等待它实际读取；不用再复制粘贴。" || toast == "Codex 已实际读取，等待后续回应。" ||
+                toast == "Codex 已确认正在处理，请查看实际回应与模型。" || toast == "Codex 已回应，可在“需求与回复”查看；回应不代表模型修复通过。";
+            if (receiptToast && sentEntry != null)
             {
                 string latestStatus = WorkbenchData.Text(sentEntry["status"]);
                 if (latestStatus == "addressed") Toast("Codex 已回应，可在“需求与回复”查看；回应不代表模型修复通过。");

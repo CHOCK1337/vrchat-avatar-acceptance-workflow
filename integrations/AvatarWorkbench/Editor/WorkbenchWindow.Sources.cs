@@ -56,7 +56,7 @@ namespace AvatarWorkbench
         void QueueSourceSave() { sourceSave?.Pause(); sourceSave = rootVisualElement.schedule.Execute(() => SaveSources()).StartingIn(400); }
         JObject CurrentDirectory => sourceDirectories.FirstOrDefault(d => WorkbenchData.Text(d["id"]) == selectedDirectoryId);
         JObject CurrentShare => sourceShares.FirstOrDefault(d => WorkbenchData.Text(d["id"]) == selectedShareId);
-        static string SourceType(string kind) => kind == "prefab" ? "预制体" : kind == "package" ? "Unity 安装包" : kind == "archive" ? "压缩包" : "插件目录";
+        static string SourceType(string kind) => kind == "prefab" ? "预制体" : kind == "package" ? "Unity 安装包" : kind == "archive" ? "压缩包" : kind == "folder" ? "商品素材目录" : "插件目录";
         static string SizeLabel(long bytes) => bytes >= 1024 * 1024 * 1024 ? (bytes / (1024d * 1024 * 1024)).ToString("0.0") + " GB" : bytes >= 1024 * 1024 ? (bytes / (1024d * 1024)).ToString("0.0") + " MB" : bytes >= 1024 ? (bytes / 1024d).ToString("0.0") + " KB" : bytes + " B";
         static Label SourceLabel(string text, string style = "") { var label = new Label(text) { enableRichText = false }; if (!string.IsNullOrEmpty(style)) label.AddToClassList(style); return label; }
 
@@ -68,6 +68,7 @@ namespace AvatarWorkbench
             directoryPathField.RegisterValueChangedCallback(_ => QueueSourceSave()); toolbar.Add(directoryPathField);
             toolbar.Add(MakeButton("选择目录", () => { string path = EditorUtility.OpenFolderPanel("选择素材目录", WorkbenchData.Project, ""); if (!string.IsNullOrEmpty(path)) { directoryPathField.SetValueWithoutNotify(path); RegisterDirectory(path); } }, "browse-source-directory"));
             toolbar.Add(MakeButton("添加", () => RegisterDirectory(directoryPathField.value), "add-source-directory")); panel.Add(toolbar);
+            toolbar.Add(MakeButton("读取 Mio 素材库", PickMioLibrary, "read-mio-library"));
             var split = Row(); split.AddToClassList("aw-source-split"); split.style.alignItems = Align.Stretch;
             var sidebar = new VisualElement(); sidebar.AddToClassList("aw-source-sidebar"); sidebar.Add(SourceLabel("素材目录", "aw-source-section"));
             directoryList = new ListView { itemsSource = sourceDirectories, fixedItemHeight = 57, selectionType = SelectionType.None, name = "source-directory-list" };
@@ -76,7 +77,7 @@ namespace AvatarWorkbench
             directoryList.bindItem = (container, index) => {
                 container.Clear(); var item = sourceDirectories[index]; string id = WorkbenchData.Text(item["id"]), path = WorkbenchData.Text(item["path"]);
                 var button = MakeButton("", () => SelectDirectory(id), "directory-" + id); button.AddToClassList("aw-source-record"); button.EnableInClassList("aw-source-current", id == selectedDirectoryId); button.tooltip = path;
-                button.Add(SourceLabel(Path.GetFileName(path), "aw-source-record-name")); button.Add(SourceLabel(item["read_at"] == null ? "尚未读取" : (item["items"] as JArray)?.Count + " 项 · 上次读取", "aw-muted")); container.Add(button);
+                button.Add(SourceLabel(WorkbenchData.Text(item["source_kind"]) == "mio_library" ? "Mio 素材库" : Path.GetFileName(path), "aw-source-record-name")); button.Add(SourceLabel(item["read_at"] == null ? "尚未读取" : (item["items"] as JArray)?.Count + " 项 · 上次读取", "aw-muted")); container.Add(button);
             }; sidebar.Add(directoryList); directoryEmpty = SourceLabel("尚未添加目录", "aw-source-empty"); sidebar.Add(directoryEmpty);
             sidebar.Add(MakeButton("移除目录记录", RemoveDirectoryRecord, "remove-directory-record")); split.Add(sidebar);
             var results = new VisualElement(); results.AddToClassList("aw-source-results");
@@ -93,13 +94,16 @@ namespace AvatarWorkbench
             stopSourceButton = MakeButton("取消读取", CancelSourceRead, "cancel-source-read"); stopSourceButton.style.display = DisplayStyle.None; footer.Add(stopSourceButton);
             addCatalogButton = MakeButton("勾选后加入本次素材", AddCatalogPicks, "apply-catalog-picks"); addCatalogButton.AddToClassList("aw-primary"); footer.Add(addCatalogButton); panel.Add(footer);
             sourceStatus = SourceLabel("只读取选定目录 · 不自动导入、解压或安装", "aw-source-status"); panel.Add(sourceStatus);
-            catalogResize = e => { if (e.target != catalogList || e.newRect.height <= 0) return; int columns = Mathf.Clamp((int)(e.newRect.width / 200), 1, 5); float height = Mathf.Min(240, Mathf.Max(1, Mathf.Floor(e.newRect.height))); bool changed = columns != sourceColumns || catalogList.fixedItemHeight != height; sourceColumns = columns; if (changed) { catalogList.fixedItemHeight = height; RebuildCatalogRows(); } };
+            catalogResize = e => { if (e.target != catalogList || e.newRect.height <= 0) return; int columns = Mathf.Clamp((int)(e.newRect.width / (e.newRect.height < 180 ? 290 : 200)), 1, 5); float height = Mathf.Min(290, Mathf.Max(96, Mathf.Floor(e.newRect.height))); bool changed = columns != sourceColumns || catalogList.fixedItemHeight != height; sourceColumns = columns; if (changed) { catalogList.fixedItemHeight = height; RebuildCatalogRows(); } };
             catalogList.RegisterCallback(catalogResize);
             RefreshDirectoryRecords(); RefreshCatalog();
+            int currentIndex = sourceDirectories.FindIndex(d => WorkbenchData.Text(d["id"]) == selectedDirectoryId);
+            if (currentIndex >= 0) directoryList.schedule.Execute(() => directoryList.ScrollToItem(currentIndex)).StartingIn(80);
+            if (WorkbenchData.Text(CurrentDirectory?["source_kind"]) == "mio_library") sourceStatus.text = "Mio 素材库 · 显示上次读取的名称与图片记录 · 点击读取可刷新";
             sourceCovers = panel.schedule.Execute(() => {
                 if (!windowVisible || activePanel != "materials" || materialSource != "directory" || EditorApplication.isCompiling || EditorApplication.isUpdating) return;
                 bool pending = false;
-                foreach (var image in catalogList.Query<Image>("catalog-cover").ToList()) { if (image.image || !(image.userData is ResourceCard item)) continue; image.image = LibraryCover(item); pending |= image.image == null; var label = image.parent.Q<Label>("catalog-cover-state"); if (label != null) label.text = image.image ? "" : sourceCoverAttempts >= 29 ? "没有已有封面" : "正在读取预览" + new[] { "", ".", "..", "..." }[sourceCoverAttempts % 4]; }
+                foreach (var image in catalogList.Query<Image>("catalog-cover").ToList()) { if (image.image || !(image.userData is ResourceCard item)) continue; image.image = LibraryCover(item); pending |= image.image == null; var label = image.parent.Q<Label>("catalog-cover-state"); if (label != null) label.text = image.image ? "" : sourceCoverAttempts >= 29 ? "没有可读封面 · 点详情查看" : "正在读取预览" + new[] { "", ".", "..", "..." }[sourceCoverAttempts % 4]; }
                 sourceCoverAttempts++; if (!pending || sourceCoverAttempts >= 30) sourceCovers.Pause();
             }).Every(350);
             if (!string.IsNullOrEmpty(sourceLoadError)) { panel.SetEnabled(false); catalogEmpty.text = sourceLoadError; catalogEmpty.tooltip = sourceLoadError; sourceStatus.text = "来源记录读取失败，已停止写入，原文件保留。"; }
@@ -125,40 +129,73 @@ namespace AvatarWorkbench
         void RemoveDirectoryRecord() { if (sourceTask != null || CurrentDirectory == null) return; CurrentDirectory.Remove(); selectedDirectoryId = ""; RefreshDirectoryRecords(); RefreshCatalog(); SaveSources(); sourceStatus.text = "已移除目录记录，磁盘文件保留。"; }
         void RefreshCatalog()
         {
-            catalogItems.Clear(); catalogItems.AddRange((CurrentDirectory?["items"] as JArray ?? new JArray()).OfType<JObject>().Where(x => ((string)x["name"] + " " + (string)x["path"]).IndexOf(sourceFilterText ?? "", StringComparison.OrdinalIgnoreCase) >= 0));
+            catalogItems.Clear(); catalogItems.AddRange((CurrentDirectory?["items"] as JArray ?? new JArray()).OfType<JObject>().Where(x => ((string)x["name"] + " " + (string)x["path"] + " " + (string)x["category"] + " " + x["bases"] + " " + x["tags"] + " " + (string)x["booth_id"]).IndexOf(sourceFilterText ?? "", StringComparison.OrdinalIgnoreCase) >= 0).OrderByDescending(x => !string.IsNullOrEmpty(WorkbenchData.Text(x["thumbnail"]))));
             RebuildCatalogRows(); catalogEmpty.style.display = catalogItems.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None; catalogList.style.display = catalogItems.Count == 0 ? DisplayStyle.None : DisplayStyle.Flex;
             catalogEmpty.text = CurrentDirectory == null ? "添加素材目录，再点击读取。\n封面、贴图和色卡不会被收录为安装资源。" : CurrentDirectory["read_at"] == null ? "已选目录，尚未读取。点击上方“读取目录”。" : "没有匹配的安装资源。可清空筛选或选择更具体的目录。";
             UpdateCatalogCount();
         }
         void RebuildCatalogRows() { catalogRows.Clear(); catalogRows.AddRange(Enumerable.Range(0, (catalogItems.Count + sourceColumns - 1) / sourceColumns)); catalogList?.Rebuild(); sourceCoverAttempts = 0; sourceCovers?.Resume(); }
-        ResourceCard CatalogResource(JObject item) => new ResourceCard { id = WorkbenchData.Text(item["id"]), name = WorkbenchData.Text(item["name"]), path = WorkbenchData.Text(item["path"]), kind = WorkbenchData.Text(item["kind"]), thumbnail = WorkbenchData.Text(item["thumbnail"]), state = "selected", note = "本地目录读取，尚未交给原工作流处理。" };
+        ResourceCard CatalogResource(JObject item) => new ResourceCard { id = WorkbenchData.Text(item["id"]), name = WorkbenchData.Text(item["name"]), path = WorkbenchData.Text(item["path"]), kind = WorkbenchData.Text(item["kind"]), thumbnail = WorkbenchData.Text(item["thumbnail"]), state = "selected", note = "本地素材，尚未交给原工作流处理。", productReference = new JObject {
+            ["metadata_source"] = item["metadata_source"]?.DeepClone(), ["source_key"] = item["source_key"]?.DeepClone(), ["booth_id"] = item["booth_id"]?.DeepClone(), ["booth_url"] = item["booth_url"]?.DeepClone(),
+            ["category"] = item["category"]?.DeepClone(), ["bases"] = item["bases"]?.DeepClone(), ["cover_source"] = item["cover_source"]?.DeepClone(), ["member_paths"] = item["member_paths"]?.DeepClone(), ["booth_match_source"] = item["booth_match_source"]?.DeepClone(), ["compatibility_status"] = "unverified" } };
         void BindCatalogRow(VisualElement row, int index)
         {
             row.Clear();
             for (int column = 0; column < sourceColumns; column++)
             {
                 int n = index * sourceColumns + column; if (n >= catalogItems.Count) break; var item = catalogItems[n]; var resource = CatalogResource(item);
+                bool compact = catalogList.fixedItemHeight < 180;
                 var tile = new VisualElement(); tile.AddToClassList("aw-asset-tile"); tile.EnableInClassList("aw-asset-picked", catalogPicks.Contains(resource.id));
-                var cover = new VisualElement(); cover.AddToClassList("aw-tile-cover"); cover.style.height = Mathf.Max(12, catalogList.fixedItemHeight - 69);
+                var cover = new VisualElement(); cover.AddToClassList("aw-tile-cover"); cover.style.height = Mathf.Max(12, catalogList.fixedItemHeight - (compact ? 12 : 87));
+                if (compact) { tile.style.flexDirection = FlexDirection.Row; cover.style.width = Mathf.Min(112, catalogList.fixedItemHeight - 12); }
                 var image = new Image { image = LibraryCover(resource), userData = resource, name = "catalog-cover", scaleMode = ScaleMode.ScaleToFit }; image.AddToClassList("aw-tile-image"); cover.Add(image);
+                cover.RegisterCallback<MouseDownEvent>(e => { if (e.button == 0 && !(e.target is Toggle) && (e.target as VisualElement)?.GetFirstAncestorOfType<Toggle>() == null) ShowCatalogDetails(item); });
                 var label = SourceLabel(image.image ? "" : "正在读取预览…", "aw-tile-loading"); label.name = "catalog-cover-state"; cover.Add(label);
                 var pick = new Toggle { value = catalogPicks.Contains(resource.id), tooltip = "选择 " + resource.name }; pick.AddToClassList("aw-tile-pick"); pick.RegisterValueChangedCallback(e => { if (e.newValue) catalogPicks.Add(resource.id); else catalogPicks.Remove(resource.id); tile.EnableInClassList("aw-asset-picked", e.newValue); UpdateCatalogCount(); QueueSourceSave(); }); cover.Add(pick); tile.Add(cover);
-                var title = SourceLabel(resource.name, "aw-tile-title"); title.tooltip = resource.path; tile.Add(title);
-                var footer = Row(); footer.AddToClassList("aw-tile-footer"); var type = SourceLabel(SourceType(resource.kind), "aw-muted"); type.style.flexGrow = 1; footer.Add(type);
-                if (IsLibraryPrefab(resource)) footer.Add(MakeButton("3D 预览", () => WorkbenchResourceGallery.OpenPreview(new[] { resource }, Array.Empty<string>(), resource.id), "catalog-preview-" + resource.id));
-                else { var size = SourceLabel(SizeLabel((long?)item["bytes"] ?? 0), "aw-muted"); footer.Add(size); }
-                tile.Add(footer); row.Add(tile);
+                var info = compact ? new VisualElement() : tile; if (compact) { info.style.flexGrow = 1; info.style.flexShrink = 1; info.style.minWidth = 0; tile.Add(info); }
+                var title = SourceLabel(resource.name, "aw-tile-title"); title.tooltip = resource.path; info.Add(title);
+                var facts = SourceLabel(WorkbenchData.Text(item["category"], SourceType(resource.kind)) + " · " + WorkbenchCatalogMetadata.CoverLabel(item), "aw-muted"); facts.tooltip = WorkbenchCatalogMetadata.CoverLabel(item) + "\n" + WorkbenchData.Text(item["thumbnail"]); facts.style.fontSize = 10; facts.style.height = 17; facts.style.overflow = Overflow.Hidden; facts.style.whiteSpace = WhiteSpace.NoWrap; info.Add(facts);
+                var footer = Row(); footer.AddToClassList("aw-tile-footer"); var type = SourceLabel(SizeLabel((long?)item["bytes"] ?? 0), "aw-muted"); type.style.flexGrow = 1; if (!compact || !IsLibraryPrefab(resource)) footer.Add(type);
+                footer.Add(MakeButton("详情 / 大图", () => ShowCatalogDetails(item), "catalog-detail-" + resource.id));
+                if (IsLibraryPrefab(resource)) footer.Add(MakeButton(compact ? "3D" : "3D 预览", () => WorkbenchResourceGallery.OpenPreview(new[] { resource }, Array.Empty<string>(), resource.id), "catalog-preview-" + resource.id));
+                info.Add(footer); row.Add(tile);
             }
             for (int fill = row.childCount; fill < sourceColumns; fill++) { var empty = new VisualElement(); empty.AddToClassList("aw-asset-tile"); empty.style.visibility = Visibility.Hidden; row.Add(empty); }
         }
         void UpdateCatalogCount() { int count = catalogItems.Count(x => catalogPicks.Contains(WorkbenchData.Text(x["id"]))); catalogCount.text = "显示 " + catalogItems.Count + " 项 · 已勾选 " + count + " 项"; addCatalogButton.SetEnabled(count > 0 && sourceTask == null); }
         void StartDirectoryRead()
         {
+            if (WorkbenchData.Text(CurrentDirectory?["source_kind"]) == "mio_library") { StartMioRead(CurrentDirectory); return; }
             if (sourceTask != null || CurrentDirectory == null) return;
             var record = CurrentDirectory; string path = WorkbenchData.Text(record["path"]), project = WorkbenchData.Project; bool recursive = sourceRecursive.value;
             directoryProgress = new WorkbenchSources.Progress(); sourceNetwork = false; sourceCancellation = new CancellationTokenSource(); var token = sourceCancellation.Token;
             sourceTask = Task.Run(() => WorkbenchSources.Scan(path, project, recursive, token, directoryProgress), token);
-            BeginSourceWork(result => { record["items"] = result["items"].DeepClone(); record["read_at"] = result["read_at"]; record["recursive"] = recursive; record["limited"] = result["limited"]; RefreshDirectoryRecords(); RefreshCatalog(); SaveSources(); sourceStatus.text = directoryProgress.Label + ((bool?)result["limited"] == true ? " · 达到范围上限，请选择更小目录" : " · 读取完成") + ((int?)result["skipped"] > 0 ? " · 已跳过无法访问项和链接" : ""); });
+            BeginSourceWork(result => { WorkbenchCatalogMetadata.PreserveFetched(record["items"] as JArray, result["items"] as JArray); record["items"] = result["items"].DeepClone(); record["read_at"] = result["read_at"]; record["recursive"] = recursive; record["limited"] = result["limited"]; RefreshDirectoryRecords(); RefreshCatalog(); SaveSources(); sourceStatus.text = directoryProgress.Label + ((bool?)result["limited"] == true ? " · 达到范围上限，请选择更小目录" : " · 读取完成") + ((int?)result["skipped"] > 0 ? " · 已跳过无法访问项和链接" : ""); });
+        }
+        void ShowCatalogDetails(JObject item)
+        {
+            WorkbenchCatalogDetailWindow.Open(item, () => { if (disposed) return; RefreshCatalog(); SaveSources(); });
+        }
+        void PickMioLibrary()
+        {
+            if (sourceTask != null) return;
+            string file = EditorUtility.OpenFilePanel("选择 Mio 素材库 library.json（只读）", "", "json");
+            if (string.IsNullOrEmpty(file)) return;
+            TryAction(() => {
+                var records = (JArray)sourceStore["directories"]; string id = "mio-db-" + WorkbenchData.Hash(System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(file).ToLowerInvariant())).Substring(0, 16);
+                var record = records.OfType<JObject>().FirstOrDefault(x => WorkbenchData.Text(x["id"]) == id);
+                if (record == null) { if (records.Count >= 16) throw new IOException("最多保留 16 个素材来源。"); record = new JObject { ["id"] = id, ["path"] = file, ["source_kind"] = "mio_library", ["items"] = new JArray() }; records.Add(record); }
+                selectedDirectoryId = id; directoryPathField.SetValueWithoutNotify(file); RefreshDirectoryRecords(); directoryList.ScrollToItem(sourceDirectories.IndexOf(record)); RefreshCatalog(); StartMioRead(record);
+            });
+        }
+        void StartMioRead(JObject record)
+        {
+            if (sourceTask != null || record == null || !string.IsNullOrEmpty(sourceLoadError)) return;
+            string path = WorkbenchData.Text(record["path"]), project = WorkbenchData.Project;
+            sourceCancellation = new CancellationTokenSource(); var token = sourceCancellation.Token; directoryProgress = new WorkbenchSources.Progress(); sourceNetwork = false;
+            sourceTask = Task.Run(() => WorkbenchCatalogMetadata.ReadMio(path, project, token, directoryProgress), token);
+            BeginSourceWork(result => { WorkbenchCatalogMetadata.PreserveFetched(record["items"] as JArray, result["items"] as JArray); foreach (var field in result.Properties()) record[field.Name] = field.Value.DeepClone(); RefreshCatalog();
+                sourceStatus.text = SaveSources() ? "已只读载入 Mio：" + result["raw_records"] + " 条原记录 → " + ((JArray)result["items"]).Count + " 张本地商品卡片" + ((bool?)result["limited"] == true ? " · 达到读取上限" : "") + " · 素材与图片留在原位置" : "索引尚未保存，原记录保留。"; });
         }
         void AddCatalogPicks()
         {
