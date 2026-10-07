@@ -16,6 +16,7 @@
 
 ## 仓库内容
 
+- [`integrations/AvatarWorkbench/START_HERE.md`](integrations/AvatarWorkbench/START_HERE.md)：可选 Unity Editor 可视化工作台，支持原流程反馈、多 API / 模型选择及素材 / 截图预览；独立集成，不改本文既有工作流规则。
 - [`WORKFLOW.md`](WORKFLOW.md)：完整执行规范和状态机。
 - [`references/workflow.md`](references/workflow.md)：任务数据、阶段和统一批量验收规则。
 - [`references/clothing.md`](references/clothing.md)：MA → MochiFitter → 手工适配的衣服路由。
