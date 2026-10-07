@@ -16,6 +16,9 @@ namespace AvatarWorkbench
         Label connectionHelp, placeholder, requestContext, draftLabel, resourceCount, activityLabel, roleGuide, taskDetails;
         VisualElement draftStrip;
         TextField search;
+        VisualElement materialModeRow, directoryToolbar;
+        DropdownField materialModeChoice;
+        readonly List<string> materialModeNames = new List<string> { "本次已选", "本地素材库", "百度网盘", "BOOTH 搜索" };
         readonly List<ResourceCard> visibleResources = new List<ResourceCard>();
         Button submitButton, materialTab, previewTab, feedbackTab, helpButton;
         string activePanel = "preview", layoutMode = "", resourceFilter = "";
@@ -33,10 +36,10 @@ namespace AvatarWorkbench
             var mark = new Label("AW"); mark.AddToClassList("aw-brand-mark"); brand.Add(mark);
             var brandText = new VisualElement(); var title = new Label("改模工作台"); title.AddToClassList("aw-title"); brandText.Add(title);
             var english = new Label("AVATAR WORKBENCH"); english.AddToClassList("aw-brand-caption"); brandText.Add(english); brand.Add(brandText); header.Add(brand);
-            targetField = new ObjectField("当前角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target };
+            targetField = new ObjectField("目标角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target };
             targetField.AddToClassList("aw-target"); targetField.RegisterValueChangedCallback(e => { if (!restoring) SetTarget(e.newValue as GameObject); }); header.Add(targetField);
-            header.Add(MakeButton("用选中角色", UseSelection, "use-selection"));
-            refreshButton = MakeButton("刷新", RefreshAll, "refresh"); refreshButton.tooltip = "重新读取当前角色和任务，不构建或安装素材。"; header.Add(refreshButton);
+            var choose = MakeButton("使用选中角色", UseSelection, "use-selection"); choose.tooltip = "在 Hierarchy 选中角色根物件后点击；也可直接拖到左侧目标角色栏。"; header.Add(choose);
+            refreshButton = MakeButton("刷新画面", RefreshAll, "refresh"); refreshButton.tooltip = "重新读取当前角色和任务，不构建或安装素材。"; header.Add(refreshButton);
             header.Add(MakeButton("更多 ▾", ShowMore, "more-menu")); root.Add(header);
             var shell = Row(); shell.AddToClassList("aw-shell"); shell.style.alignItems = Align.Stretch;
             navigationRail = BuildNavigation(); shell.Add(navigationRail);
@@ -53,12 +56,14 @@ namespace AvatarWorkbench
         VisualElement BuildMaterials()
         {
             var panel = Pane(0); panel.name = "materials-panel";
-            var modes = Row(); modes.AddToClassList("aw-material-modes");
-            localMaterialTab = MakeButton("本次素材", () => SelectMaterialSource("local"), "materials-local-tab");
-            directoryTab = MakeButton("读取目录", () => SelectMaterialSource("directory"), "materials-directory-tab");
+            var modes = Row(); materialModeRow = modes; modes.AddToClassList("aw-material-modes");
+            localMaterialTab = MakeButton("本次已选", () => SelectMaterialSource("local"), "materials-local-tab");
+            directoryTab = MakeButton("本地素材库", () => SelectMaterialSource("directory"), "materials-directory-tab");
             panTab = MakeButton("百度网盘", () => SelectMaterialSource("baidu"), "materials-baidu-tab");
-            boothMaterialTab = MakeButton("BOOTH 找素材", () => SelectMaterialSource("booth"), "materials-booth-tab");
-            modes.Add(localMaterialTab); modes.Add(directoryTab); modes.Add(panTab); modes.Add(boothMaterialTab); panel.Add(modes);
+            boothMaterialTab = MakeButton("BOOTH 搜索", () => SelectMaterialSource("booth"), "materials-booth-tab");
+            materialModeChoice = new DropdownField(materialModeNames, 0) { name = "material-source-choice", tooltip = "切换本次已选素材、本地目录、百度网盘或 BOOTH 搜索。" };
+            materialModeChoice.RegisterValueChangedCallback(e => { int index = materialModeNames.IndexOf(e.newValue); if (index >= 0) SelectMaterialSource(new[] { "local", "directory", "baidu", "booth" }[index]); });
+            modes.Add(materialModeChoice); panel.Add(modes);
             localMaterialContent = BuildLocalMaterials(); localMaterialContent.AddToClassList("aw-material-content"); panel.Add(localMaterialContent);
             directoryContent = BuildDirectorySources(); panel.Add(directoryContent);
             panContent = BuildBaiduSources(); panel.Add(panContent);
@@ -75,10 +80,10 @@ namespace AvatarWorkbench
             var heading = Row(); heading.AddToClassList("aw-preview-heading");
             previewLabel = new Label { enableRichText = false }; previewLabel.AddToClassList("aw-source-badge"); heading.Add(previewLabel);
             sceneSourceLabel = new Label { name = "scene-sync-source", enableRichText = false }; sceneSourceLabel.AddToClassList("aw-scene-source"); sceneSourceLabel.AddToClassList("aw-ellipsis"); sceneSourceLabel.style.flexGrow = 1; heading.Add(sceneSourceLabel);
-            freezeButton = MakeButton("圈出问题", BeginFeedback, "freeze-feedback"); freezeButton.AddToClassList("aw-accent-outline"); heading.Add(freezeButton);
+            freezeButton = MakeButton("圈出问题位置", BeginFeedback, "freeze-feedback"); freezeButton.tooltip = "冻结这一张真实画面，框选位置后在下方写问题；图片保留当前候选身份。"; freezeButton.AddToClassList("aw-accent-outline"); heading.Add(freezeButton);
             heading.Add(MakeButton("返回实时画面", LeaveAnnotation, "return-preview"));
             compareButton = MakeButton("前后对比", () => { comparing = !comparing; UpdateLabels(); canvas.MarkDirtyRepaint(); }, "compare"); heading.Add(compareButton);
-            heading.Add(MakeButton("来源 ▾", ShowSources, "source-menu")); panel.Add(heading);
+            heading.Add(MakeButton("画面来源 ▾", ShowSources, "source-menu")); panel.Add(heading);
             panel.Add(BuildPreviewWorkspace());
             roleGuide = Wrapped("拖动旋转、滚轮缩放；右键加 WASD 移动相机。试穿仅操作临时角色。"); roleGuide.style.display = DisplayStyle.None; panel.Add(roleGuide);
             return panel;
@@ -87,7 +92,7 @@ namespace AvatarWorkbench
         VisualElement BuildResultPanel()
         {
             var panel = Pane(0); panel.name = "feedback-panel";
-            panel.Add(Heading("需求与回复"));
+            panel.Add(Heading("修改进度与回复"));
             var scroll = new ScrollView(ScrollViewMode.Vertical); scroll.AddToClassList("aw-inner-scroll");
             activityLabel = Heading("等待修改需求"); activityLabel.style.whiteSpace = WhiteSpace.Normal; scroll.Add(activityLabel);
             taskLabel = Wrapped(""); taskLabel.AddToClassList("aw-task-summary");
@@ -108,7 +113,7 @@ namespace AvatarWorkbench
         void BuildComposer(VisualElement root)
         {
             composer = new VisualElement { name = "request-composer" }; composer.AddToClassList("aw-composer");
-            var title = Row(); title.AddToClassList("aw-composer-title"); title.Add(Heading("写下修改需求"));
+            var title = Row(); title.AddToClassList("aw-composer-title"); title.Add(Heading("想怎么修改？"));
             requestContext = new Label { enableRichText = false }; requestContext.AddToClassList("aw-ellipsis"); requestContext.AddToClassList("aw-muted"); requestContext.style.flexGrow = 1; title.Add(requestContext); AddModelChoice(title); composer.Add(title);
             draftStrip = Row(); draftStrip.AddToClassList("aw-draft-strip");
             draftLabel = new Label { enableRichText = false }; draftLabel.AddToClassList("aw-ellipsis"); draftLabel.style.flexGrow = 1; draftStrip.Add(draftLabel);
@@ -171,7 +176,7 @@ namespace AvatarWorkbench
                 cards.style.display = visibleResources.Count > 0 ? DisplayStyle.Flex : DisplayStyle.None;
             }
             if (resourceCount != null) resourceCount.text = resources.Count == 0 ? "尚未选择" : "本次 " + resources.Count + " 项 · 本地新增 " + localResources.Count + " 项";
-            if (materialTab != null) materialTab.text = "素材库" + (resources.Count == 0 ? "" : " (" + resources.Count + ")");
+            if (materialTab != null) { materialTab.text = "挑素材"; materialTab.tooltip = "挑选素材 · 本次共有 " + resources.Count + " 项"; }
             if (emptyResources != null) { emptyResources.style.display = visibleResources.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None; emptyResources.text = resources.Count == 0 ? "还没有素材。\n也可直接在下方写修改需求。" : "没有匹配项，试试清空筛选词。"; }
             UpdateSelectedResource(); UpdateComposer();
         }
@@ -248,7 +253,7 @@ namespace AvatarWorkbench
             if (docked) menu.AddItem(new GUIContent(maximized ? "恢复停靠布局" : "最大化停靠区"), false, () => maximized = !maximized);
             else menu.AddDisabledItem(new GUIContent("最大化停靠区（浮动窗口可拖动边框放大）"));
             menu.AddItem(new GUIContent("选择已有任务…"), false, () => TryAction(PickTask));
-            menu.AddItem(new GUIContent("API 与模型设置…"), false, WorkbenchModelSettingsWindow.Open);
+            menu.AddItem(new GUIContent("AI 接口与模型设置…"), false, WorkbenchModelSettingsWindow.Open);
             menu.AddItem(new GUIContent("本地素材大图 / 多素材对比…"), false, OpenResourceGallery);
             menu.AddItem(new GUIContent("截图记录…"), false, OpenScreenshotGallery);
             menu.AddItem(new GUIContent("切换画面来源 / 已有截图…"), false, () => TryAction(ShowSources));
@@ -257,7 +262,7 @@ namespace AvatarWorkbench
             menu.AddItem(new GUIContent("导出本任务反馈记录…"), false, () => TryAction(ExportFeedback));
             menu.AddItem(new GUIContent("查看进度与技术详情"), false, () => { SelectPanel("feedback"); rootVisualElement.Q<Foldout>("technical-details").value = true; });
             menu.AddSeparator("");
-            menu.AddItem(new GUIContent("操作说明"), false, () => EditorUtility.DisplayDialog("改模工作台怎么用", "1. 选择当前角色，需要安装素材时再添加素材。\n2. 转动模型看效果；有问题就先圈选，再写一句话。\n3. 点击保存。未接入 Codex 时会同时复制指令，粘贴到 Codex 即可接手。\n\n此窗口只展示与记录，不会自动改模、构建或上传。", "知道了"));
+            menu.AddItem(new GUIContent("操作说明"), false, () => EditorUtility.DisplayDialog("改模工作台怎么用", "1. 在顶部选目标角色；到“挑素材”查看大图，勾选想用的素材并附到需求。\n2. 在“看模型”旋转、试穿或查看姿势；有问题可圈出位置。\n3. 在底部写一句话，点击“发送给 Codex”。已连接时直接发送，回复到“看回复”。\n\n尚未连接时请求仍会保存，并提供继续处理指令。AI 接口设置只决定需求发往哪里；试穿只改变临时预览。", "知道了"));
             menu.ShowAsContext();
         }
     }

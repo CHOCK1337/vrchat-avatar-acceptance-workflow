@@ -18,7 +18,7 @@ namespace AvatarWorkbench
         internal void RefreshModelChoice() { UpdateComposer(); UpdateLabels(); RenderFeedback(); }
         void AddModelChoice(VisualElement row)
         {
-            modelChoice = MakeButton("模型：当前 Codex ▾", ShowModelChoices, "choose-task-model");
+            modelChoice = MakeButton("发送到：Codex ▾", ShowModelChoices, "choose-task-model");
             modelChoice.style.maxWidth = 240; modelChoice.style.flexShrink = 0; row.Add(modelChoice);
         }
         void ShowModelChoices()
@@ -42,7 +42,7 @@ namespace AvatarWorkbench
         void ApplyModelLabels()
         {
             string active = WorkbenchModels.Active;
-            if (modelChoice != null) { modelChoice.text = "模型：" + WorkbenchUiRules.Short(WorkbenchModels.Label(active), 23) + " ▾"; modelChoice.tooltip = WorkbenchModels.Label(active); modelChoice.SetEnabled(!sendingCodex); }
+            if (modelChoice != null) { modelChoice.text = "发送到：" + WorkbenchUiRules.Short(WorkbenchModels.Label(active), 23) + " ▾"; modelChoice.tooltip = "选择接收需求的 AI 接口：" + WorkbenchModels.Label(active); modelChoice.SetEnabled(!sendingCodex); }
             if (active == "codex") return;
             connectionLabel.text = sendingCodex ? apiReceipt != null ? "API 正在读取本次请求…" : "正在把原候选交给 Codex…" : "已选择 API · " + WorkbenchModels.Label(active);
             connectionHelp.text = "需求、素材与截图送到你选择的接口。回复与建议不等于已改模；继续处理时仍用原工作流。";

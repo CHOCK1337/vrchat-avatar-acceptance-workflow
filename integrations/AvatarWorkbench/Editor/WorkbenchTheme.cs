@@ -11,7 +11,7 @@ namespace AvatarWorkbench
         internal static void Apply(EditorWindow window, string kind)
         {
             var root = window.rootVisualElement;
-            root.AddToClassList("aw-root"); root.AddToClassList("aw-curated"); root.AddToClassList(kind);
+            root.AddToClassList("aw-root"); root.AddToClassList("aw-curated"); root.AddToClassList("aw-studio"); root.AddToClassList(kind);
             string script = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(window));
             if (string.IsNullOrEmpty(script)) return;
             var sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(Path.GetDirectoryName(script).Replace('\\', '/') + "/WorkbenchStyles.uss");

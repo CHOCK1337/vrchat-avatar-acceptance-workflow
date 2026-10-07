@@ -115,6 +115,8 @@ namespace AvatarWorkbench
             boothMaterialContent.style.display = materialSource == "booth" ? DisplayStyle.Flex : DisplayStyle.None;
             if (directoryContent != null) directoryContent.style.display = materialSource == "directory" ? DisplayStyle.Flex : DisplayStyle.None;
             if (panContent != null) panContent.style.display = materialSource == "baidu" ? DisplayStyle.Flex : DisplayStyle.None;
+            materialModeChoice?.SetValueWithoutNotify(materialModeNames[Array.IndexOf(new[] { "local", "directory", "baidu", "booth" }, materialSource)]);
+            if (directoryToolbar != null) directoryToolbar.style.display = materialSource == "directory" ? DisplayStyle.Flex : DisplayStyle.None;
             directoryTab?.EnableInClassList("aw-tab-active", materialSource == "directory"); panTab?.EnableInClassList("aw-tab-active", materialSource == "baidu");
             localMaterialTab.EnableInClassList("aw-tab-active", materialSource == "local"); boothMaterialTab.EnableInClassList("aw-tab-active", materialSource == "booth");
             if (materialSource != "booth") StopBoothRequests(true);

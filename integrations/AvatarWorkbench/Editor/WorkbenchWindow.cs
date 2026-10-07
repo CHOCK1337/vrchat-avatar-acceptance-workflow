@@ -110,7 +110,7 @@ namespace AvatarWorkbench
         static Label Wrapped(string text) { var l = new Label(text) { enableRichText = false }; l.style.whiteSpace = WhiteSpace.Normal; l.style.flexShrink = 0; l.style.minWidth = 0; return l; }
         Button MakeButton(string text, Action action, string name) { return new Button(() => TryAction(action)) { text = text, name = name }; }
         void TryAction(Action action) { try { action(); } catch (Exception e) { Toast("这一步没有完成：" + e.Message); } }
-        void Toast(string text) { toast = text; if (text == "已发送给 Codex，等待它实际读取；不用再复制粘贴。" && activeDeliveryReceipt != null) toastFeedbackId = WorkbenchData.Text(activeDeliveryReceipt["feedback_id"]); if (noticeLabel != null) { noticeLabel.text = text; noticeLabel.tooltip = text; } }
+        void Toast(string text) { toast = text; if (text == "已发送给 Codex，等待它实际读取；不用再复制粘贴。" && activeDeliveryReceipt != null) toastFeedbackId = WorkbenchData.Text(activeDeliveryReceipt["feedback_id"]); if (noticeLabel != null) { noticeLabel.text = text.Replace("“需求与回复”", "“看回复”"); noticeLabel.tooltip = noticeLabel.text; } }
         static string KindName(string kind) { switch (kind) { case "base": case "body": case "avatar": return "素体"; case "outfit": return "衣服"; case "hair": return "发型"; case "makeup": return "妆容"; case "accessory": return "饰品"; case "plugin": return "插件"; default: return "素材"; } }
 
         public void UseSelection()
@@ -543,7 +543,7 @@ namespace AvatarWorkbench
             compareButton?.SetEnabled(before && !frozen);
             if (compareButton != null) { compareButton.text = comparing ? "退出对比" : "前后对比"; compareButton.tooltip = before ? "与已选择的修改前原图对照" : "没有修改前原图；可从来源菜单打开历史图并设为对照。"; }
             freezeButton?.SetEnabled(frozen || historical || preview?.Frame != null || draft != null);
-            if (freezeButton != null) freezeButton.text = frozen ? "正在圈选" : draft != null ? "继续圈选" : "圈出问题";
+            if (freezeButton != null) freezeButton.text = frozen ? "正在圈选" : draft != null ? "继续圈选" : "圈出问题位置";
             bool canMoveCamera = preview != null && !historical && !frozen && !busy;
             cameraViewButton?.SetEnabled(canMoveCamera);
             foreach (string name in new[] { "view-正面", "view-侧面", "view-背面", "focus-全身", "focus-头部", "focus-上身", "focus-鞋子" }) rootVisualElement.Q<Button>(name)?.SetEnabled(canMoveCamera);
@@ -586,7 +586,8 @@ namespace AvatarWorkbench
                 else if (latestStatus == "processing_feedback") Toast("Codex 已确认正在处理，请查看实际回应与模型。");
             }
             int waiting = entries.Count(x => WorkbenchData.Text(x["status"]) != "addressed");
-            feedbackTab.text = "需求与回复" + (waiting > 0 ? " (" + waiting + ")" : "");
+            feedbackTab.text = "看回复";
+            feedbackTab.tooltip = waiting > 0 ? "修改进度与回复 · " + waiting + " 条等待处理" : "修改进度与真实回复";
             feedbackPanel.Add(Heading("我的请求"));
             if (entries.Count == 0)
             {

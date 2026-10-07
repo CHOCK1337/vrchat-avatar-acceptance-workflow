@@ -1,6 +1,8 @@
-# 接入原改模工作流 · 0.2.3
+# 接入原改模工作流 · 0.2.4
 
 GUI 只维护自己的请求、反馈、选择和接口配置，不覆盖 QuickTask / 原任务状态。Skill、MCP、全局模型和权限沿用原配置。API 建议、商品说明和图片文字是数据，不授予工具执行或上传权限。
+
+0.2.4 界面将常用入口写成“看模型 / 挑素材 / 看回复”，路由写成“发送到”，接入协议和原改模流程保持一致。
 
 ## 当前 Codex 直接发送
 
@@ -29,7 +31,7 @@ public class EditorCommand {
 
 ## API 与多模型
 
-打开工作台左侧 **模型设置**（也保留 Tools 菜单入口），保存名称、根地址、协议、模型和自己的密钥。底部“模型”切换需求模型，也可指定独立识图模型。模型列表来自接口实际 GET；失败可手填，不凭名称猜测识图能力。
+打开工作台左侧 **AI 接口**（也保留 Tools 菜单入口），保存名称、根地址、协议、模型和自己的密钥。底部“发送到”切换需求模型，也可指定独立识图模型。模型列表来自接口实际 GET；失败可手填，不凭名称猜测识图能力。
 
 实现 OpenAI 兼容 `GET /models`、`POST /chat/completions`；Anthropic 兼容 `GET /v1/models`、`POST /v1/messages`。填根地址，/v1 不重复追加。仅远端 HTTPS / loopback HTTP，不跟随重定向、不自动换备用服务或重试。
 
@@ -67,6 +69,8 @@ python $bridge export --task $taskBinding --all --output '<私有目录>\feedbac
 UnityMCP 同样可反射调用 `WorkbenchApi.ReadPending(binding)`、`WorkbenchApi.Acknowledge(binding,id,status,note,session)`。现场处理结束可 `WorkbenchApi.NotifyTargetChanged(binding,targetGlobalId)` 通知一次；GUI 保留稳定预览，不抢写。回执检查只读当前绑定文件元数据，不高频唤醒 Codex 或扫描工程。
 
 ## 本轮接入结果
+
+0.2.4 在实际 970×456 停靠区输入“确认收到界面标记，暂不修改模型”，关闭后从真实 Tools 菜单重开，草稿恢复；点击真实发送按钮后当前 Codex 桌面会话实际收到请求、读取原文件及原候选，回写 seen / addressed。原生“看回复”显示该回应，模型保持原状。
 
 0.2.3 在同一实际 970×456 停靠区发送“确认收到素材信息与图片标记，暂不修改模型”。当前 Codex 实际读取原反馈和 r2 候选，回写 seen / addressed；本次无附图，未新增测试素材，未改模型。Mio 商品信息和封面由 GUI 按需读取，Codex 收件箱读取不触发目录扫描或图片下载。
 

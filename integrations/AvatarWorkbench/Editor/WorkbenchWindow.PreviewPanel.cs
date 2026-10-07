@@ -77,7 +77,7 @@ namespace AvatarWorkbench
             finally
             {
                 if (radialPanel != null) radialPanel.style.display = DisplayStyle.None;
-                if (radialButton != null) radialButton.text = "圆盘菜单";
+                if (radialButton != null) radialButton.text = "角色菜单";
             }
         }
 

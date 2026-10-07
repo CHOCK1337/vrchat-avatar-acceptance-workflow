@@ -29,15 +29,15 @@ namespace AvatarWorkbench
         VisualElement BuildNavigation()
         {
             var rail = new VisualElement { name = "workspace-navigation" }; rail.AddToClassList("aw-navigation");
-            var caption = new Label("工作区"); caption.AddToClassList("aw-nav-caption"); rail.Add(caption);
+            var caption = new Label("工作台"); caption.AddToClassList("aw-nav-caption"); rail.Add(caption);
             tabBar = new VisualElement(); tabBar.AddToClassList("aw-nav-primary");
-            previewTab = Navigation("模型预览", "model", () => SelectPanel("preview"), "tab-preview");
-            materialTab = Navigation("素材库", "assets", () => SelectPanel("materials"), "tab-materials");
-            feedbackTab = Navigation("需求与回复", "reply", () => SelectPanel("feedback"), "tab-feedback");
+            previewTab = Navigation("看模型", "model", () => SelectPanel("preview"), "tab-preview");
+            materialTab = Navigation("挑素材", "assets", () => SelectPanel("materials"), "tab-materials");
+            feedbackTab = Navigation("看回复", "reply", () => SelectPanel("feedback"), "tab-feedback");
             tabBar.Add(previewTab); tabBar.Add(materialTab); tabBar.Add(feedbackTab); rail.Add(tabBar);
             var spacer = new VisualElement(); spacer.style.flexGrow = 1; rail.Add(spacer);
             rail.Add(Navigation("截图记录", "images", OpenScreenshotGallery, "open-screenshot-gallery"));
-            rail.Add(Navigation("模型设置", "settings", WorkbenchModelSettingsWindow.Open, "open-model-settings"));
+            rail.Add(Navigation("AI 接口", "settings", WorkbenchModelSettingsWindow.Open, "open-model-settings"));
             var project = new Label(Path.GetFileName(WorkbenchData.Project.TrimEnd('\\', '/'))) { tooltip = WorkbenchData.Project, enableRichText = false };
             project.AddToClassList("aw-project-caption"); project.AddToClassList("aw-ellipsis"); rail.Add(project);
             connectionBox = new VisualElement(); connectionBox.AddToClassList("aw-connection");
@@ -53,18 +53,14 @@ namespace AvatarWorkbench
             foreach (string direction in new[] { "正面", "侧面", "背面" })
             {
                 string value = direction;
-                menu.AddItem(new GUIContent("视角/" + value), false, () => { if (frozen || historical || busy) return; preview?.Orient(value); canvas.MarkDirtyRepaint(); });
+                menu.AddItem(new GUIContent(value), false, () => { if (frozen || historical || busy) return; preview?.Orient(value); canvas.MarkDirtyRepaint(); });
             }
+            menu.AddSeparator("");
             foreach (string part in new[] { "全身", "头部", "上身", "鞋子" })
             {
                 string value = part;
-                menu.AddItem(new GUIContent("聚焦/" + value), false, () => { if (frozen || historical || busy) return; preview?.SetFocus(value); canvas.MarkDirtyRepaint(); });
+                menu.AddItem(new GUIContent("聚焦" + value), false, () => { if (frozen || historical || busy) return; preview?.SetFocus(value); canvas.MarkDirtyRepaint(); });
             }
-            menu.AddSeparator("");
-            if (shakeButton != null && shakeButton.enabledSelf) menu.AddItem(new GUIContent("动态/晃一晃"), false, () => TryAction(ShakePreview));
-            else menu.AddDisabledItem(new GUIContent("动态/晃一晃（先开启动态预览）"));
-            if (endTrialButton != null && endTrialButton.enabledSelf) menu.AddItem(new GUIContent("还原临时试穿"), false, () => TryAction(EndTrial));
-            else menu.AddDisabledItem(new GUIContent("还原临时试穿（尚未试穿）"));
             menu.DropDown(cameraViewButton.worldBound);
         }
 
@@ -74,7 +70,7 @@ namespace AvatarWorkbench
             var header = Row(); header.AddToClassList("aw-library-heading"); header.Add(Heading("本次素材"));
             resourceCount = new Label { enableRichText = false }; resourceCount.AddToClassList("aw-muted"); resourceCount.style.flexGrow = 1; header.Add(resourceCount);
             header.Add(MakeButton("添加素材 ▾", () => { var menu = new GenericMenu(); menu.AddItem(new GUIContent("选择 Prefab / 安装包…"), false, () => TryAction(PickResource)); menu.AddItem(new GUIContent("读取素材目录…"), false, () => SelectMaterialSource("directory")); menu.AddItem(new GUIContent("添加百度网盘分享…"), false, () => SelectMaterialSource("baidu")); menu.ShowAsContext(); }, "add-resource"));
-            header.Add(MakeButton("双素材预览", OpenResourceGallery, "open-resource-gallery")); libraryRoot.Add(header);
+            header.Add(MakeButton("并排看素材", OpenResourceGallery, "open-resource-gallery")); libraryRoot.Add(header);
             search = new TextField("筛选") { name = "resource-search", value = resourceFilter }; search.AddToClassList("aw-library-search"); search.style.flexGrow = 1;
             search.RegisterValueChangedCallback(e => { resourceFilter = e.newValue; UpdateResourceList(); }); header.Insert(2, search); resourceCount.style.display = DisplayStyle.None;
             libraryRoot.RegisterCallback<DragUpdatedEvent>(e => { DragAndDrop.visualMode = DragAndDropVisualMode.Copy; e.StopPropagation(); });
@@ -91,7 +87,7 @@ namespace AvatarWorkbench
                     var cover = new VisualElement(); cover.AddToClassList("aw-tile-cover"); cover.style.height = Mathf.Max(12, cards.fixedItemHeight - 69);
                     var image = new Image { image = LibraryCover(resource), scaleMode = ScaleMode.ScaleToFit, userData = resource, name = "library-cover" }; image.AddToClassList("aw-tile-image"); cover.Add(image);
                     var loading = new Label(image.image ? "" : "正在读取预览…") { name = "library-cover-state", pickingMode = PickingMode.Ignore }; loading.AddToClassList("aw-tile-loading"); cover.Add(loading);
-                    var pick = new Toggle { value = ResourceRequested(resource), tooltip = "加入本次需求：" + resource.name, name = "pick-" + resource.id }; pick.AddToClassList("aw-tile-pick");
+                    var pick = new Toggle("附到需求") { value = ResourceRequested(resource), tooltip = "随需求交给 Codex，不会立即安装：" + resource.name, name = "pick-" + resource.id }; pick.AddToClassList("aw-tile-pick");
                     pick.RegisterValueChangedCallback(e => { var ids = new HashSet<string>(resources.Where(ResourceRequested).Select(x => x.id)); if (e.newValue) ids.Add(resource.id); else ids.Remove(resource.id); card.EnableInClassList("aw-asset-picked", e.newValue); SelectResourcesForRequest(ids.ToArray()); }); cover.Add(pick);
                     var kind = new Label(KindName(resource.kind)); kind.AddToClassList("aw-tile-kind"); cover.Add(kind);
                     image.RegisterCallback<ClickEvent>(_ => { selectedId = resource.id; UpdateSelectedResource(); UpdateComposer(); QueueSave(); }); card.Add(cover);
@@ -106,7 +102,7 @@ namespace AvatarWorkbench
             emptyResources = Wrapped("把本次 Prefab 或素材目录拖到这里。\n也可以直接输入修改需求。"); emptyResources.AddToClassList("aw-empty"); libraryRoot.Add(emptyResources);
             var note = new Label("勾选的素材随请求附上 · 点击只查看 · 不会立即安装"); note.AddToClassList("aw-library-note"); libraryRoot.Add(note);
             detailLabel = Wrapped(""); detailLabel.style.display = DisplayStyle.None; libraryRoot.Add(detailLabel);
-            libraryResize = e => { if (e.target != cards) return; if (e.newRect.height <= 0) return; int next = Mathf.Clamp((int)(e.newRect.width / 220), 1, 5); float itemHeight = Mathf.Min(position.height < 520 ? 210 : 264, Mathf.Max(1, Mathf.Floor(e.newRect.height))); bool changed = next != libraryColumns || cards.fixedItemHeight != itemHeight; libraryColumns = next; if (changed) { cards.fixedItemHeight = itemHeight; RebuildLibrary(); } };
+            libraryResize = e => { if (e.target != cards) return; if (e.newRect.height <= 0) return; int next = Mathf.Clamp((int)(e.newRect.width / 240), 1, 5); float itemHeight = Mathf.Min(position.height < 520 ? 238 : 316, Mathf.Max(1, Mathf.Floor(e.newRect.height))); bool changed = next != libraryColumns || cards.fixedItemHeight != itemHeight; libraryColumns = next; if (changed) { cards.fixedItemHeight = itemHeight; RebuildLibrary(); } };
             cards.RegisterCallback(libraryResize);
             libraryLoading = libraryRoot.schedule.Execute(() =>
             {

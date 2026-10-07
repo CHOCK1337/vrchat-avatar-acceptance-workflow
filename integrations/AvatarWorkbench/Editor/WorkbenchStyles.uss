@@ -422,3 +422,124 @@
 .aw-curated.aw-icon-rail .aw-source-sidebar { width: 118px; margin-right: 5px; }
 .aw-curated.aw-icon-rail .aw-material-modes Button { padding: 0 7px; font-size: 11px; }
 .aw-curated.aw-short-window .aw-source-status { height: 15px; }
+
+/* 0.2.4: image-first native workspace. One primary action, explicit verbs. */
+.aw-root.aw-curated.aw-studio {
+    --aw-bg: #171b20; --aw-panel: #22282f; --aw-raised: #2b323b;
+    --aw-line: #414b56; --aw-text: #f1f3f5; --aw-muted: #b5bec8;
+    --aw-accent: #ffb49b; --aw-fill: #e58d71;
+    padding: 8px; font-size: 13px;
+}
+.aw-studio Button { border-radius: 6px; background-color: transparent; border-color: #46515e; font-size: 12px; min-height: 29px; }
+.aw-studio Button:hover { background-color: #35404b; border-color: #8b9aab; }
+.aw-studio Button:focus { border-color: #ffb49b; }
+.aw-studio Button:disabled { color: #8d97a4; background-color: #242b33; border-color: #36404b; }
+.aw-studio .aw-header { height: 40px; margin-bottom: 8px; }
+.aw-studio .aw-brand { width: 180px; }
+.aw-studio .aw-brand-mark { background-color: #e9a085; color: #27211f; width: 34px; height: 34px; border-radius: 10px; font-size: 13px; }
+.aw-studio .aw-title { font-size: 18px; }
+.aw-studio .aw-brand-caption { font-size: 9px; color: #a8b1bd; }
+.aw-studio .aw-target { height: 30px; }
+.aw-studio .aw-target .unity-base-field__label { width: 60px; min-width: 60px; font-size: 12px; }
+.aw-studio .aw-navigation { width: 104px; padding-right: 8px; margin-right: 8px; border-right-color: #353e48; }
+.aw-studio .aw-nav-caption, .aw-studio .aw-project-caption { display: none; }
+.aw-studio .aw-nav-item { height: 34px; min-height: 34px; padding-left: 32px; font-size: 12px; color: #b7c1cc; }
+.aw-studio .aw-line-icon { top: 7px; left: 7px; }
+.aw-studio .aw-nav-primary .aw-nav-item { height: 58px; min-height: 58px; margin-bottom: 6px; padding: 25px 0 0 0; -unity-text-align: middle-center; font-size: 13px; }
+.aw-studio .aw-nav-primary .aw-line-icon { top: 7px; left: 35px; }
+.aw-studio .aw-nav-item.aw-tab-active { background-color: #3b3433; color: #ffbba3; border-left-width: 3px; border-left-color: #e9a085; border-radius: 6px; }
+.aw-studio .aw-nav-item.aw-tab-active:hover { background-color: #48403d; }
+.aw-studio .aw-connection { padding: 6px; border-radius: 6px; margin-top: 6px; }
+.aw-studio .aw-connected { background-color: #21352f; }
+.aw-studio .aw-connection-title { font-size: 11px; margin-bottom: 5px; }
+.aw-studio .aw-connection Button { height: 24px; min-height: 24px; border-color: #47665d; }
+.aw-studio .aw-pane { padding: 8px; border-radius: 8px; }
+.aw-studio .aw-preview-heading { height: 29px; margin-bottom: 6px; }
+.aw-studio .aw-preview-heading Button { font-size: 12px; }
+.aw-studio .aw-accent-outline { background-color: #39312e; border-color: #9d7262; color: #ffccb7; }
+.aw-studio .aw-source-badge { color: #bce0d3; background-color: #2e423e; }
+.aw-studio .aw-preview-workspace { border-color: #3a4552; background-color: #14191e; border-radius: 7px; }
+.aw-studio .aw-preview-workspace .aw-play-tools { height: 37px; padding: 4px; flex-shrink: 0; }
+.aw-studio .aw-play-tools Button { flex-grow: 0; flex-basis: auto; flex-shrink: 1; margin-right: 4px; padding: 0 8px; font-size: 12px; }
+.aw-studio .aw-preview-character-tools { flex-shrink: 0; padding-right: 5px; margin-right: 6px; border-right-width: 1px; border-right-color: #46505c; }
+.aw-studio .aw-preview-workspace #preview-radial { background-color: #303a43; border-color: #586877; color: #e3ebf1; }
+.aw-studio #preview-reset-camera { display: flex; }
+.aw-studio #preview-expand { flex-basis: auto; border-color: #677888; }
+.aw-studio .aw-camera-help { color: #a8b9c7; height: 20px; font-size: 11px; }
+.aw-studio .aw-composer { background-color: #252d35; border-width: 1px; border-color: #42505c; border-radius: 8px; padding: 6px 8px 4px 8px; margin-top: 8px; }
+.aw-studio .aw-composer-title { height: 23px; margin-bottom: 4px; }
+.aw-studio .aw-composer-title .aw-heading { font-size: 14px; color: #f5ede8; }
+.aw-studio .aw-composer-title .aw-muted { font-size: 11px; }
+.aw-studio #choose-task-model { height: 24px; min-height: 24px; padding: 0 6px; max-width: 215px; font-size: 11px; border-width: 0; }
+.aw-studio .aw-input-row, .aw-studio .aw-submit { height: 44px; }
+.aw-studio .aw-input .unity-text-field__input { background-color: #191f26; border-color: #536274; font-size: 14px; padding: 8px 10px; }
+.aw-studio .aw-placeholder { top: 10px; left: 12px; color: #a6b4c3; font-size: 13px; }
+.aw-studio .aw-primary { background-color: #e9a085; color: #251e1b; border-color: #efb49c; -unity-font-style: bold; }
+.aw-studio .aw-primary:hover { background-color: #fac0a6; color: #251e1b; border-color: #fac0a6; }
+.aw-studio .aw-primary:disabled { background-color: #38414c; color: #a7b0bd; border-color: #4a5665; }
+.aw-studio .aw-submit { width: 130px; font-size: 14px; margin: 0; }
+.aw-studio .aw-notice { height: 15px; font-size: 11px; margin-top: 3px; }
+.aw-studio .aw-material-modes { height: 32px; margin-bottom: 7px; min-width: 0; flex-shrink: 0; }
+.aw-studio #material-source-choice { width: 130px; min-width: 100px; height: 29px; flex-shrink: 0; margin-right: 8px; }
+.aw-studio .unity-popup-field__input { min-height: 29px; font-size: 12px; background-color: #2a333e; border-color: #546475; }
+.aw-studio .aw-inline-source-toolbar { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; height: 30px; margin: 0; }
+.aw-studio #directory-source-choice { flex-grow: 0; flex-shrink: 1; width: 180px; min-width: 105px; height: 29px; margin-right: 8px; }
+.aw-studio #catalog-filter { flex-grow: 1; flex-basis: 0; min-width: 70px; height: 29px; }
+.aw-studio #catalog-filter .unity-base-field__label { width: 30px; min-width: 30px; }
+.aw-studio .aw-source-toolbar Button { height: 29px; min-height: 29px; font-size: 12px; }
+.aw-studio .aw-source-footer { height: 29px; margin-top: 5px; }
+.aw-studio .aw-catalog-count { font-size: 11px; margin-right: 12px; flex-shrink: 0; }
+.aw-studio .aw-source-status { flex-shrink: 1; flex-basis: 0; min-width: 0; height: 17px; margin-right: 8px; }
+.aw-studio .aw-source-footer Button { height: 28px; min-height: 28px; font-size: 12px; }
+.aw-studio .aw-library-heading { height: 31px; margin-bottom: 7px; }
+.aw-studio .aw-library-heading .aw-heading { font-size: 14px; }
+.aw-studio.aw-wide .aw-library-heading { height: 62px; flex-wrap: wrap; }
+.aw-studio.aw-wide .aw-library-heading .aw-heading { display: none; }
+.aw-studio.aw-wide .aw-library-heading .aw-library-search { flex-basis: 100%; margin-right: 0; }
+.aw-studio.aw-wide .aw-library-heading Button { margin-top: 4px; }
+.aw-studio .aw-tile-row { padding-bottom: 8px; }
+.aw-studio .aw-asset-tile { margin-right: 9px; border-color: #45505d; background-color: #2a323c; border-radius: 8px; }
+.aw-studio .aw-asset-tile:hover { border-color: #b0bcc7; }
+.aw-studio .aw-asset-tile.aw-asset-picked { border-color: #efb49c; background-color: #39322e; }
+.aw-studio .aw-tile-cover { background-color: #161c23; }
+.aw-studio .aw-tile-title { font-size: 14px; padding-left: 10px; color: #f4f0ed; height: 28px; }
+.aw-studio .aw-tile-facts { padding-left: 10px; color: #acbac8; }
+.aw-studio .aw-tile-footer { padding: 0 8px; }
+.aw-studio .aw-tile-footer Button { border-width: 0; color: #e5b69c; padding: 0 5px; font-size: 12px; height: 25px; min-height: 25px; }
+.aw-studio .aw-tile-pick { top: 7px; right: 7px; padding: 4px 6px; background-color: #26313d; border-radius: 5px; flex-direction: row-reverse; }
+.aw-studio .aw-tile-pick .unity-base-field__label { min-width: 0; width: auto; margin: 0; font-size: 11px; color: #e2e8ee; }
+.aw-studio .aw-tile-pick .unity-base-field__input { width: 19px; min-width: 19px; flex-grow: 0; margin-right: 4px; }
+.aw-studio .aw-tile-kind { font-size: 10px; color: #d6dfe8; background-color: #2b3642; }
+.aw-studio .aw-feedback-card { border-color: #465363; background-color: #2a333e; border-radius: 8px; padding: 12px; }
+.aw-studio .aw-feedback-state { color: #afddc8; }
+.aw-studio .aw-feedback-text { font-size: 15px; color: #f3eeea; }
+.aw-studio .aw-feedback-reply { font-size: 14px; color: #cfdae6; }
+.aw-studio.aw-short-window .aw-header { height: 36px; margin-bottom: 7px; }
+.aw-studio.aw-short-window .aw-composer-title { height: 20px; margin-bottom: 3px; }
+.aw-studio.aw-short-window .aw-composer { margin-top: 6px; padding: 5px 8px 3px 8px; }
+.aw-studio.aw-short-window .aw-input-row, .aw-studio.aw-short-window .aw-submit { height: 38px; }
+.aw-studio.aw-short-window .aw-preview-heading { height: 28px; }
+.aw-studio.aw-short-window .aw-preview-workspace .aw-play-tools { height: 33px; padding: 2px 4px; }
+.aw-studio.aw-short-window .aw-nav-primary .aw-nav-item { height: 52px; min-height: 52px; }
+.aw-studio.aw-icon-rail .aw-navigation { width: 46px; padding-right: 4px; margin-right: 7px; }
+.aw-studio.aw-icon-rail .aw-nav-primary .aw-nav-item { height: 38px; min-height: 38px; color: transparent; padding: 0; }
+.aw-studio.aw-icon-rail .aw-nav-primary .aw-line-icon { left: 7px; top: 9px; }
+.aw-studio.aw-icon-rail #directory-source-choice { width: 130px; }
+.aw-studio.aw-product-window { padding: 16px; }
+.aw-product-heading { height: 64px; flex-shrink: 0; min-width: 0; }
+.aw-product-title { font-size: 22px; -unity-font-style: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #f4efe9; }
+.aw-product-subtitle { color: #b3bdc8; font-size: 12px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-product-body { flex-direction: row; flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; min-height: 0; }
+.aw-product-gallery { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; min-height: 0; margin-right: 16px; }
+.aw-product-image-frame { position: relative; flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-height: 0; border-radius: 9px; background-color: #10171f; border-width: 1px; border-color: #445363; }
+.aw-product-image { position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; }
+.aw-product-image-error { position: absolute; top: 40%; left: 20px; right: 20px; white-space: normal; font-size: 13px; color: #b7c4d0; -unity-text-align: middle-center; }
+.aw-product-info { width: 260px; flex-shrink: 0; min-height: 0; padding: 12px; background-color: #252e38; border-radius: 8px; }
+.aw-product-fact { margin-bottom: 16px; min-width: 0; }
+.aw-product-fact-title { color: #aebdcc; font-size: 11px; margin-bottom: 5px; }
+.aw-product-fact-value { color: #f1ede8; font-size: 14px; white-space: normal; }
+.aw-product-paging { flex-direction: row; align-items: center; height: 40px; min-width: 0; flex-shrink: 0; padding-top: 5px; }
+.aw-product-picture-count { width: 42px; font-size: 12px; color: #dbe4ed; -unity-text-align: middle-center; }
+.aw-product-picture-source { flex-grow: 1; flex-shrink: 1; min-width: 0; color: #afddc8; font-size: 11px; -unity-text-align: middle-right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-product-actions { flex-direction: row; align-items: center; flex-shrink: 0; height: 43px; margin-top: 8px; min-width: 0; }
+.aw-product-status { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; color: #b9c5d1; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; }
