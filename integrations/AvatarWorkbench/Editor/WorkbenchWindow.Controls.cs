@@ -17,6 +17,7 @@ namespace AvatarWorkbench
         VisualElement BuildPreviewControls()
         {
             var row = Row(); row.AddToClassList("aw-play-tools");
+            cameraViewButton = MakeButton("视角 / 聚焦 ▾", ShowCameraViews, "camera-views"); row.Add(cameraViewButton);
             outfitButton = MakeButton("换衣服 ▾", ShowOutfits, "preview-outfit"); row.Add(outfitButton);
             poseButton = MakeButton("换姿势 ▾", ShowPoses, "preview-pose"); row.Add(poseButton);
             radialButton = MakeButton("圆盘菜单", ToggleRadialMenu, "preview-radial"); row.Add(radialButton);

@@ -59,6 +59,7 @@ namespace AvatarWorkbench
         }
         void OnDisable()
         {
+            ReleaseVisualUi();
             SaveState(); disposed = true; poll?.Pause(); saveJob?.Pause();
             StopCodexConnection();
             StopSceneSync();
@@ -109,7 +110,7 @@ namespace AvatarWorkbench
         Button MakeButton(string text, Action action, string name) { return new Button(() => TryAction(action)) { text = text, name = name }; }
         void TryAction(Action action) { try { action(); } catch (Exception e) { Toast("这一步没有完成：" + e.Message); } }
         void Toast(string text) { toast = text; if (noticeLabel != null) { noticeLabel.text = text; noticeLabel.tooltip = text; } }
-        static string KindName(string kind) { switch (kind) { case "outfit": return "衣服"; case "hair": return "发型"; case "accessory": return "饰品"; case "plugin": return "插件"; default: return "素材"; } }
+        static string KindName(string kind) { switch (kind) { case "base": case "body": case "avatar": return "素体"; case "outfit": return "衣服"; case "hair": return "发型"; case "makeup": return "妆容"; case "accessory": return "饰品"; case "plugin": return "插件"; default: return "素材"; } }
 
         public void UseSelection()
         {
@@ -503,7 +504,7 @@ namespace AvatarWorkbench
             }
             else if (codexLink != null)
             {
-                connectionLabel.text = "可直接发送 · " + WorkbenchData.Text(codexLink["title"]);
+                connectionLabel.text = "Codex 已连接";
                 connectionHelp.text = "下方输入后点“发送给 Codex”，原话、角色、候选和素材自动附上。";
             }
             else if (consumer == null)
@@ -519,7 +520,7 @@ namespace AvatarWorkbench
             helpButton.text = WorkbenchCodex.Link() == null ? "连接 Codex" : "重新连接";
             helpButton.SetEnabled(!connectingCodex && !sendingCodex);
             ApplyModelLabels();
-            connectionLabel.tooltip = connectionHelp.text + "\n" + McpStatus();
+            connectionLabel.tooltip = WorkbenchData.Text(codexLink?["title"]) + "\n" + connectionHelp.text + "\n" + McpStatus();
             var shown = (frozen ? draft?["candidate"] : historical ? historicalInfo?["candidate"] : stableContext?["candidate"]) as JObject;
             candidateLabel.text = "画面版本：" + WorkbenchData.Identity(shown ?? WorkbenchData.Candidate(task)) + "\n" + sourceNotice;
             previewLabel.text = frozen ? "已冻结 · 在图上圈选" : historical ? "已有截图" : busy ? "之前的稳定画面" : preview?.Gesture?.PhysicsRunning == true ? "Unity PhysBone · 运行中" : preview?.Gesture?.Moving == true ? "正在切换 · 保留上次画面" : preview?.Gesture != null ? "试穿与姿势 · 临时预览" : "编辑态快照";
@@ -531,12 +532,13 @@ namespace AvatarWorkbench
                 sceneSourceLabel.tooltip = candidateLabel.text;
             }
             compareButton?.SetEnabled(before && !frozen);
-            if (compareButton != null) compareButton.text = comparing ? "退出对比" : "对比前后";
+            if (compareButton != null) { compareButton.text = comparing ? "退出对比" : "前后对比"; compareButton.tooltip = before ? "与已选择的修改前原图对照" : "没有修改前原图；可从来源菜单打开历史图并设为对照。"; }
             freezeButton?.SetEnabled(frozen || historical || preview?.Frame != null || draft != null);
-            if (freezeButton != null) freezeButton.text = frozen ? "正在圈选问题" : draft != null ? "继续上次圈选" : "圈出有问题的位置";
+            if (freezeButton != null) freezeButton.text = frozen ? "正在圈选" : draft != null ? "继续圈选" : "圈出问题";
             bool canMoveCamera = preview != null && !historical && !frozen && !busy;
+            cameraViewButton?.SetEnabled(canMoveCamera);
             foreach (string name in new[] { "view-正面", "view-侧面", "view-背面", "focus-全身", "focus-头部", "focus-上身", "focus-鞋子" }) rootVisualElement.Q<Button>(name)?.SetEnabled(canMoveCamera);
-            rootVisualElement.Q<Button>("return-preview")?.SetEnabled(frozen || historical);
+            var returnButton = rootVisualElement.Q<Button>("return-preview"); if (returnButton != null) { returnButton.SetEnabled(frozen || historical); returnButton.style.display = frozen || historical ? DisplayStyle.Flex : DisplayStyle.None; }
             UpdatePreviewControls();
             rootVisualElement.Q<Button>("discard-feedback")?.SetEnabled(draft != null);
             refreshButton?.SetEnabled(!busy); candidateButton?.SetEnabled(!string.IsNullOrEmpty(CandidatePath) && !busy);
@@ -565,7 +567,7 @@ namespace AvatarWorkbench
             if (feedbackPanel == null) return;
             feedbackPanel.Clear(); entries = entries ?? WorkbenchData.Feedback(BindingPath);
             int waiting = entries.Count(x => WorkbenchData.Text(x["status"]) != "addressed");
-            feedbackTab.text = "看回复" + (waiting > 0 ? " (" + waiting + ")" : "");
+            feedbackTab.text = "需求与回复" + (waiting > 0 ? " (" + waiting + ")" : "");
             feedbackPanel.Add(Heading("我的请求"));
             if (entries.Count == 0)
             {

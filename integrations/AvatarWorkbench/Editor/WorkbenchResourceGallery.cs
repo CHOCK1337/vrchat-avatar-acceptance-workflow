@@ -35,13 +35,19 @@ namespace AvatarWorkbench
             w.minSize = new Vector2(680, 420); w.snapshot = new JArray(resources.Take(300).Select(x => x.Json())).ToString();
             w.selected = new JArray(selectedIds).ToString(); w.CreateGUI(); w.Show();
         }
+        internal static void OpenPreview(IEnumerable<ResourceCard> resources, IEnumerable<string> selectedIds, string id)
+        {
+            var scope = resources.ToArray(); Open(scope, selectedIds);
+            var window = Resources.FindObjectsOfTypeAll<WorkbenchResourceGallery>().FirstOrDefault();
+            var item = scope.FirstOrDefault(x => x.id == id); if (window && item != null) window.Compare(item);
+        }
         void OnDisable() { Release(); }
         void OnBecameInvisible() { visible = false; loading?.Pause(); }
         void OnBecameVisible() { visible = true; loading?.Resume(); }
         void Release()
         {
             loading?.Pause(); loading = null;
-            if (resize != null) rootVisualElement.UnregisterCallback(resize); resize = null;
+            if (resize != null && grid != null) grid.UnregisterCallback(resize); resize = null;
             foreach (var preview in previews) preview.Dispose(); previews.Clear(); compared.Clear();
             foreach (var image in ownImages.Values) if (image) Object.DestroyImmediate(image); ownImages.Clear();
         }
@@ -50,11 +56,11 @@ namespace AvatarWorkbench
             Release(); items.Clear(); picked.Clear();
             if (!string.IsNullOrEmpty(snapshot)) items.AddRange(JArray.Parse(snapshot).OfType<JObject>().Select(x => new ResourceCard { id = (string)x["id"], name = (string)x["name"], path = (string)x["path"], thumbnail = (string)x["thumbnail"], kind = (string)x["kind"], state = (string)x["state"] }));
             if (!string.IsNullOrEmpty(selected)) picked.UnionWith(JArray.Parse(selected).Values<string>());
-            var root = rootVisualElement; root.Clear(); root.style.paddingLeft = root.style.paddingRight = 12; root.style.paddingTop = root.style.paddingBottom = 10;
-            var title = new Label("先看素材，再勾选本次需求"); title.style.fontSize = 20; title.style.flexShrink = 0; root.Add(title);
+            var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-gallery-window");
+            var title = new Label("素材库"); title.AddToClassList("aw-window-title"); title.style.fontSize = 20; title.style.flexShrink = 0; root.Add(title);
             hint = new Label("卡片只选择和查看。Prefab 可旋转、缩放并对比；unitypackage 未导入时只显示已有封面，不能假装已经穿上角色。"); hint.style.whiteSpace = WhiteSpace.Normal; hint.style.flexShrink = 0; root.Add(hint);
             var filter = new TextField("筛选素材") { name = "gallery-search" }; root.Add(filter);
-            grid = new ListView { itemsSource = rows, fixedItemHeight = 225, virtualizationMethod = CollectionVirtualizationMethod.FixedHeight, selectionType = SelectionType.None, name = "local-resource-grid" };
+            grid = new ListView { itemsSource = rows, fixedItemHeight = 262, virtualizationMethod = CollectionVirtualizationMethod.FixedHeight, selectionType = SelectionType.None, name = "local-resource-grid" };
             grid.style.flexGrow = 1; grid.style.minHeight = 90; root.Add(grid);
             var scope = items.ToList();
             grid.makeItem = () => { var row = new VisualElement(); row.style.flexDirection = FlexDirection.Row; row.style.paddingTop = row.style.paddingBottom = 4; return row; };
@@ -64,23 +70,24 @@ namespace AvatarWorkbench
                 for (int col = 0; col < columns; col++)
                 {
                     int n = index * columns + col; if (n >= items.Count) break; var item = items[n];
-                    var card = new VisualElement(); card.style.flexGrow = 1; card.style.flexBasis = 0; card.style.minWidth = 0; card.style.marginRight = 7; card.style.backgroundColor = new Color(.13f, .16f, .20f);
-                    var img = new Image { name = "resource-cover", scaleMode = ScaleMode.ScaleToFit, image = Cover(item), userData = item }; img.style.height = 142; img.style.flexShrink = 0; card.Add(img);
+                    var card = new VisualElement(); card.style.flexGrow = 1; card.style.flexBasis = 0; card.style.minWidth = 0; card.style.marginRight = 7; card.AddToClassList("aw-asset-tile"); card.EnableInClassList("aw-asset-picked", picked.Contains(item.id));
+                    var img = new Image { name = "resource-cover", scaleMode = ScaleMode.ScaleToFit, image = Cover(item), userData = item }; img.style.height = Mathf.Max(40, grid.fixedItemHeight - 84); img.style.flexShrink = 0; img.AddToClassList("aw-gallery-cover"); card.Add(img);
                     var loader = new Label(img.image ? "" : IsProjectAsset(item.path) && Path.GetExtension(item.path).Equals(".prefab", StringComparison.OrdinalIgnoreCase) ? "◌ 正在读取预览…" : "没有已有封面") { name = "cover-loading", enableRichText = false }; loader.style.fontSize = 10; card.Add(loader);
-                    var caption = new Toggle(WorkbenchUiRules.Short(item.name, 25)) { value = picked.Contains(item.id), name = "pick-" + item.id }; caption.tooltip = item.name + "\n" + item.path;
-                    caption.RegisterValueChangedCallback(e => { if (e.newValue) picked.Add(item.id); else picked.Remove(item.id); selected = new JArray(picked).ToString(); UpdateCount(); }); card.Add(caption);
+                    var caption = new Toggle(WorkbenchUiRules.Short(item.name, 25)) { value = picked.Contains(item.id), name = "pick-" + item.id }; caption.AddToClassList("aw-gallery-pick"); caption.tooltip = item.name + "\n" + item.path;
+                    caption.RegisterValueChangedCallback(e => { if (e.newValue) picked.Add(item.id); else picked.Remove(item.id); selected = new JArray(picked).ToString(); card.EnableInClassList("aw-asset-picked", e.newValue); UpdateCount(); }); card.Add(caption);
                     var state = new Label(WorkbenchData.StateName(item.state)) { enableRichText = false }; state.style.fontSize = 11; card.Add(state);
-                    var action = new Button(() => Compare(item)) { text = "真实 3D 预览 / 加入对比", name = "preview-" + item.id };
+                    var action = new Button(() => Compare(item)) { text = "3D 预览 / 对比", name = "preview-" + item.id };
                     action.SetEnabled(Path.GetExtension(item.path ?? "").Equals(".prefab", StringComparison.OrdinalIgnoreCase) && IsProjectAsset(item.path)); card.Add(action); row.Add(card);
                 }
+                for (int fill = row.childCount; fill < columns; fill++) { var empty = new VisualElement(); empty.AddToClassList("aw-asset-tile"); empty.style.visibility = Visibility.Hidden; row.Add(empty); }
             };
             filter.RegisterValueChangedCallback(e => { items = scope.Where(x => ((x.name ?? "") + " " + x.path).IndexOf(e.newValue ?? "", StringComparison.OrdinalIgnoreCase) >= 0).ToList(); Rebuild(); });
             comparison = new VisualElement { name = "resource-3d-comparison" }; comparison.style.flexDirection = FlexDirection.Row; comparison.style.flexShrink = 0; comparison.style.height = 230; comparison.style.display = DisplayStyle.None; root.Add(comparison);
             var actions = new VisualElement(); actions.style.flexDirection = FlexDirection.Row; actions.style.flexShrink = 0; root.Add(actions);
-            apply = new Button(() => { var owner = Owner; if (owner == null) { hint.text = "工作台窗口已关闭，选择仍保留；重新打开工作台后再应用。"; return; } owner.SelectResourcesForRequest(picked.ToArray()); hint.text = "已更新本次需求的素材选择；没有安装或修改角色。"; }) { name = "apply-resource-picks" }; actions.Add(apply);
-            actions.Add(new Button(() => { foreach (var p in previews) p.Dispose(); previews.Clear(); compared.Clear(); comparison.Clear(); comparison.style.display = DisplayStyle.None; }) { text = "结束 3D 对比", name = "close-resource-comparison" });
-            resize = e => { if (e.target != root) return; int next = Mathf.Clamp((int)(e.newRect.width / 245), 2, 4); if (next != columns) { columns = next; Rebuild(); } };
-            root.RegisterCallback(resize);
+            apply = new Button(() => { var owner = Owner; if (owner == null) { hint.text = "工作台窗口已关闭，选择仍保留；重新打开工作台后再应用。"; return; } owner.SelectResourcesForRequest(picked.ToArray()); hint.text = "已更新本次需求的素材选择；没有安装或修改角色。"; }) { name = "apply-resource-picks" }; apply.AddToClassList("aw-primary"); actions.AddToClassList("aw-gallery-footer"); actions.Add(apply);
+            actions.Add(new Button(() => { foreach (var p in previews) p.Dispose(); previews.Clear(); compared.Clear(); comparison.Clear(); comparison.style.display = DisplayStyle.None; }) { text = "收起对比", name = "close-resource-comparison" });
+            resize = e => { if (e.target != grid || e.newRect.height <= 0) return; int next = Mathf.Clamp((int)(e.newRect.width / 245), 2, 4); float itemHeight = Mathf.Min(262, Mathf.Max(1, Mathf.Floor(e.newRect.height))); bool changed = next != columns || grid.fixedItemHeight != itemHeight; columns = next; if (changed) { grid.fixedItemHeight = itemHeight; Rebuild(); } };
+            grid.RegisterCallback(resize);
             Rebuild(); UpdateCount(); attempts = 0;
             loading = root.schedule.Execute(() =>
             {

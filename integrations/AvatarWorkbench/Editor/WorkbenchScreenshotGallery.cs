@@ -22,8 +22,8 @@ namespace AvatarWorkbench
         void OnDisable() { Release(); }
         public void CreateGUI()
         {
-            Release(); var root = rootVisualElement; root.Clear(); root.style.paddingLeft = root.style.paddingRight = 12; root.style.paddingTop = root.style.paddingBottom = 10;
-            var title = new Label("截图记录：看清画面和它所属的版本"); title.style.fontSize = 20; root.Add(title);
+            Release(); var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-screenshots-window");
+            var title = new Label("截图记录"); title.AddToClassList("aw-window-title"); title.style.fontSize = 20; root.Add(title);
             var note = new Label("这些是已有截图。已回应只表示收到答复，不表示修复通过；打开旧图仍保留原候选身份。"); note.style.whiteSpace = WhiteSpace.Normal; root.Add(note);
             var items = string.IsNullOrEmpty(recordJson) ? new List<JObject>() : JArray.Parse(recordJson).OfType<JObject>().ToList();
             if (items.Count == 0) { root.Add(new Label("还没有截图；先在工作台冻结真实画面，或打开已有截图清单。")); return; }
@@ -33,7 +33,7 @@ namespace AvatarWorkbench
             list.unbindItem = (row, index) => ReleaseRow(row);
             list.bindItem = (row, index) =>
             {
-                ReleaseRow(row); row.Clear(); var record = items[index];
+                ReleaseRow(row); row.Clear(); row.AddToClassList("aw-record-card"); var record = items[index];
                 var image = new Image { scaleMode = ScaleMode.ScaleToFit }; image.style.width = 310; image.style.height = 220; image.style.flexShrink = 0; row.Add(image);
                 var details = new VisualElement(); details.style.flexGrow = 1; details.style.minWidth = 0; details.style.paddingLeft = 12; row.Add(details);
                 void Label(string text) { var label = new UnityEngine.UIElements.Label(text) { enableRichText = false }; label.style.whiteSpace = WhiteSpace.Normal; details.Add(label); }

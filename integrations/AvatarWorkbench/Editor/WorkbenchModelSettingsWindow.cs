@@ -25,8 +25,8 @@ namespace AvatarWorkbench
         void CreateGUI()
         {
             lifetime?.Cancel(); lifetime?.Dispose(); lifetime = new CancellationTokenSource();
-            var root = rootVisualElement; root.Clear(); root.style.paddingLeft = root.style.paddingRight = 16; root.style.paddingTop = root.style.paddingBottom = 12;
-            var title = new Label("选择你自己的模型，沿用现有改模流程"); title.style.fontSize = 20; root.Add(title);
+            var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-settings-window");
+            var title = new Label("模型与 API"); title.AddToClassList("aw-window-title"); title.style.fontSize = 20; root.Add(title);
             var list = WorkbenchModels.Profiles(); var names = new List<string> { "＋ 新建接口配置" }; names.AddRange(list.Select(x => (string)x["name"] + " · " + (string)x["model"]));
             int index = list.FindIndex(x => (string)x["id"] == profileId) + 1;
             var choices = new PopupField<string>("接口配置", names, index); choices.name = "model-profile-picker"; root.Add(choices);

@@ -1,9 +1,9 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "payload_files": {
     "BOOTH_NOTICE.md": "a153a58c6232c125826ddd2caef0888451e16b74d85fc032c76aca9b54e61582",
     "BOOTH_NOTICE.md.meta": "ca68654d04ef1fe1b0b1e014cdc2488851339dce812383fdda49ea748694c0ba",
-    "CODEX_CONNECT.md": "b327f9bddea5f3cc5c765b49175b5b301291938549586597b5f7d77d96379d3f",
+    "CODEX_CONNECT.md": "b691af8badc3b87c60ba93556e50bbf1d19019e4e9f3dfb031a4421461f00305",
     "CODEX_CONNECT.md.meta": "a8f43e00f01186c850c084d36873399e78fbf52370707303ab2532f3da5ddd0b",
     "Editor/AvatarWorkbench.Editor.asmdef": "a3ab2a175802f7c67829ce916ad489e835e350039e2fad3884f339269dffe41d",
     "Editor/AvatarWorkbench.Editor.asmdef.meta": "476011ad6659388aceef69f6d8ebe3c7796b6fbf8c9c30711dfc48f69a9656a4",
@@ -33,7 +33,7 @@
     "Editor/WorkbenchGesturePreview.cs.meta": "5a0d182fb06c3e218bf5b2050eff8fcf91ad309770accc3a18864ffdc1813ae6",
     "Editor/WorkbenchModels.cs": "b908b7d19f3b43752eeaca3d0b44d387561f25cfea13100a2627e34429c8ac94",
     "Editor/WorkbenchModels.cs.meta": "93c4b947e0c103f8badfd1006f35e057a33f6bd10746800982d0c1c810fe3f47",
-    "Editor/WorkbenchModelSettingsWindow.cs": "571c4a5d4b05d623c02fa3ba23cd311f34970b5c04c40c68366451f8d50ba4f9",
+    "Editor/WorkbenchModelSettingsWindow.cs": "dc27973377b90cfde80cbac2827d6ef707ee5c7a789220c90c267aa8fc44e081",
     "Editor/WorkbenchModelSettingsWindow.cs.meta": "c0ea73fc9da22d3cbeeecf246e3e5fc15058cf6b30da96bdc5ce592ae211cf76",
     "Editor/WorkbenchPhysicsPreview.cs": "ffe9c619e96d6118d7761027d1e98fa55cc90a70a89fd6f464ebd23b10ec432f",
     "Editor/WorkbenchPhysicsPreview.cs.meta": "9945395cee6d3902cb90a3d06aa9f82c8ee0d27164f5c25c5302ec4dfa79b477",
@@ -41,14 +41,16 @@
     "Editor/WorkbenchPreview.cs.meta": "10acc34fd966d24811e8cf794eb7d2a9ae0f1d020bd65895e88b188014646f31",
     "Editor/WorkbenchRadialPreview.cs": "05e1f5b9419e4a6c6ab23b8cbc95f296a5c6df143b736e555c4f59456fca1e64",
     "Editor/WorkbenchRadialPreview.cs.meta": "063af8ceb618e282f76e53d6b771d2e8a1d2b8d29bb57c2d67db57e4039631e3",
-    "Editor/WorkbenchResourceGallery.cs": "d99e884d3f7a64f1caf050e1e411fbc2583f8858e1820ba789c5be193f7355dc",
+    "Editor/WorkbenchResourceGallery.cs": "2aaf44dc3f97ac7f2b1693b9c93b2a74275e42b79ae58f031ccb7fd104b95878",
     "Editor/WorkbenchResourceGallery.cs.meta": "be8ff5fbf4638a66ca6bed55496e42da9c59cd26544f4635d0ed7294062b2531",
     "Editor/WorkbenchSceneSync.cs": "097d92b47bb2be4733a3085a8e3eee179bc1f926ba43efd73f80d52f67f5ede3",
     "Editor/WorkbenchSceneSync.cs.meta": "8c75810d8a5a2e82b0001a47308bdec8e6ed41dc7bbf6aa2b379b399fd60ed4a",
-    "Editor/WorkbenchScreenshotGallery.cs": "26048415202b5d500cc6db1bc1c7f85c878026d97bc83bada9855e3cdf1828f4",
+    "Editor/WorkbenchScreenshotGallery.cs": "5903dfc53c6e99f4c9cd494e21d71865c02abc9a3bac54e60c32df3740dea991",
     "Editor/WorkbenchScreenshotGallery.cs.meta": "de1fd4f5e11499f4891930594ceb5806f195d6a5b22688f38cc9326353af8e4f",
-    "Editor/WorkbenchStyles.uss": "6034bff918c8748033f57702d7a9093d8fe052355b652887d2ced368083ab724",
+    "Editor/WorkbenchStyles.uss": "baa015d3cfce6ecfc662ca2c5353f9fc13e72a39b941a99a4b9848ce152f2694",
     "Editor/WorkbenchStyles.uss.meta": "cbcffa5ed7576a53e88afce86d8ca5f67355295667faa4f7916cff9ee5c9af4a",
+    "Editor/WorkbenchTheme.cs": "03387b5a88042c7f569e6df181dc627df4eb39e60db6981131859bdc97699b6b",
+    "Editor/WorkbenchTheme.cs.meta": "cd72cc568633f51bb0fac7f66a1acde25d917d8d97c0f3615edc03422f0b3283",
     "Editor/WorkbenchUiRules.cs": "5d504ef9a2c1b671c83988210e2792b3ce681adf29e582c9bf83e35f2a0397f4",
     "Editor/WorkbenchUiRules.cs.meta": "0d2495c531869f8cb06c73914bd24e7440aeb895c582c3759ed943955295e602",
     "Editor/WorkbenchWindow.Booth.cs": "af6eb096510679857ffca86d2a1d2d52ec77ae9869243c23249e8bd7caf115c8",
@@ -57,9 +59,9 @@
     "Editor/WorkbenchWindow.Camera.cs.meta": "6b94f0ab04839f057e94265a23242ec3403787e7dc534fe1b024683f2947bb04",
     "Editor/WorkbenchWindow.Codex.cs": "162725e3c42a94cddddda63d60c4cf13bebd8f9f2a036d1c327ee4159e5d1912",
     "Editor/WorkbenchWindow.Codex.cs.meta": "73b3eaa31219c4b676f961733b4b4d547d51e250e72fdaf5c3fbd0542b470dcd",
-    "Editor/WorkbenchWindow.Controls.cs": "0afd19980578cf3451495605d820a2a1786e6c34ab1b9b8dcc5999c39e645286",
+    "Editor/WorkbenchWindow.Controls.cs": "e0ffc4b21c210d81c50ad1af4685b7280010d426aad275f09f7ebdce212b9cbf",
     "Editor/WorkbenchWindow.Controls.cs.meta": "7461cf976ead0724f822cd1fcc227113bb595801b3e7ce498f073db94698c494",
-    "Editor/WorkbenchWindow.cs": "85efb48950ed327c6d111d49c2e1f3d0ad40df02a8e5d1a1722b193af32508a2",
+    "Editor/WorkbenchWindow.cs": "6e1be7b564fcd11d4b25c1820f8f32b6373f480497645b682c11e598c0d9b9b2",
     "Editor/WorkbenchWindow.cs.meta": "f0ce3e88c1918ef057b9d861d26560dbca42ae2358308d3f693527a2c7bdf521",
     "Editor/WorkbenchWindow.Gallery.cs": "b39752618e106ac55899b3eb9eb3745524b34e8b444205ee1d7a346655e04561",
     "Editor/WorkbenchWindow.Gallery.cs.meta": "20c556780dc200a09be6c436c720b88a44a8af49b9340d2c00722f5fbbe16432",
@@ -69,23 +71,25 @@
     "Editor/WorkbenchWindow.PreviewPanel.cs.meta": "58c908e2a7d5054f9b683f7cc2a4f05d6f1e9726a5a71f8c0ca9a678da9e5e8d",
     "Editor/WorkbenchWindow.ProductReferences.cs": "48460463fb82409adbc300538afd93b7d90df34dce0893ad0cd38f1594e33d2d",
     "Editor/WorkbenchWindow.ProductReferences.cs.meta": "a9a96c6d7b8caa1f98a9cb28c51a436bf1eee9ae5611f59bb6e4e3031cd84854",
-    "Editor/WorkbenchWindow.UI.cs": "15a131d299a051e4bf64226e2d6403a6e01ba48b4d148c21a4929fa58bab6f9a",
+    "Editor/WorkbenchWindow.UI.cs": "6c2ff26bc7a91f4526036d256d94ca3fc21d69725e0bb15341755802f75af37d",
     "Editor/WorkbenchWindow.UI.cs.meta": "a1b167471876333f7e0474fd4281d8cc43473786d974be25aa9a46085b4c2955",
+    "Editor/WorkbenchWindow.Visual.cs": "1832ca561bd1b808acc4086b98127c0b12b1bbf09ec718cfe1c4a11ee1072ecd",
+    "Editor/WorkbenchWindow.Visual.cs.meta": "9d635a62b8f72443732d472f93ed1d0f344ab66a83f6a56d2b996240ab064962",
     "Editor.meta": "30a2195586ff2e4340666fc540af9ed56dbd9c824f724fe9f08e6a64f05390de",
     "LICENSE": "0a6fcd017c80afe3259b08dc2e1c18fbd8f0123faf9676c59c762f5db2f11a1c",
     "LICENSE.meta": "d7460f2e02116e920126646b5f352518f31d286176b9f95069b2261c930105db",
-    "MIO_REFERENCE.md": "62a0e95dc5561b731f04dc7f6a88bfc8288496a0a3bd05def6869f153611dfbc",
+    "MIO_REFERENCE.md": "e7ad6e82256b0b24b2c042b3fe7e1a0abfe353b5742fdb904131f01bdee74578",
     "MIO_REFERENCE.md.meta": "5845341c3ecee41e856bcca23942453f296c8aad2dca2bfa93e617d531ca7ab8",
-    "package.json": "bc52bfa6aa52535959a04e412a9d9b8ddf701ead5d59adaba330068b97a99b37",
+    "package.json": "1d991564ce494a7a5453f22460f0c63ff6751e2ae492b994f92d99534062f838",
     "package.json.meta": "c482de9d189653762d95a90059c627523baf50fde8d2c347b26ccb741f524359",
-    "README.md": "2eb5f9e65be52b9611350849850d940e06edd85202ccc386f63c4683e7c19455",
+    "README.md": "e10a82aa5cf35e9931fb301d4d13b3c49c93cea3430804e0619e27162956a0a5",
     "README.md.meta": "89bd6b9064129624e1c701960ca0c72c4ad70023f8b9a28d6443b9ddadda5798",
-    "START_HERE.md": "51214a72301a85a2e73d4125f9bdb63c5c5f30a5b9ae8f522824a1c35b08a585",
+    "START_HERE.md": "7b57f1b1055d4218e8f30302bbb2e7c8c4dba8dc46a1304d48772f6b84ba6dd2",
     "START_HERE.md.meta": "0723fcc4c1000fea2ea4b9081cb5c7faf94a45ddf044fa8f54328d417454d92e",
     "Tools/codex_feedback.py": "8cab5a1800e02d3d83dca42870db22061d6627d12c8f68972e8a5060e8327770",
     "Tools/codex_feedback.py.meta": "7d6480f4eade1e0b33e5f1e91be1f0f452467d9e0e7b7b4a86ca05fdf4ce41a3",
     "Tools.meta": "18c4ae1ecdf25ee570fd218fcff68185f0aea9b5d66b7f7ab35cc2099b0024c9",
-    "VERIFIED.md": "94b460fd52b8850c9279d031173695c726caffc984f4936c82d3b3549bb89f83",
+    "VERIFIED.md": "1a9e3e1b86d02417c88e6d7dee072a0e7884235eb1c8f94be68e1724914c8671",
     "VERIFIED.md.meta": "c827f0db3910fd5e8c1d587881e5eae9163d39b87988ad6cbbc56e34dff9213d"
   },
   "baseline_files": {
@@ -97,7 +101,8 @@
     ],
     "CODEX_CONNECT.md": [
       "15e5edaeca3b8c1c651f834d519bdbe51f543d484018bedb584bacfb813de25c",
-      "e8f8860836746b56633b81d4d0086b6d4484ef4f20a7362f5ffb0f46d39ebf13"
+      "e8f8860836746b56633b81d4d0086b6d4484ef4f20a7362f5ffb0f46d39ebf13",
+      "b327f9bddea5f3cc5c765b49175b5b301291938549586597b5f7d77d96379d3f"
     ],
     "CODEX_CONNECT.md.meta": [
       "a8f43e00f01186c850c084d36873399e78fbf52370707303ab2532f3da5ddd0b"
@@ -113,21 +118,24 @@
     ],
     "package.json": [
       "6f4e0cd7a92627a7e4049c7451f0c0d903d149db971d0e8c1545454741467918",
-      "c41064635b5fac70fbbbcb8621aa200a05335c48dadd0f2b88969aa5baad0f9b"
+      "c41064635b5fac70fbbbcb8621aa200a05335c48dadd0f2b88969aa5baad0f9b",
+      "bc52bfa6aa52535959a04e412a9d9b8ddf701ead5d59adaba330068b97a99b37"
     ],
     "package.json.meta": [
       "c482de9d189653762d95a90059c627523baf50fde8d2c347b26ccb741f524359"
     ],
     "README.md": [
       "4097fd47634d8d4830e8a20e28296b22c8a4e969a32d3d3644e8bce2b5fe12ee",
-      "eff38f7903ea70aa2cd50cfa5691a372d4727c5c98cf5aa3361088d2aa87ab31"
+      "eff38f7903ea70aa2cd50cfa5691a372d4727c5c98cf5aa3361088d2aa87ab31",
+      "2eb5f9e65be52b9611350849850d940e06edd85202ccc386f63c4683e7c19455"
     ],
     "README.md.meta": [
       "89bd6b9064129624e1c701960ca0c72c4ad70023f8b9a28d6443b9ddadda5798"
     ],
     "START_HERE.md": [
       "be6340072c8d1c04b7d1f6bdc67361e59c3936ef5addb32f5b5e9f09b4ddd287",
-      "489099e0d232cc0b490e387012290f6bb530e2f9e25d0ad7c6b37b67ae4e74c7"
+      "489099e0d232cc0b490e387012290f6bb530e2f9e25d0ad7c6b37b67ae4e74c7",
+      "51214a72301a85a2e73d4125f9bdb63c5c5f30a5b9ae8f522824a1c35b08a585"
     ],
     "START_HERE.md.meta": [
       "0723fcc4c1000fea2ea4b9081cb5c7faf94a45ddf044fa8f54328d417454d92e"
@@ -137,7 +145,8 @@
     ],
     "VERIFIED.md": [
       "1d9329f08dbfea3751963c4bbd5c62ccd8a0f1be13bb09568bbeba231ae0d51a",
-      "e1e25727038d229af2bba0e65779c0d97ca517bba506e9ace11d8ce1e377c50f"
+      "e1e25727038d229af2bba0e65779c0d97ca517bba506e9ace11d8ce1e377c50f",
+      "94b460fd52b8850c9279d031173695c726caffc984f4936c82d3b3549bb89f83"
     ],
     "VERIFIED.md.meta": [
       "c827f0db3910fd5e8c1d587881e5eae9163d39b87988ad6cbbc56e34dff9213d"
@@ -233,7 +242,8 @@
       "6b94f0ab04839f057e94265a23242ec3403787e7dc534fe1b024683f2947bb04"
     ],
     "Editor/WorkbenchWindow.Codex.cs": [
-      "e02be32b9d4701a58341bd684ad29bebe8bb8cb5cc18c58d7ce99cbec2f2a251"
+      "e02be32b9d4701a58341bd684ad29bebe8bb8cb5cc18c58d7ce99cbec2f2a251",
+      "162725e3c42a94cddddda63d60c4cf13bebd8f9f2a036d1c327ee4159e5d1912"
     ],
     "Editor/WorkbenchWindow.Codex.cs.meta": [
       "73b3eaa31219c4b676f961733b4b4d547d51e250e72fdaf5c3fbd0542b470dcd"
@@ -245,7 +255,8 @@
       "7461cf976ead0724f822cd1fcc227113bb595801b3e7ce498f073db94698c494"
     ],
     "Editor/WorkbenchWindow.cs": [
-      "b3235be3622bfa369a545a927d7f7228a6c8d302bc84b0e74fbf70dc1d9e3337"
+      "b3235be3622bfa369a545a927d7f7228a6c8d302bc84b0e74fbf70dc1d9e3337",
+      "85efb48950ed327c6d111d49c2e1f3d0ad40df02a8e5d1a1722b193af32508a2"
     ],
     "Editor/WorkbenchWindow.cs.meta": [
       "f0ce3e88c1918ef057b9d861d26560dbca42ae2358308d3f693527a2c7bdf521"
@@ -263,7 +274,8 @@
       "a9a96c6d7b8caa1f98a9cb28c51a436bf1eee9ae5611f59bb6e4e3031cd84854"
     ],
     "Editor/WorkbenchWindow.UI.cs": [
-      "4eadc5a36631d9c8bdaa952c281a838cde2294332167df51ed348ac1aba67d8e"
+      "4eadc5a36631d9c8bdaa952c281a838cde2294332167df51ed348ac1aba67d8e",
+      "15a131d299a051e4bf64226e2d6403a6e01ba48b4d148c21a4929fa58bab6f9a"
     ],
     "Editor/WorkbenchWindow.UI.cs.meta": [
       "a1b167471876333f7e0474fd4281d8cc43473786d974be25aa9a46085b4c2955"
@@ -309,6 +321,48 @@
     ],
     "Editor/BoothCli~/workbench_query.py": [
       "86b5a32c0c895ec8b7e2586bab0bb5c90e39be81306bde10f0717a262c2f12af"
+    ],
+    "Editor/WorkbenchModels.cs": [
+      "b908b7d19f3b43752eeaca3d0b44d387561f25cfea13100a2627e34429c8ac94"
+    ],
+    "Editor/WorkbenchModels.cs.meta": [
+      "93c4b947e0c103f8badfd1006f35e057a33f6bd10746800982d0c1c810fe3f47"
+    ],
+    "Editor/WorkbenchModelSettingsWindow.cs": [
+      "571c4a5d4b05d623c02fa3ba23cd311f34970b5c04c40c68366451f8d50ba4f9"
+    ],
+    "Editor/WorkbenchModelSettingsWindow.cs.meta": [
+      "c0ea73fc9da22d3cbeeecf246e3e5fc15058cf6b30da96bdc5ce592ae211cf76"
+    ],
+    "Editor/WorkbenchResourceGallery.cs": [
+      "d99e884d3f7a64f1caf050e1e411fbc2583f8858e1820ba789c5be193f7355dc"
+    ],
+    "Editor/WorkbenchResourceGallery.cs.meta": [
+      "be8ff5fbf4638a66ca6bed55496e42da9c59cd26544f4635d0ed7294062b2531"
+    ],
+    "Editor/WorkbenchScreenshotGallery.cs": [
+      "26048415202b5d500cc6db1bc1c7f85c878026d97bc83bada9855e3cdf1828f4"
+    ],
+    "Editor/WorkbenchScreenshotGallery.cs.meta": [
+      "de1fd4f5e11499f4891930594ceb5806f195d6a5b22688f38cc9326353af8e4f"
+    ],
+    "Editor/WorkbenchWindow.Gallery.cs": [
+      "b39752618e106ac55899b3eb9eb3745524b34e8b444205ee1d7a346655e04561"
+    ],
+    "Editor/WorkbenchWindow.Gallery.cs.meta": [
+      "20c556780dc200a09be6c436c720b88a44a8af49b9340d2c00722f5fbbe16432"
+    ],
+    "Editor/WorkbenchWindow.Models.cs": [
+      "e35b1e9cdfa0edf11a74b90547fe71a3d46d3ff3703dcbbe3b75fdbf03d62bf4"
+    ],
+    "Editor/WorkbenchWindow.Models.cs.meta": [
+      "8534e232b525d1dc05ac51b96bece4c7d6696a0595b27fa827afe8fcfcaffacb"
+    ],
+    "MIO_REFERENCE.md": [
+      "62a0e95dc5561b731f04dc7f6a88bfc8288496a0a3bd05def6869f153611dfbc"
+    ],
+    "MIO_REFERENCE.md.meta": [
+      "5845341c3ecee41e856bcca23942453f296c8aad2dca2bfa93e617d531ca7ab8"
     ]
   }
 }

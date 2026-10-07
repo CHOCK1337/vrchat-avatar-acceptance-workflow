@@ -1,6 +1,8 @@
-# 改模工作台 / Avatar Workbench · 0.2.0
+# 改模工作台 / Avatar Workbench · 0.2.1
 
 Unity Editor 插件：中文任务绑定、真实模型预览、圈选反馈、多接口 / 模型切换、本地素材大图与独立 3D 对比、保留候选身份的截图记录。
+
+0.2.1 重做原生 UI Toolkit 界面：固定左侧导航、图片优先的素材卡片、统一的深色与珊瑚色样式、始终可见的需求输入区。970×456 停靠区域也能选择角色、看模型、浏览素材、读取回复并发送；图库、设置和截图记录使用同一套样式。渲染、菜单、API、搜索及反馈后端沿用原实现。
 
 从 [START_HERE.md](START_HERE.md) 开始。本插件只读用户当前安装的 `assemble-vrchat-avatar/SKILL.md`，沿用 QuickTask 和反馈收件箱，不改仓库原工作流规则、不恢复五问启动流程、不重配 Skill / MCP / 全局模型，不变更 Avatar / Packages / 上传权限。
 

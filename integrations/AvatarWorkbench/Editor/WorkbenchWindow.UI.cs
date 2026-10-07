@@ -23,49 +23,31 @@ namespace AvatarWorkbench
 
         void BuildInterface()
         {
+            ReleaseVisualUi();
             var root = rootVisualElement;
-            root.Clear(); root.name = "avatar-workbench-root"; root.AddToClassList("aw-root");
-            root.style.flexGrow = 1; root.style.minWidth = 0; root.style.minHeight = 0;
-            var script = MonoScript.FromScriptableObject(this);
-            string scriptPath = script ? AssetDatabase.GetAssetPath(script) : "";
-            if (!string.IsNullOrEmpty(scriptPath))
-            {
-                var sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(Path.GetDirectoryName(scriptPath).Replace('\\', '/') + "/WorkbenchStyles.uss");
-                if (sheet != null && !root.styleSheets.Contains(sheet)) root.styleSheets.Add(sheet);
-            }
-
+            if (sizeCallback != null) root.UnregisterCallback(sizeCallback);
+            root.Clear(); root.name = "avatar-workbench-root";
+            WorkbenchTheme.Apply(this, "aw-main-window");
             var header = Row(); header.AddToClassList("aw-header");
-            var title = new Label("改模工作台") { enableRichText = false }; title.AddToClassList("aw-title"); header.Add(title);
-            targetField = new ObjectField("角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target };
-            targetField.AddToClassList("aw-target"); targetField.labelElement.style.minWidth = 30; targetField.labelElement.style.width = 30;
-            targetField.RegisterValueChangedCallback(e => { if (!restoring) SetTarget(e.newValue as GameObject); }); header.Add(targetField);
-            header.Add(MakeButton("用选中的角色", UseSelection, "use-selection"));
-            refreshButton = MakeButton("刷新画面", RefreshAll, "refresh"); refreshButton.tooltip = "重新读取当前角色和任务；不会构建或安装素材。"; header.Add(refreshButton);
+            var brand = Row(); brand.AddToClassList("aw-brand");
+            var mark = new Label("AW"); mark.AddToClassList("aw-brand-mark"); brand.Add(mark);
+            var brandText = new VisualElement(); var title = new Label("改模工作台"); title.AddToClassList("aw-title"); brandText.Add(title);
+            var english = new Label("AVATAR WORKBENCH"); english.AddToClassList("aw-brand-caption"); brandText.Add(english); brand.Add(brandText); header.Add(brand);
+            targetField = new ObjectField("当前角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target };
+            targetField.AddToClassList("aw-target"); targetField.RegisterValueChangedCallback(e => { if (!restoring) SetTarget(e.newValue as GameObject); }); header.Add(targetField);
+            header.Add(MakeButton("用选中角色", UseSelection, "use-selection"));
+            refreshButton = MakeButton("刷新", RefreshAll, "refresh"); refreshButton.tooltip = "重新读取当前角色和任务，不构建或安装素材。"; header.Add(refreshButton);
             header.Add(MakeButton("更多 ▾", ShowMore, "more-menu")); root.Add(header);
-
-            connectionBox = Row(); connectionBox.AddToClassList("aw-connection");
-            var info = new VisualElement(); info.style.flexGrow = 1; info.style.minWidth = 0;
-            connectionLabel = new Label { enableRichText = false }; connectionLabel.AddToClassList("aw-connection-title"); info.Add(connectionLabel);
-            connectionHelp = Wrapped(""); connectionHelp.AddToClassList("aw-muted"); connectionHelp.AddToClassList("aw-connection-help"); info.Add(connectionHelp);
-            connectionBox.Add(info);
-            helpButton = MakeButton("连接 Codex", ConnectSelectedModel, "copy-connect"); connectionBox.Add(helpButton); root.Add(connectionBox);
-
-            tabBar = Row(); tabBar.AddToClassList("aw-tabs");
-            previewTab = MakeButton("看模型", () => SelectPanel("preview"), "tab-preview");
-            materialTab = MakeButton("选素材", () => SelectPanel("materials"), "tab-materials");
-            feedbackTab = MakeButton("看回复", () => SelectPanel("feedback"), "tab-feedback");
-            tabBar.Add(previewTab); tabBar.Add(materialTab); tabBar.Add(feedbackTab);
-            root.Add(tabBar);
-
-            bodyArea = Row(); bodyArea.AddToClassList("aw-body"); bodyArea.style.alignItems = Align.Stretch; bodyArea.style.flexShrink = 1; bodyArea.style.minHeight = 0;
+            var shell = Row(); shell.AddToClassList("aw-shell"); shell.style.alignItems = Align.Stretch;
+            navigationRail = BuildNavigation(); shell.Add(navigationRail);
+            workspaceColumn = new VisualElement(); workspaceColumn.AddToClassList("aw-workspace-column"); shell.Add(workspaceColumn);
+            bodyArea = Row(); bodyArea.AddToClassList("aw-body"); bodyArea.style.alignItems = Align.Stretch;
             materialPanel = BuildMaterials(); bodyArea.Add(materialPanel);
             previewPanel = BuildPreviewPanel(); bodyArea.Add(previewPanel);
-            resultPanel = BuildResultPanel(); bodyArea.Add(resultPanel); root.Add(bodyArea);
-            BuildComposer(root);
-
+            resultPanel = BuildResultPanel(); bodyArea.Add(resultPanel); workspaceColumn.Add(bodyArea);
+            BuildComposer(workspaceColumn); root.Add(shell);
             sizeCallback = e => { if (e.target == root) ApplyLayout(e.newRect.width, e.newRect.height); };
-            root.RegisterCallback(sizeCallback);
-            ApplyLayout(position.width, position.height);
+            root.RegisterCallback(sizeCallback); ApplyLayout(position.width, position.height);
         }
 
         VisualElement BuildMaterials()
@@ -81,88 +63,31 @@ namespace AvatarWorkbench
             return panel;
         }
 
-        VisualElement BuildLocalMaterials()
-        {
-            var panel = new VisualElement { name = "local-materials-panel" };
-            var heading = Heading("选素材"); heading.AddToClassList("aw-materials-heading"); panel.Add(heading);
-            var hint = Wrapped("添加想安装的衣服、发型或饰品。这里只选择，不会立即安装。"); hint.AddToClassList("aw-muted"); hint.AddToClassList("aw-resource-help"); panel.Add(hint);
-            var actions = Row(); actions.AddToClassList("aw-wrap");
-            actions.Add(MakeButton("＋ 添加文件", PickResource, "add-resource"));
-            actions.Add(MakeButton("添加目录", PickResourceFolder, "add-folder")); panel.Add(actions);
-            panel.Add(MakeButton("大图浏览 / 多素材对比", OpenResourceGallery, "open-resource-gallery"));
-            var drop = Wrapped("也可把 Prefab 或素材目录拖到这里"); drop.AddToClassList("aw-drop");
-            drop.RegisterCallback<DragUpdatedEvent>(e => { DragAndDrop.visualMode = DragAndDropVisualMode.Copy; e.StopPropagation(); });
-            drop.RegisterCallback<DragPerformEvent>(e => { DragAndDrop.AcceptDrag(); AddDroppedPaths(DragAndDrop.paths); e.StopPropagation(); }); panel.Add(drop);
-            search = new TextField("筛选") { name = "resource-search", value = resourceFilter };
-            search.labelElement.style.minWidth = 30; search.labelElement.style.width = 30;
-            search.RegisterValueChangedCallback(e => { resourceFilter = e.newValue; UpdateResourceList(); }); panel.Add(search);
-            resourceCount = new Label { enableRichText = false }; resourceCount.AddToClassList("aw-muted"); resourceCount.AddToClassList("aw-resource-count"); panel.Add(resourceCount);
-            cards = new ListView { itemsSource = visibleResources, fixedItemHeight = 70, virtualizationMethod = CollectionVirtualizationMethod.FixedHeight, selectionType = SelectionType.Single, name = "resource-list" };
-            cards.style.flexGrow = 1; cards.style.minHeight = 0; cards.style.minWidth = 0;
-            cards.makeItem = () =>
-            {
-                var row = Row(); row.AddToClassList("aw-resource-card");
-                var image = new Image { name = "thumb", scaleMode = ScaleMode.ScaleToFit }; image.AddToClassList("aw-thumb"); row.Add(image);
-                var text = new VisualElement(); text.style.flexGrow = 1; text.style.minWidth = 0;
-                var name = new Label { name = "name", enableRichText = false }; name.AddToClassList("aw-ellipsis"); name.AddToClassList("aw-resource-name"); text.Add(name);
-                var state = new Label { name = "state", enableRichText = false }; state.AddToClassList("aw-ellipsis"); state.AddToClassList("aw-muted"); text.Add(state);
-                var kind = new Label { name = "kind", enableRichText = false }; kind.AddToClassList("aw-muted"); text.Add(kind);
-                row.Add(text); return row;
-            };
-            cards.bindItem = (v, i) =>
-            {
-                var r = visibleResources[i]; v.Q<Label>("name").text = r.name; v.Q<Label>("name").tooltip = r.name;
-                v.Q<Label>("state").text = WorkbenchData.StateName(r.state);
-                v.Q<Label>("kind").text = KindName(r.kind);
-                v.Q<Image>("thumb").image = Thumbnail(r); v.tooltip = r.path;
-            };
-            cards.selectionChanged += selection =>
-            {
-                var r = selection.OfType<ResourceCard>().FirstOrDefault(); if (r == null) return;
-                selectedId = r.id; UpdateSelectedResource(); UpdateComposer(); QueueSave();
-            };
-            panel.Add(cards);
-            emptyResources = Wrapped("还没有素材。\n你也可以不选素材，直接在下方写修改需求。"); emptyResources.AddToClassList("aw-empty"); emptyResources.style.flexShrink = 1; panel.Add(emptyResources);
-            panel.Add(MakeButton("把已选素材写入需求", DescribeSelection, "describe-selection"));
-            var details = new Foldout { text = "素材详情", value = false };
-            detailLabel = Wrapped("选择素材后可查看来源路径。"); detailLabel.AddToClassList("aw-small");
-            var detailScroll = new ScrollView(ScrollViewMode.Vertical); detailScroll.style.maxHeight = 100; detailScroll.Add(detailLabel); details.Add(detailScroll);
-            details.Add(MakeButton("移除这项本地选择", RemoveLocalSelection, "remove-resource")); panel.Add(details);
-            return panel;
-        }
+        VisualElement BuildLocalMaterials() => BuildResourceLibrary();
 
         VisualElement BuildPreviewPanel()
         {
             var panel = Pane(0); panel.name = "preview-panel";
-            var top = Row(); top.AddToClassList("aw-preview-heading"); top.Add(Heading("看模型"));
-            previewLabel = new Label { enableRichText = false }; previewLabel.AddToClassList("aw-ellipsis"); previewLabel.AddToClassList("aw-muted"); previewLabel.style.flexGrow = 1; top.Add(previewLabel);
-            top.Add(MakeButton("画面来源 ▾", ShowSources, "source-menu")); panel.Add(top);
-            top.Add(MakeButton("截图记录", OpenScreenshotGallery, "open-screenshot-gallery"));
-            sceneSourceLabel = new Label { name = "scene-sync-source", enableRichText = false };
-            sceneSourceLabel.AddToClassList("aw-scene-source"); sceneSourceLabel.AddToClassList("aw-ellipsis"); panel.Add(sceneSourceLabel);
-            var controls = Row(); controls.AddToClassList("aw-view-tools");
-            foreach (string direction in new[] { "正面", "侧面", "背面" })
-                controls.Add(MakeButton(direction, () => { if (frozen || historical || busy) return; preview?.Orient(direction); canvas.MarkDirtyRepaint(); }, "view-" + direction));
-            foreach (string part in new[] { "全身", "头部", "上身", "鞋子" })
-                controls.Add(MakeButton(part, () => { if (frozen || historical || busy) return; preview?.SetFocus(part); canvas.MarkDirtyRepaint(); }, "focus-" + part));
-            var toolGroup = new VisualElement(); toolGroup.AddToClassList("aw-preview-tool-group");
-            toolGroup.Add(controls); panel.Add(toolGroup);
+            var heading = Row(); heading.AddToClassList("aw-preview-heading");
+            previewLabel = new Label { enableRichText = false }; previewLabel.AddToClassList("aw-source-badge"); heading.Add(previewLabel);
+            sceneSourceLabel = new Label { name = "scene-sync-source", enableRichText = false }; sceneSourceLabel.AddToClassList("aw-scene-source"); sceneSourceLabel.AddToClassList("aw-ellipsis"); sceneSourceLabel.style.flexGrow = 1; heading.Add(sceneSourceLabel);
+            freezeButton = MakeButton("圈出问题", BeginFeedback, "freeze-feedback"); freezeButton.AddToClassList("aw-accent-outline"); heading.Add(freezeButton);
+            heading.Add(MakeButton("返回实时画面", LeaveAnnotation, "return-preview"));
+            compareButton = MakeButton("前后对比", () => { comparing = !comparing; UpdateLabels(); canvas.MarkDirtyRepaint(); }, "compare"); heading.Add(compareButton);
+            heading.Add(MakeButton("来源 ▾", ShowSources, "source-menu")); panel.Add(heading);
             panel.Add(BuildPreviewWorkspace());
-            var tools = Row(); tools.AddToClassList("aw-preview-actions");
-            freezeButton = MakeButton("圈出有问题的位置", BeginFeedback, "freeze-feedback"); freezeButton.AddToClassList("aw-accent-outline"); tools.Add(freezeButton);
-            tools.Add(MakeButton("返回实时画面", LeaveAnnotation, "return-preview"));
-            compareButton = MakeButton("对比前后", () => { comparing = !comparing; UpdateLabels(); canvas.MarkDirtyRepaint(); }, "compare"); tools.Add(compareButton); panel.Add(tools);
-            roleGuide = Wrapped("换衣服和圆盘菜单只影响这里的试穿。满意后，在下方告诉 Codex 要怎样修改。"); roleGuide.AddToClassList("aw-preview-guide"); roleGuide.AddToClassList("aw-muted"); panel.Add(roleGuide);
+            roleGuide = Wrapped("拖动旋转、滚轮缩放；右键加 WASD 移动相机。试穿仅操作临时角色。"); roleGuide.style.display = DisplayStyle.None; panel.Add(roleGuide);
             return panel;
         }
 
         VisualElement BuildResultPanel()
         {
             var panel = Pane(0); panel.name = "feedback-panel";
-            panel.Add(Heading("进度与回复"));
+            panel.Add(Heading("需求与回复"));
             var scroll = new ScrollView(ScrollViewMode.Vertical); scroll.AddToClassList("aw-inner-scroll");
             activityLabel = Heading("等待修改需求"); activityLabel.style.whiteSpace = WhiteSpace.Normal; scroll.Add(activityLabel);
-            taskLabel = Wrapped(""); taskLabel.AddToClassList("aw-task-summary"); scroll.Add(taskLabel);
+            taskLabel = Wrapped(""); taskLabel.AddToClassList("aw-task-summary");
+            var taskSummary = new Foldout { text = "本次任务记录", value = false }; taskSummary.Add(taskLabel);
             feedbackPanel = new VisualElement(); feedbackPanel.style.marginTop = 10; scroll.Add(feedbackPanel);
             var detail = new Foldout { text = "技术详情", value = false, name = "technical-details" };
             projectLabel = Wrapped(""); candidateLabel = Wrapped("");
@@ -173,13 +98,13 @@ namespace AvatarWorkbench
             candidateButton = MakeButton("查看任务保存的角色", UseTaskCandidate, "task-candidate"); detail.Add(candidateButton);
             detail.Add(MakeButton("导出反馈记录", ExportFeedback, "export-feedback"));
             detail.Add(MakeButton("复制接入信息", CopyInstruction, "copy-instruction")); scroll.Add(detail);
-            panel.Add(scroll); return panel;
+            scroll.Add(taskSummary); panel.Add(scroll); return panel;
         }
 
         void BuildComposer(VisualElement root)
         {
             composer = new VisualElement { name = "request-composer" }; composer.AddToClassList("aw-composer");
-            var title = Row(); title.AddToClassList("aw-composer-title"); title.Add(Heading("你想怎么改？"));
+            var title = Row(); title.AddToClassList("aw-composer-title"); title.Add(Heading("写下修改需求"));
             requestContext = new Label { enableRichText = false }; requestContext.AddToClassList("aw-ellipsis"); requestContext.AddToClassList("aw-muted"); requestContext.style.flexGrow = 1; title.Add(requestContext); AddModelChoice(title); composer.Add(title);
             draftStrip = Row(); draftStrip.AddToClassList("aw-draft-strip");
             draftLabel = new Label { enableRichText = false }; draftLabel.AddToClassList("aw-ellipsis"); draftLabel.style.flexGrow = 1; draftStrip.Add(draftLabel);
@@ -191,7 +116,7 @@ namespace AvatarWorkbench
             input.RegisterValueChangedCallback(e => { message = e.newValue; UpdateComposer(); QueueSave(); });
             input.RegisterCallback<KeyDownEvent>(e => { if (e.keyCode == KeyCode.Return && (e.ctrlKey || e.commandKey) && submitButton != null && submitButton.enabledSelf) { TryAction(SaveAndHandoff); e.StopPropagation(); } });
             inputArea.Add(input);
-            placeholder = Wrapped("例如：把头发改成黑色。\n要指出哪里不对，可先点上方“圈出有问题的位置”。");
+            placeholder = Wrapped("例如：把头发改成黑色，保留原来的发饰。");
             placeholder.name = "request-placeholder"; placeholder.pickingMode = PickingMode.Ignore; placeholder.AddToClassList("aw-placeholder"); inputArea.Add(placeholder);
             line.Add(inputArea);
             submitButton = MakeButton("发送给 Codex", SaveAndHandoff, "submit-feedback"); submitButton.AddToClassList("aw-primary"); submitButton.AddToClassList("aw-submit"); line.Add(submitButton); composer.Add(line);
@@ -202,55 +127,35 @@ namespace AvatarWorkbench
         void ApplyLayout(float width, float height)
         {
             if (bodyArea == null || width < 1 || height < 1) return;
-            layoutMode = WorkbenchUiRules.Layout(width, height);
-            rootVisualElement.EnableInClassList("aw-compact", layoutMode == "compact");
-            rootVisualElement.EnableInClassList("aw-medium", layoutMode == "medium");
-            rootVisualElement.EnableInClassList("aw-wide", layoutMode == "wide");
+            bool wide = width >= 1420 && height >= 620;
+            layoutMode = wide ? "wide" : "compact";
+            rootVisualElement.EnableInClassList("aw-wide", wide);
+            rootVisualElement.EnableInClassList("aw-compact", !wide);
+            rootVisualElement.EnableInClassList("aw-medium", false);
             rootVisualElement.EnableInClassList("aw-narrow", width < 620);
-            rootVisualElement.EnableInClassList("aw-compact-landscape", layoutMode == "compact" && width >= 900);
+            rootVisualElement.EnableInClassList("aw-icon-rail", width < 760);
+            rootVisualElement.EnableInClassList("aw-short-window", height < 520);
+            rootVisualElement.EnableInClassList("aw-compact-landscape", false);
             targetField.style.display = width < 620 ? DisplayStyle.None : DisplayStyle.Flex;
-            placeholder.text = width < 620 ? "写一句修改需求…" : "例如：把头发改成黑色。\n要指出哪里不对，可先点上方“圈出有问题的位置”。";
-            placeholder.style.overflow = Overflow.Hidden;
-            bool wide = layoutMode == "wide", compact = layoutMode == "compact";
+            placeholder.text = width < 620 ? "写一句修改需求…" : "例如：把头发改成黑色，保留原来的发饰。";
             bool boothFocus = materialSource == "booth" && activePanel == "materials";
             rootVisualElement.EnableInClassList("aw-booth-full", boothFocus);
-            bool boothCompact = boothFocus && width >= 900 && height < 600;
-            rootVisualElement.EnableInClassList("aw-booth-compact-grid", boothCompact);
-            var header = rootVisualElement.Q<VisualElement>(className: "aw-header");
-            if (header != null && connectionBox != null)
-            {
-                if (boothCompact && connectionBox.parent != header) header.Add(connectionBox);
-                else if (!boothCompact && connectionBox.parent == header) rootVisualElement.Insert(rootVisualElement.IndexOf(header) + 1, connectionBox);
-            }
-            var modes = rootVisualElement.Q<VisualElement>(className: "aw-material-modes");
-            var boothControls = boothMaterialContent?.Q<VisualElement>(className: "aw-booth-controls");
-            if (modes != null && boothControls != null && materialPanel != null)
-            {
-                if (boothCompact && modes.parent != boothControls) boothControls.Insert(0, modes);
-                else if (!boothCompact && modes.parent == boothControls) materialPanel.Insert(0, modes);
-            }
-            float cardHeight = compact ? 54f : 70f;
-            if (cards != null && cards.fixedItemHeight != cardHeight) cards.fixedItemHeight = cardHeight;
-            tabBar.style.display = wide && !boothFocus ? DisplayStyle.None : DisplayStyle.Flex;
+            rootVisualElement.EnableInClassList("aw-booth-compact-grid", false);
+            tabBar.style.display = DisplayStyle.Flex;
             bool showMaterials = wide || activePanel == "materials";
-            bool showResults = !boothFocus && (wide || (activePanel == "feedback") || (!compact && activePanel == "preview"));
+            bool showResults = !boothFocus && (wide || activePanel == "feedback");
             materialPanel.style.display = showMaterials ? DisplayStyle.Flex : DisplayStyle.None;
             resultPanel.style.display = showResults ? DisplayStyle.Flex : DisplayStyle.None;
-            previewPanel.style.display = !boothFocus && (!compact || activePanel == "preview") ? DisplayStyle.Flex : DisplayStyle.None;
-            materialPanel.style.width = compact || boothFocus ? new StyleLength(StyleKeyword.Auto) : new StyleLength(236f);
-            resultPanel.style.width = compact ? new StyleLength(StyleKeyword.Auto) : new StyleLength(wide ? 292f : 260f);
-            materialPanel.style.flexGrow = compact || boothFocus ? 1 : 0;
-            resultPanel.style.flexGrow = compact ? 1 : 0;
-            previewPanel.style.flexGrow = 1;
-            materialPanel.style.marginRight = compact || boothFocus ? 0 : 8;
-            resultPanel.style.marginLeft = compact ? 0 : 8;
-            previewTab.EnableInClassList("aw-tab-active", activePanel == "preview");
-            materialTab.EnableInClassList("aw-tab-active", activePanel == "materials");
-            feedbackTab.EnableInClassList("aw-tab-active", activePanel == "feedback");
-            ApplyPreviewWorkspace();
-            if (!showMaterials) StopBoothRequests(true);
+            previewPanel.style.display = !boothFocus && (wide || activePanel == "preview") ? DisplayStyle.Flex : DisplayStyle.None;
+            materialPanel.style.width = wide && !boothFocus ? new StyleLength(236) : new StyleLength(StyleKeyword.Auto);
+            resultPanel.style.width = wide ? new StyleLength(292) : new StyleLength(StyleKeyword.Auto);
+            materialPanel.style.flexGrow = wide && !boothFocus ? 0 : 1; resultPanel.style.flexGrow = wide ? 0 : 1; previewPanel.style.flexGrow = 1;
+            materialPanel.style.marginRight = wide && !boothFocus ? 10 : 0; resultPanel.style.marginLeft = wide ? 10 : 0;
+            previewTab.EnableInClassList("aw-tab-active", activePanel == "preview"); materialTab.EnableInClassList("aw-tab-active", activePanel == "materials"); feedbackTab.EnableInClassList("aw-tab-active", activePanel == "feedback");
+            ApplyPreviewWorkspace(); if (!showMaterials) StopBoothRequests(true); else libraryLoading?.Resume();
             canvas?.MarkDirtyRepaint();
         }
+
         void SelectPanel(string name) { activePanel = name; ApplyLayout(position.width, position.height); QueueSave(); }
 
         void UpdateResourceList()
@@ -258,12 +163,11 @@ namespace AvatarWorkbench
             visibleResources.Clear(); visibleResources.AddRange(resources.Where(r => string.IsNullOrWhiteSpace(resourceFilter) || (r.name ?? "").IndexOf(resourceFilter, StringComparison.OrdinalIgnoreCase) >= 0 || (r.path ?? "").IndexOf(resourceFilter, StringComparison.OrdinalIgnoreCase) >= 0));
             if (cards != null)
             {
-                cards.Rebuild(); int index = visibleResources.FindIndex(r => r.id == selectedId);
-                cards.SetSelectionWithoutNotify(index < 0 ? Array.Empty<int>() : new[] { index });
+                RebuildLibrary();
                 cards.style.display = visibleResources.Count > 0 ? DisplayStyle.Flex : DisplayStyle.None;
             }
             if (resourceCount != null) resourceCount.text = resources.Count == 0 ? "尚未选择" : "本次 " + resources.Count + " 项 · 本地新增 " + localResources.Count + " 项";
-            if (materialTab != null) materialTab.text = "选素材" + (resources.Count == 0 ? "" : " (" + resources.Count + ")");
+            if (materialTab != null) materialTab.text = "素材库" + (resources.Count == 0 ? "" : " (" + resources.Count + ")");
             if (emptyResources != null) { emptyResources.style.display = visibleResources.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None; emptyResources.text = resources.Count == 0 ? "还没有素材。\n也可直接在下方写修改需求。" : "没有匹配项，试试清空筛选词。"; }
             UpdateSelectedResource(); UpdateComposer();
         }
