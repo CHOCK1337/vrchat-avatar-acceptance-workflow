@@ -1,0 +1,17 @@
+﻿DSH 改模完整工具包 0.3.0 / Windows x64
+
+1. 完整解压到固定目录，不要在 ZIP 里面运行。
+2. 用户先装好 DSH、配置自己的模型账号，并准备 Unity Avatar 工程及合法素材。
+3. 保存并关闭 DSH 和 Unity。
+4. 双击 Verify-Package.cmd 检查包，再双击 Setup.cmd，输入 Unity 工程目录。
+5. 打开 Unity，等待编译完成，双击 Doctor.cmd。
+6. DSH 在工具包目录新开会话，使用 examples/FIRST_TASK.md 的提示词。
+
+给用户：docs/USER_GUIDE.md
+给 Agent：docs/AGENT_GUIDE.md
+操作案例：docs/EXAMPLES.md
+故障：docs/TROUBLESHOOTING.md
+
+包里已有 Python、Node、两个 MCP、配置模板和 Unity 工作台。
+不含 DSH/Unity 安装程序、模型账号或商业模型素材；不会自动上传。
+内含 UnityMCP-VRC 的 CC BY-NC 4.0 依赖，请遵守非商业许可。

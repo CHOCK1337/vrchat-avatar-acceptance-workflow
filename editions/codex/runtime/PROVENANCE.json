@@ -1,0 +1,23 @@
+{
+  "format": "avatar-workbench-runtime-v1",
+  "platform": "win32-x64",
+  "archives": {
+    "node": {
+      "version": "24.15.0",
+      "url": "https://nodejs.org/download/release/v24.15.0/node-v24.15.0-win-x64.zip",
+      "sha256": "cc5149eabd53779ce1e7bdc5401643622d0c7e6800ade18928a767e940bb0e62",
+      "hash_source": "https://nodejs.org/download/release/v24.15.0/SHASUMS256.txt"
+    },
+    "python": {
+      "version": "3.13.16",
+      "url": "https://www.python.org/ftp/python/3.13.16/python-3.13.16-embeddable-amd64.zip",
+      "sha256": "589dc1e9d02549ca5f680710307ff9b77f6e3ffc4aa3efccd7fa54eeeafac94b",
+      "hash_source": "https://www.python.org/ftp/python/3.13.16/windows-3.13.16.json"
+    }
+  },
+  "mcp_sdk": "1.29.0",
+  "yaml": "4.3.2",
+  "python_pth_modified": true,
+  "dsh_desktop_included": false,
+  "private_configuration_copied": false
+}

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "avatarWorkbench": {
+      "command": "${BUNDLE_ROOT}/runtime/python/python.exe",
+      "args": ["${BUNDLE_ROOT}/adapter/workbench_mcp.py", "--config", "${BUNDLE_ROOT}/local/connection.json"],
+      "cwd": "${BUNDLE_ROOT}"
+    },
+    "unityMCP": {
+      "command": "${BUNDLE_ROOT}/runtime/node/node.exe",
+      "args": ["${BUNDLE_ROOT}/runtime/unity-mcp/build/index.js"],
+      "cwd": "${BUNDLE_ROOT}/runtime/unity-mcp"
+    }
+  }
+}

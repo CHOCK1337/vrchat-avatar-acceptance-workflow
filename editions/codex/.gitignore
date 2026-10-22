@@ -1,0 +1,22 @@
+# Private user state and generated dependencies
+/local/
+/__pycache__/
+**/__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+**/.credentials.yaml
+**/auth.json
+**/credentials.json
+**/node_modules/
+/runtime/*
+!/runtime/PROVENANCE.json
+/Library/
+/Temp/
+/Logs/
+/deliverables/
+*.zip
+*.unitypackage
+*.vrca
+*.vrcw

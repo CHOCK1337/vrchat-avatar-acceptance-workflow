@@ -1,0 +1,17 @@
+{
+  "format": "aa-quicktask-v1",
+  "task_id": "REPLACE_WITH_NEW_TASK_ID",
+  "project_path": "REPLACE_WITH_VERIFIED_UNITY_PROJECT",
+  "avatar": "REPLACE_WITH_VERIFIED_AVATAR",
+  "status": "NOT_STARTED",
+  "task_revision": 0,
+  "delivery": "local",
+  "operation": "edit",
+  "explicit_requirements": ["安装一件指定同体型衣服", "保留原装和作者部件开关", "原装与新衣互斥", "真实回切及完整腿脚检查"],
+  "constraints": {"preserve_source": true, "upload": false},
+  "resources": [{"id": "REPLACE_WITH_REAL_RESOURCE", "kind": "outfit", "region": "full", "state": "not_started"}],
+  "candidate": null,
+  "next_action": "核对当前实际工程、Avatar 和所选素材；示例路径不可直接执行",
+  "known_issues": [],
+  "artifact_paths": []
+}

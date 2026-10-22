@@ -1,0 +1,2233 @@
+{
+  "packages": [
+    {
+      "path": "runtime/node/node_modules/corepack",
+      "name": "corepack",
+      "version": "0.34.6",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/nodejs/corepack.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@gar/promise-retry",
+      "name": "@gar/promise-retry",
+      "version": "1.0.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/wraithgar/node-promise-retry.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@isaacs/fs-minipass",
+      "name": "@isaacs/fs-minipass",
+      "version": "4.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/npm/fs-minipass.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@isaacs/string-locale-compare",
+      "name": "@isaacs/string-locale-compare",
+      "version": "1.1.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/string-locale-compare"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/agent",
+      "name": "@npmcli/agent",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/agent.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/arborist",
+      "name": "@npmcli/arborist",
+      "version": "9.4.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/arborist"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/config",
+      "name": "@npmcli/config",
+      "version": "10.8.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/config"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/fs",
+      "name": "@npmcli/fs",
+      "version": "5.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/fs.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/git",
+      "name": "@npmcli/git",
+      "version": "7.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/git.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/installed-package-contents",
+      "name": "@npmcli/installed-package-contents",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/installed-package-contents.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/map-workspaces",
+      "name": "@npmcli/map-workspaces",
+      "version": "5.0.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/map-workspaces.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/metavuln-calculator",
+      "name": "@npmcli/metavuln-calculator",
+      "version": "9.0.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/metavuln-calculator.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/name-from-folder",
+      "name": "@npmcli/name-from-folder",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/name-from-folder.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/node-gyp",
+      "name": "@npmcli/node-gyp",
+      "version": "5.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/node-gyp.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/package-json",
+      "name": "@npmcli/package-json",
+      "version": "7.0.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/package-json.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/promise-spawn",
+      "name": "@npmcli/promise-spawn",
+      "version": "9.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/promise-spawn.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/query",
+      "name": "@npmcli/query",
+      "version": "5.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/query.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/redact",
+      "name": "@npmcli/redact",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/redact.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@npmcli/run-script",
+      "name": "@npmcli/run-script",
+      "version": "10.0.4",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/run-script.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@sigstore/bundle",
+      "name": "@sigstore/bundle",
+      "version": "4.0.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/sigstore-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@sigstore/core",
+      "name": "@sigstore/core",
+      "version": "3.2.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/sigstore-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@sigstore/protobuf-specs",
+      "name": "@sigstore/protobuf-specs",
+      "version": "0.5.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/protobuf-specs.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@sigstore/sign",
+      "name": "@sigstore/sign",
+      "version": "4.1.1",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/sigstore-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@sigstore/tuf",
+      "name": "@sigstore/tuf",
+      "version": "4.0.2",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/sigstore-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@sigstore/verify",
+      "name": "@sigstore/verify",
+      "version": "3.1.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/sigstore-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@tufjs/canonical-json",
+      "name": "@tufjs/canonical-json",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/theupdateframework/tuf-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/@tufjs/models",
+      "name": "@tufjs/models",
+      "version": "4.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/theupdateframework/tuf-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/abbrev",
+      "name": "abbrev",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/abbrev-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/agent-base",
+      "name": "agent-base",
+      "version": "7.1.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/TooTallNate/proxy-agents.git",
+        "directory": "packages/agent-base"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/aproba",
+      "name": "aproba",
+      "version": "2.1.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/iarna/aproba"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/archy",
+      "name": "archy",
+      "version": "1.0.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "http://github.com/substack/node-archy.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/balanced-match",
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/juliangruber/balanced-match.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/bin-links",
+      "name": "bin-links",
+      "version": "6.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/bin-links.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/binary-extensions",
+      "name": "binary-extensions",
+      "version": "3.1.0",
+      "license": "MIT",
+      "repository": "sindresorhus/binary-extensions"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/brace-expansion",
+      "name": "brace-expansion",
+      "version": "5.0.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/juliangruber/brace-expansion.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/cacache",
+      "name": "cacache",
+      "version": "20.0.4",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cacache.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/chalk",
+      "name": "chalk",
+      "version": "5.6.2",
+      "license": "MIT",
+      "repository": "chalk/chalk"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/chownr",
+      "name": "chownr",
+      "version": "3.0.0",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/isaacs/chownr.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/ci-info",
+      "name": "ci-info",
+      "version": "4.4.0",
+      "license": "MIT",
+      "repository": "github:watson/ci-info"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/cidr-regex",
+      "name": "cidr-regex",
+      "version": "5.0.3",
+      "license": "BSD-2-Clause",
+      "repository": "silverwind/cidr-regex"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/cmd-shim",
+      "name": "cmd-shim",
+      "version": "8.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cmd-shim.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/common-ancestor-path",
+      "name": "common-ancestor-path",
+      "version": "2.0.0",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git@github.com:isaacs/common-ancestor-path"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/cssesc",
+      "name": "cssesc",
+      "version": "3.0.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/mathiasbynens/cssesc.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/debug",
+      "name": "debug",
+      "version": "4.4.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/debug-js/debug.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/diff",
+      "name": "diff",
+      "version": "8.0.3",
+      "license": "BSD-3-Clause",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/kpdecker/jsdiff.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/env-paths",
+      "name": "env-paths",
+      "version": "2.2.1",
+      "license": "MIT",
+      "repository": "sindresorhus/env-paths"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/exponential-backoff",
+      "name": "exponential-backoff",
+      "version": "3.1.3",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/coveooss/exponential-backoff.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/fastest-levenshtein",
+      "name": "fastest-levenshtein",
+      "version": "1.0.16",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ka-weihe/fastest-levenshtein.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/fs-minipass",
+      "name": "fs-minipass",
+      "version": "3.0.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/npm/fs-minipass.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/glob",
+      "name": "glob",
+      "version": "13.0.6",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git@github.com:isaacs/node-glob.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/graceful-fs",
+      "name": "graceful-fs",
+      "version": "4.2.11",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/isaacs/node-graceful-fs"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/hosted-git-info",
+      "name": "hosted-git-info",
+      "version": "9.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/hosted-git-info.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/http-cache-semantics",
+      "name": "http-cache-semantics",
+      "version": "4.2.0",
+      "license": "BSD-2-Clause",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kornelski/http-cache-semantics.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/http-proxy-agent",
+      "name": "http-proxy-agent",
+      "version": "7.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/TooTallNate/proxy-agents.git",
+        "directory": "packages/http-proxy-agent"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/https-proxy-agent",
+      "name": "https-proxy-agent",
+      "version": "7.0.6",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/TooTallNate/proxy-agents.git",
+        "directory": "packages/https-proxy-agent"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/iconv-lite",
+      "name": "iconv-lite",
+      "version": "0.7.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/pillarjs/iconv-lite.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/ignore-walk",
+      "name": "ignore-walk",
+      "version": "8.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/ignore-walk.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/ini",
+      "name": "ini",
+      "version": "6.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/ini.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/init-package-json",
+      "name": "init-package-json",
+      "version": "8.2.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/init-package-json.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/ip-address",
+      "name": "ip-address",
+      "version": "10.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/beaugunderson/ip-address.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/is-cidr",
+      "name": "is-cidr",
+      "version": "6.0.3",
+      "license": "BSD-2-Clause",
+      "repository": "silverwind/is-cidr"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/isexe",
+      "name": "isexe",
+      "version": "4.0.0",
+      "license": "BlueOak-1.0.0",
+      "repository": "https://github.com/isaacs/isexe"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/json-parse-even-better-errors",
+      "name": "json-parse-even-better-errors",
+      "version": "5.0.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/json-parse-even-better-errors.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/json-stringify-nice",
+      "name": "json-stringify-nice",
+      "version": "1.1.4",
+      "license": "ISC",
+      "repository": "https://github.com/isaacs/json-stringify-nice"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/jsonparse",
+      "name": "jsonparse",
+      "version": "1.3.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "http://github.com/creationix/jsonparse.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/just-diff",
+      "name": "just-diff",
+      "version": "6.0.2",
+      "license": "MIT",
+      "repository": "https://github.com/angus-c/just"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/just-diff-apply",
+      "name": "just-diff-apply",
+      "version": "5.5.0",
+      "license": "MIT",
+      "repository": "https://github.com/angus-c/just"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmaccess",
+      "name": "libnpmaccess",
+      "version": "10.0.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmaccess"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmdiff",
+      "name": "libnpmdiff",
+      "version": "8.1.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmdiff"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmexec",
+      "name": "libnpmexec",
+      "version": "10.2.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmexec"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmfund",
+      "name": "libnpmfund",
+      "version": "7.0.19",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmfund"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmorg",
+      "name": "libnpmorg",
+      "version": "8.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmorg"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmpack",
+      "name": "libnpmpack",
+      "version": "9.1.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmpack"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmpublish",
+      "name": "libnpmpublish",
+      "version": "11.1.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmpublish"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmsearch",
+      "name": "libnpmsearch",
+      "version": "9.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmsearch"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmteam",
+      "name": "libnpmteam",
+      "version": "8.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmteam"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/libnpmversion",
+      "name": "libnpmversion",
+      "version": "8.0.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git",
+        "directory": "workspaces/libnpmversion"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/lru-cache",
+      "name": "lru-cache",
+      "version": "11.2.7",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/isaacs/node-lru-cache.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/make-fetch-happen",
+      "name": "make-fetch-happen",
+      "version": "15.0.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/make-fetch-happen.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minimatch",
+      "name": "minimatch",
+      "version": "10.2.4",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git@github.com:isaacs/minimatch"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass",
+      "name": "minipass",
+      "version": "7.1.3",
+      "license": "BlueOak-1.0.0",
+      "repository": "https://github.com/isaacs/minipass"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-collect",
+      "name": "minipass-collect",
+      "version": "2.0.1",
+      "license": "ISC",
+      "repository": "https://github.com/isaacs/minipass-collect"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-fetch",
+      "name": "minipass-fetch",
+      "version": "5.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/minipass-fetch.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-flush/node_modules/minipass",
+      "name": "minipass",
+      "version": "3.3.6",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/minipass.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-flush/node_modules/yallist",
+      "name": "yallist",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/yallist.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-flush",
+      "name": "minipass-flush",
+      "version": "1.0.5",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/minipass-flush.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-pipeline/node_modules/minipass",
+      "name": "minipass",
+      "version": "3.3.6",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/minipass.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-pipeline/node_modules/yallist",
+      "name": "yallist",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/yallist.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-pipeline",
+      "name": "minipass-pipeline",
+      "version": "1.2.4",
+      "license": "ISC",
+      "repository": null
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minipass-sized",
+      "name": "minipass-sized",
+      "version": "2.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/minipass-sized.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/minizlib",
+      "name": "minizlib",
+      "version": "3.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/minizlib.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/ms",
+      "name": "ms",
+      "version": "2.1.3",
+      "license": "MIT",
+      "repository": "vercel/ms"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/mute-stream",
+      "name": "mute-stream",
+      "version": "3.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/mute-stream.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/negotiator",
+      "name": "negotiator",
+      "version": "1.0.0",
+      "license": "MIT",
+      "repository": "jshttp/negotiator"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/node-gyp",
+      "name": "node-gyp",
+      "version": "12.2.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/nodejs/node-gyp.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/nopt",
+      "name": "nopt",
+      "version": "9.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/nopt.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-audit-report",
+      "name": "npm-audit-report",
+      "version": "7.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-audit-report.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-bundled",
+      "name": "npm-bundled",
+      "version": "5.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-bundled.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-install-checks",
+      "name": "npm-install-checks",
+      "version": "8.0.0",
+      "license": "BSD-2-Clause",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-install-checks.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-normalize-package-bin",
+      "name": "npm-normalize-package-bin",
+      "version": "5.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-normalize-package-bin.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-package-arg",
+      "name": "npm-package-arg",
+      "version": "13.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-package-arg.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-packlist",
+      "name": "npm-packlist",
+      "version": "10.0.4",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-packlist.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-pick-manifest",
+      "name": "npm-pick-manifest",
+      "version": "11.0.3",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-pick-manifest.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-profile",
+      "name": "npm-profile",
+      "version": "12.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-profile.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-registry-fetch",
+      "name": "npm-registry-fetch",
+      "version": "19.1.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-registry-fetch.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/npm-user-validate",
+      "name": "npm-user-validate",
+      "version": "4.0.0",
+      "license": "BSD-2-Clause",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/npm-user-validate.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/p-map",
+      "name": "p-map",
+      "version": "7.0.4",
+      "license": "MIT",
+      "repository": "sindresorhus/p-map"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/pacote",
+      "name": "pacote",
+      "version": "21.5.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/pacote.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/parse-conflict-json",
+      "name": "parse-conflict-json",
+      "version": "5.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/parse-conflict-json.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/path-scurry",
+      "name": "path-scurry",
+      "version": "2.0.2",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/path-scurry"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/postcss-selector-parser",
+      "name": "postcss-selector-parser",
+      "version": "7.1.1",
+      "license": "MIT",
+      "repository": "postcss/postcss-selector-parser"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/proc-log",
+      "name": "proc-log",
+      "version": "6.1.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/proc-log.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/proggy",
+      "name": "proggy",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/proggy.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/promise-all-reject-late",
+      "name": "promise-all-reject-late",
+      "version": "1.0.1",
+      "license": "ISC",
+      "repository": null
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/promise-call-limit",
+      "name": "promise-call-limit",
+      "version": "3.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/promise-call-limit"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/promzard",
+      "name": "promzard",
+      "version": "3.0.1",
+      "license": "ISC",
+      "repository": {
+        "url": "git+https://github.com/npm/promzard.git",
+        "type": "git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/qrcode-terminal",
+      "name": "qrcode-terminal",
+      "version": "0.12.0",
+      "license": null,
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/gtanner/qrcode-terminal"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/read",
+      "name": "read",
+      "version": "5.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/read.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/read-cmd-shim",
+      "name": "read-cmd-shim",
+      "version": "6.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/read-cmd-shim.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/safer-buffer",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ChALkeR/safer-buffer.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/semver",
+      "name": "semver",
+      "version": "7.7.4",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/node-semver.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/signal-exit",
+      "name": "signal-exit",
+      "version": "4.1.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/tapjs/signal-exit.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/sigstore",
+      "name": "sigstore",
+      "version": "4.1.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sigstore/sigstore-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/smart-buffer",
+      "name": "smart-buffer",
+      "version": "4.2.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/JoshGlazebrook/smart-buffer.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/socks",
+      "name": "socks",
+      "version": "2.8.7",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/JoshGlazebrook/socks.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/socks-proxy-agent",
+      "name": "socks-proxy-agent",
+      "version": "8.0.5",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/TooTallNate/proxy-agents.git",
+        "directory": "packages/socks-proxy-agent"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/spdx-exceptions",
+      "name": "spdx-exceptions",
+      "version": "2.5.0",
+      "license": "CC-BY-3.0",
+      "repository": "kemitchell/spdx-exceptions.json"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/spdx-expression-parse",
+      "name": "spdx-expression-parse",
+      "version": "4.0.0",
+      "license": "MIT",
+      "repository": "jslicense/spdx-expression-parse.js"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/spdx-license-ids",
+      "name": "spdx-license-ids",
+      "version": "3.0.23",
+      "license": "CC0-1.0",
+      "repository": "jslicense/spdx-license-ids"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/ssri",
+      "name": "ssri",
+      "version": "13.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/ssri.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/supports-color",
+      "name": "supports-color",
+      "version": "10.2.2",
+      "license": "MIT",
+      "repository": "chalk/supports-color"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/tar",
+      "name": "tar",
+      "version": "7.5.11",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/isaacs/node-tar.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/text-table",
+      "name": "text-table",
+      "version": "0.2.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/substack/text-table.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/tiny-relative-date",
+      "name": "tiny-relative-date",
+      "version": "2.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/wildlyinaccurate/relative-date.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/tinyglobby/node_modules/fdir",
+      "name": "fdir",
+      "version": "6.5.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/thecodrr/fdir.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/tinyglobby/node_modules/picomatch",
+      "name": "picomatch",
+      "version": "4.0.3",
+      "license": "MIT",
+      "repository": "micromatch/picomatch"
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/tinyglobby",
+      "name": "tinyglobby",
+      "version": "0.2.15",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SuperchupuDev/tinyglobby.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/treeverse",
+      "name": "treeverse",
+      "version": "3.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/npm/treeverse.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/tuf-js",
+      "name": "tuf-js",
+      "version": "4.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/theupdateframework/tuf-js.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/util-deprecate",
+      "name": "util-deprecate",
+      "version": "1.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/TooTallNate/util-deprecate.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/validate-npm-package-name",
+      "name": "validate-npm-package-name",
+      "version": "7.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/validate-npm-package-name.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/walk-up-path",
+      "name": "walk-up-path",
+      "version": "4.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/walk-up-path"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/which",
+      "name": "which",
+      "version": "6.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/node-which.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/write-file-atomic",
+      "name": "write-file-atomic",
+      "version": "7.0.1",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/write-file-atomic.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm/node_modules/yallist",
+      "name": "yallist",
+      "version": "5.0.0",
+      "license": "BlueOak-1.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/yallist.git"
+      }
+    },
+    {
+      "path": "runtime/node/node_modules/npm",
+      "name": "npm",
+      "version": "11.12.1",
+      "license": "Artistic-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/npm/cli.git"
+      }
+    },
+    {
+      "path": "runtime/setup/node_modules/argparse",
+      "name": "argparse",
+      "version": "2.0.1",
+      "license": "Python-2.0",
+      "repository": "nodeca/argparse"
+    },
+    {
+      "path": "runtime/setup/node_modules/js-yaml",
+      "name": "js-yaml",
+      "version": "4.3.2",
+      "license": "MIT",
+      "repository": "nodeca/js-yaml"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/@hono/node-server",
+      "name": "@hono/node-server",
+      "version": "1.19.17",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/honojs/node-server.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/@modelcontextprotocol/sdk",
+      "name": "@modelcontextprotocol/sdk",
+      "version": "1.29.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/modelcontextprotocol/typescript-sdk.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/accepts",
+      "name": "accepts",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "jshttp/accepts"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/ajv",
+      "name": "ajv",
+      "version": "8.20.0",
+      "license": "MIT",
+      "repository": "ajv-validator/ajv"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/ajv-formats",
+      "name": "ajv-formats",
+      "version": "3.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ajv-validator/ajv-formats.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/body-parser/node_modules/content-type",
+      "name": "content-type",
+      "version": "2.1.0",
+      "license": "MIT",
+      "repository": "jshttp/content-type"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/body-parser",
+      "name": "body-parser",
+      "version": "2.3.0",
+      "license": "MIT",
+      "repository": "expressjs/body-parser"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/bytes",
+      "name": "bytes",
+      "version": "3.1.2",
+      "license": "MIT",
+      "repository": "visionmedia/bytes.js"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/call-bind-apply-helpers",
+      "name": "call-bind-apply-helpers",
+      "version": "1.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/call-bind-apply-helpers.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/call-bound",
+      "name": "call-bound",
+      "version": "1.0.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/call-bound.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/content-disposition",
+      "name": "content-disposition",
+      "version": "1.1.0",
+      "license": "MIT",
+      "repository": "jshttp/content-disposition"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/content-type",
+      "name": "content-type",
+      "version": "1.0.5",
+      "license": "MIT",
+      "repository": "jshttp/content-type"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/cookie",
+      "name": "cookie",
+      "version": "0.7.2",
+      "license": "MIT",
+      "repository": "jshttp/cookie"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/cookie-signature",
+      "name": "cookie-signature",
+      "version": "1.2.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/visionmedia/node-cookie-signature.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/cors",
+      "name": "cors",
+      "version": "2.8.6",
+      "license": "MIT",
+      "repository": "expressjs/cors"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/cross-spawn",
+      "name": "cross-spawn",
+      "version": "7.0.6",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git@github.com:moxystudio/node-cross-spawn.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/debug",
+      "name": "debug",
+      "version": "4.4.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/debug-js/debug.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/depd",
+      "name": "depd",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "dougwilson/nodejs-depd"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/dunder-proto",
+      "name": "dunder-proto",
+      "version": "1.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/es-shims/dunder-proto.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/ee-first",
+      "name": "ee-first",
+      "version": "1.1.1",
+      "license": "MIT",
+      "repository": "jonathanong/ee-first"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/encodeurl",
+      "name": "encodeurl",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "pillarjs/encodeurl"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/es-define-property",
+      "name": "es-define-property",
+      "version": "1.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/es-define-property.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/es-errors",
+      "name": "es-errors",
+      "version": "1.3.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/es-errors.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/es-object-atoms",
+      "name": "es-object-atoms",
+      "version": "1.1.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/es-object-atoms.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/escape-html",
+      "name": "escape-html",
+      "version": "1.0.3",
+      "license": "MIT",
+      "repository": "component/escape-html"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/etag",
+      "name": "etag",
+      "version": "1.8.1",
+      "license": "MIT",
+      "repository": "jshttp/etag"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/eventsource",
+      "name": "eventsource",
+      "version": "3.0.7",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://git@github.com/EventSource/eventsource.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/eventsource-parser",
+      "name": "eventsource-parser",
+      "version": "3.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/rexxars/eventsource-parser.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/express",
+      "name": "express",
+      "version": "5.2.1",
+      "license": "MIT",
+      "repository": "expressjs/express"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/express-rate-limit",
+      "name": "express-rate-limit",
+      "version": "8.5.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/express-rate-limit/express-rate-limit.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/fast-deep-equal",
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/epoberezkin/fast-deep-equal.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/fast-uri/benchmark",
+      "name": "benchmark",
+      "version": "1.0.0",
+      "license": "ISC",
+      "repository": null
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/fast-uri",
+      "name": "fast-uri",
+      "version": "3.1.6",
+      "license": "BSD-3-Clause",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/fastify/fast-uri.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/finalhandler",
+      "name": "finalhandler",
+      "version": "2.1.1",
+      "license": "MIT",
+      "repository": "pillarjs/finalhandler"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/forwarded",
+      "name": "forwarded",
+      "version": "0.2.0",
+      "license": "MIT",
+      "repository": "jshttp/forwarded"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/fresh",
+      "name": "fresh",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "jshttp/fresh"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/function-bind",
+      "name": "function-bind",
+      "version": "1.1.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/Raynos/function-bind.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/get-intrinsic",
+      "name": "get-intrinsic",
+      "version": "1.3.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/get-intrinsic.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/get-proto",
+      "name": "get-proto",
+      "version": "1.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/get-proto.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/gopd",
+      "name": "gopd",
+      "version": "1.2.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/gopd.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/has-symbols",
+      "name": "has-symbols",
+      "version": "1.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/inspect-js/has-symbols.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/hasown",
+      "name": "hasown",
+      "version": "2.0.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/inspect-js/hasOwn.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/hono",
+      "name": "hono",
+      "version": "4.13.5",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/honojs/hono.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/http-errors",
+      "name": "http-errors",
+      "version": "2.0.1",
+      "license": "MIT",
+      "repository": "jshttp/http-errors"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/iconv-lite",
+      "name": "iconv-lite",
+      "version": "0.7.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/pillarjs/iconv-lite.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/inherits",
+      "name": "inherits",
+      "version": "2.0.4",
+      "license": "ISC",
+      "repository": "git://github.com/isaacs/inherits"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/ip-address",
+      "name": "ip-address",
+      "version": "10.7.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/beaugunderson/ip-address.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/ipaddr.js",
+      "name": "ipaddr.js",
+      "version": "1.9.1",
+      "license": "MIT",
+      "repository": "git://github.com/whitequark/ipaddr.js"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/is-promise",
+      "name": "is-promise",
+      "version": "4.0.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/then/is-promise.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/isexe",
+      "name": "isexe",
+      "version": "2.0.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/isaacs/isexe.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/jose",
+      "name": "jose",
+      "version": "6.2.3",
+      "license": "MIT",
+      "repository": "panva/jose"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/json-schema-traverse",
+      "name": "json-schema-traverse",
+      "version": "1.0.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/epoberezkin/json-schema-traverse.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/json-schema-typed",
+      "name": "json-schema-typed",
+      "version": "8.0.2",
+      "license": "BSD-2-Clause",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/RemyRylan/json-schema-typed.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/math-intrinsics",
+      "name": "math-intrinsics",
+      "version": "1.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/es-shims/math-intrinsics.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/media-typer",
+      "name": "media-typer",
+      "version": "1.1.0",
+      "license": "MIT",
+      "repository": "jshttp/media-typer"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/merge-descriptors",
+      "name": "merge-descriptors",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "sindresorhus/merge-descriptors"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/mime-db",
+      "name": "mime-db",
+      "version": "1.54.0",
+      "license": "MIT",
+      "repository": "jshttp/mime-db"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/mime-types",
+      "name": "mime-types",
+      "version": "3.0.2",
+      "license": "MIT",
+      "repository": "jshttp/mime-types"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/ms",
+      "name": "ms",
+      "version": "2.1.3",
+      "license": "MIT",
+      "repository": "vercel/ms"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/negotiator",
+      "name": "negotiator",
+      "version": "1.0.0",
+      "license": "MIT",
+      "repository": "jshttp/negotiator"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/object-assign",
+      "name": "object-assign",
+      "version": "4.1.1",
+      "license": "MIT",
+      "repository": "sindresorhus/object-assign"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/object-inspect",
+      "name": "object-inspect",
+      "version": "1.13.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/inspect-js/object-inspect.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/on-finished",
+      "name": "on-finished",
+      "version": "2.4.1",
+      "license": "MIT",
+      "repository": "jshttp/on-finished"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/once",
+      "name": "once",
+      "version": "1.4.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/isaacs/once"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/parseurl",
+      "name": "parseurl",
+      "version": "1.3.3",
+      "license": "MIT",
+      "repository": "pillarjs/parseurl"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/path-key",
+      "name": "path-key",
+      "version": "3.1.1",
+      "license": "MIT",
+      "repository": "sindresorhus/path-key"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/path-to-regexp",
+      "name": "path-to-regexp",
+      "version": "8.4.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/pillarjs/path-to-regexp.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/pkce-challenge",
+      "name": "pkce-challenge",
+      "version": "5.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/crouchcd/pkce-challenge.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/proxy-addr",
+      "name": "proxy-addr",
+      "version": "2.0.7",
+      "license": "MIT",
+      "repository": "jshttp/proxy-addr"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/qs",
+      "name": "qs",
+      "version": "6.15.2",
+      "license": "BSD-3-Clause",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/ljharb/qs.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/range-parser",
+      "name": "range-parser",
+      "version": "1.2.1",
+      "license": "MIT",
+      "repository": "jshttp/range-parser"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/raw-body",
+      "name": "raw-body",
+      "version": "3.0.2",
+      "license": "MIT",
+      "repository": "stream-utils/raw-body"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/require-from-string",
+      "name": "require-from-string",
+      "version": "2.0.2",
+      "license": "MIT",
+      "repository": "floatdrop/require-from-string"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/router",
+      "name": "router",
+      "version": "2.2.0",
+      "license": "MIT",
+      "repository": "pillarjs/router"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/safer-buffer",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ChALkeR/safer-buffer.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/send",
+      "name": "send",
+      "version": "1.2.1",
+      "license": "MIT",
+      "repository": "pillarjs/send"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/serve-static",
+      "name": "serve-static",
+      "version": "2.2.1",
+      "license": "MIT",
+      "repository": "expressjs/serve-static"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/setprototypeof",
+      "name": "setprototypeof",
+      "version": "1.2.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/wesleytodd/setprototypeof.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/shebang-command",
+      "name": "shebang-command",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "kevva/shebang-command"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/shebang-regex",
+      "name": "shebang-regex",
+      "version": "3.0.0",
+      "license": "MIT",
+      "repository": "sindresorhus/shebang-regex"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/side-channel",
+      "name": "side-channel",
+      "version": "1.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/side-channel.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/side-channel-list",
+      "name": "side-channel-list",
+      "version": "1.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/side-channel-list.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/side-channel-map",
+      "name": "side-channel-map",
+      "version": "1.0.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/side-channel-map.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/side-channel-weakmap",
+      "name": "side-channel-weakmap",
+      "version": "1.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ljharb/side-channel-weakmap.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/statuses",
+      "name": "statuses",
+      "version": "2.0.2",
+      "license": "MIT",
+      "repository": "jshttp/statuses"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/toidentifier",
+      "name": "toidentifier",
+      "version": "1.0.1",
+      "license": "MIT",
+      "repository": "component/toidentifier"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/type-is/node_modules/content-type",
+      "name": "content-type",
+      "version": "2.0.0",
+      "license": "MIT",
+      "repository": "jshttp/content-type"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/type-is",
+      "name": "type-is",
+      "version": "2.1.0",
+      "license": "MIT",
+      "repository": "jshttp/type-is"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/unpipe",
+      "name": "unpipe",
+      "version": "1.0.0",
+      "license": "MIT",
+      "repository": "stream-utils/unpipe"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/vary",
+      "name": "vary",
+      "version": "1.1.2",
+      "license": "MIT",
+      "repository": "jshttp/vary"
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/which",
+      "name": "which",
+      "version": "2.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/isaacs/node-which.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/wrappy",
+      "name": "wrappy",
+      "version": "1.0.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/npm/wrappy"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/zod",
+      "name": "zod",
+      "version": "4.4.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/colinhacks/zod.git"
+      }
+    },
+    {
+      "path": "runtime/unity-mcp/node_modules/zod-to-json-schema",
+      "name": "zod-to-json-schema",
+      "version": "3.25.2",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/StefanTerdell/zod-to-json-schema"
+      }
+    },
+    {
+      "path": "dependencies/UnityMCP-VRC/UnityMCPPlugin",
+      "name": "com.claude.unity-mcp",
+      "version": "1.0.0",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "path": "dependencies/com.unity.nuget.newtonsoft-json",
+      "name": "com.unity.nuget.newtonsoft-json",
+      "version": "3.2.1",
+      "license": "Unity Companion License and bundled third-party notices"
+    }
+  ]
+}

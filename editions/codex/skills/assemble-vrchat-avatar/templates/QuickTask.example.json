@@ -1,0 +1,26 @@
+{
+  "format": "aa-quicktask-v1",
+  "task_id": "replace-with-current-task-id",
+  "project_path": "replace-with-verified-open-project",
+  "avatar": "replace-with-verified-target",
+  "task_revision": 0,
+  "delivery": "local",
+  "operation": "edit",
+  "optimization": {"mode": "auto", "textures": "preserve"},
+  "performance_optimization": null,
+  "requested_method": null,
+  "explicit_requirements": [],
+  "constraints": {},
+  "resources": [
+    {
+      "id": "selected_item",
+      "kind": "outfit",
+      "region": "full",
+      "state": "not_started"
+    }
+  ],
+  "candidate": null,
+  "next_action": "resolve the actual selected resource from current user request",
+  "known_issues": [],
+  "artifact_paths": []
+}

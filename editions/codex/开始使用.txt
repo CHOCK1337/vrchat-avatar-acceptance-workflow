@@ -1,0 +1,13 @@
+Avatar Workbench Codex 完整包 0.1.0
+
+完整解压 -> 保存并关闭目标 Unity 工程 -> 双击 Setup.cmd -> 输入工程目录。
+再打开 Unity 等待编译 -> 双击 Doctor.cmd -> 在 Codex 打开同一工程。
+把 examples/FIRST_TASK.md 的提示词发给该工程中的 Codex 聊天。
+
+完整说明：START_HERE.md
+用户手册：docs/USER_GUIDE.md
+Agent 手册：docs/AGENT_GUIDE.md
+操作案例：docs/EXAMPLES.md
+排错：docs/TROUBLESHOOTING.md
+
+保留解压文件夹，不要安装后删除。包内不包含 Unity、Codex、账号、付费模型或 VRChat SDK。

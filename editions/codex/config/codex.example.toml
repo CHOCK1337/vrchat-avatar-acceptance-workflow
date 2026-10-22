@@ -1,0 +1,14 @@
+# Example only. Setup.cmd generates real absolute paths for the selected project.
+[mcp_servers.avatarWorkbench]
+command = 'C:\Tools\AvatarWorkbench-Codex\runtime\python\python.exe'
+args = ['C:\Tools\AvatarWorkbench-Codex\adapter\workbench_mcp.py', '--config', 'C:\VRCProjects\MyAvatar\.avatar-workbench-codex\connection.json']
+cwd = 'C:\Tools\AvatarWorkbench-Codex'
+startup_timeout_sec = 30
+tool_timeout_sec = 300
+
+[mcp_servers.unityMCP]
+command = 'C:\Tools\AvatarWorkbench-Codex\runtime\node\node.exe'
+args = ['C:\Tools\AvatarWorkbench-Codex\runtime\unity-mcp\build\index.js']
+cwd = 'C:\Tools\AvatarWorkbench-Codex\runtime\unity-mcp\build'
+startup_timeout_sec = 30
+tool_timeout_sec = 300

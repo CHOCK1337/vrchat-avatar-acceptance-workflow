@@ -1,0 +1,29 @@
+{
+  "mode": "routine",
+  "platform_default": "PC",
+  "gui": false,
+  "html_default": false,
+  "model": "inherit_current_session",
+  "collaboration": "off_unless_requested",
+  "max_live_unity_writers": 1,
+  "normal_backups": "only touched assets/references; no project copy",
+  "new_task_delivery_default": "local_unless_this_task_explicitly_authorizes_upload",
+  "baseline_build_required": false,
+  "full_metric_attribution_required": false,
+  "fixed_texture_resolution": null,
+  "fixed_mb_limit": null,
+  "ordinary_task_tests": "affected visible result and real controls",
+  "repair_budget": "one diagnosed correction, one affected recheck per defect across all models",
+  "learning": "existing module only on relevant correction; never a prerequisite",
+  "final_optimization": {
+    "assembly": "conservative_once_before_final_candidate",
+    "ordinary_edit": "only_if_requested",
+    "aao": "reuse_installed_no_upgrade",
+    "textures": "preserve_unless_selected_quality_checked_copies",
+    "fixed_texture_resolution": null,
+    "baseline_build_required": false,
+    "final_sdk_build": "once_for_full_delivery_or_optimization_unless_task_prohibits",
+    "build_and_test": false,
+    "upload_permission_changed": false
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "items": [
+    {
+      "path": "REPLACE_WITH_EXISTING_ORIGINAL_MATERIAL_IMAGE",
+      "resource": "REPLACE_WITH_RESOURCE_NAME",
+      "state": "REPLACE_WITH_ACTUALLY_OBSERVED_INPUT_STATE",
+      "capture_kind": "unknown",
+      "candidate": null
+    }
+  ]
+}

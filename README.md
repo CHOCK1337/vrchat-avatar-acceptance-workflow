@@ -4,6 +4,21 @@
 
 当前版本：`0.3.0-rc1`
 
+## Unity 图形工作台与完整安装包
+
+DSH 与 Codex 版在本仓库分别维护源码目录和 Release。需要直接安装的用户，请下载 Release 中的 **Full Windows x64 ZIP**，完整解压后按包内 `START_HERE.md` 运行 `Verify-Package.cmd`、`Setup.cmd` 和 `Doctor.cmd`。
+
+| 使用宿主 | 源码与文档 | 完整安装包 |
+|---|---|---|
+| DeepSeek Harness（DSH） | [`editions/dsh`](editions/dsh) | [DSH v0.3.0](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.0) |
+| Codex | [`editions/codex`](editions/codex) | [Codex v0.1.0](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.0) |
+
+安装包包含 Unity 工作台、两个 MCP、便携 Python/Node、配置模板、用户手册、Agent 手册和操作案例；GitHub 自动生成的 Source code ZIP 不含便携运行环境。更多说明见 [`editions/README.md`](editions/README.md)。
+
+DSH 通过“保存给 DSH”保存任务，首次接手需将指令粘贴到 DSH 会话；Codex 直送需绑定真实桌面会话。安装或连接成功之后，仍需在自己的工程内验收实际换装、腿部和动态。
+
+核心验收工作流继续使用下文的规范、脚本和测试。完整工作台随附的 UnityMCP-VRC 受 **CC BY-NC 4.0 非商业许可**约束，各版第三方说明随源码和安装包保留。
+
 ## 解决的问题
 
 - 在导入前一次性预检全部衣服、插件、依赖、菜单入口和性能影响。
@@ -51,6 +66,6 @@ python scripts/workflow.py -h
 
 ## 数据与版权边界
 
-仓库不包含模型、衣服、纹理、图片、视频、Unity 工程、账号凭据或付费素材。作者源文件应保持只读；修改只落到任务生成的副本或明确的 revision 中。
+仓库不包含用户的模型、衣服、纹理、截图、视频、Unity 工程、账号凭据或付费素材。作者源文件应保持只读；修改只落到任务生成的副本或明确的 revision 中。
 
-第三方设计来源和许可见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。本仓库自身采用 MIT License。
+第三方设计来源和许可见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。核心工作流与本项目自有代码采用 MIT License；`editions/` 中随附第三方组件保留各自许可，完整工作台分发包须遵守对应非商业等条件。

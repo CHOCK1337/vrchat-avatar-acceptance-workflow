@@ -1,0 +1,30 @@
+# Documentation placeholders only. Setup generates actual local paths.
+- insert:
+  - id: avatar-workbench-skill
+    name: '@deepseek-ai/dsh-skill-filesystem'
+    config:
+      providerName: avatar-workbench
+      includeDefaultRoots: false
+      customSkillDirs: ['${BUNDLE_ROOT}/skills']
+      watch: false
+  - id: avatar-workbench-mcp
+    name: '@deepseek-ai/dsh-mcp-client'
+    config:
+      serverName: avatarWorkbench
+      transport: stdio
+      command: '${BUNDLE_ROOT}/runtime/python/python.exe'
+      args: ['${BUNDLE_ROOT}/adapter/workbench_mcp.py', '--config', '${BUNDLE_ROOT}/local/connection.json']
+      cwd: '${BUNDLE_ROOT}'
+      failOnStartupError: true
+      reconnect: {enabled: false}
+  - id: avatar-workbench-unity-mcp
+    name: '@deepseek-ai/dsh-mcp-client'
+    config:
+      serverName: unityMCP
+      transport: stdio
+      command: '${BUNDLE_ROOT}/runtime/node/node.exe'
+      args: ['${BUNDLE_ROOT}/runtime/unity-mcp/build/index.js']
+      cwd: '${BUNDLE_ROOT}/runtime/unity-mcp/build'
+      toolCallTimeoutMs: 300000
+      failOnStartupError: true
+      reconnect: {enabled: false}

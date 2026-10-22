@@ -1,0 +1,8 @@
+{
+  "job_id": "read-author-source-01",
+  "kind": "facts",
+  "resource_ids": ["REPLACE_WITH_EXISTING_RESOURCE_ID"],
+  "objective": "仅从给定作者说明摘录安装方式和支持的版本，不操作Unity。",
+  "constraints": ["保留原始工作流安装方式、菜单与验收规则；来源不确定就如实报告"],
+  "inputs": ["REPLACE_WITH_ONE_REAL_LOCAL_SNAPSHOT_PATH"]
+}

@@ -1,0 +1,11 @@
+interface:
+  display_name: "VRChat 轻量改模"
+  short_description: "复用现有改模流程；成品交付前保守优化并实测占用，普通编辑只检查受影响结果。"
+  default_prompt: "使用 $assemble-vrchat-avatar，复用当前 Unity 工程、作者工具及明确要求；完整成品交付前保守优化并实测，普通编辑保持范围，不开发 GUI、不跑发行审计、不做整工程备份。"
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "unityMCP"
+      description: "现有本地 UnityMCP-VRC；需独立完成安装与实例核验"

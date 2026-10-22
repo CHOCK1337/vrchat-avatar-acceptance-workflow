@@ -1,0 +1,9 @@
+{
+  "mode": "collaboration",
+  "main": {"model": null, "effort": null},
+  "worker": {"model": null, "effort": null},
+  "review": "independent",
+  "reviewer": {"model": null, "effort": null},
+  "html_preview": true,
+  "consent": null
+}

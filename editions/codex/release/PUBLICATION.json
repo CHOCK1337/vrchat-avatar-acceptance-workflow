@@ -1,0 +1,31 @@
+{
+  "edition": "Codex",
+  "tag": "codex-v0.1.0",
+  "repo_url": "https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow",
+  "source": "Exact source snapshot of the verified full ZIP; README download notice and repository metadata added.",
+  "full_package": {
+    "file": "AvatarWorkbench_Codex_Full_v0.1.0_Win64_20261021.zip",
+    "sha256": "09222d95aa005cd6de51f18d4cbd2dc0201a3e01918e9681e0ac289b914648ce",
+    "bytes": 56972874,
+    "manifest_files": 5730
+  },
+  "source_files_copied": 287,
+  "secret_pattern_findings": 0,
+  "exclusions": [
+    "portable runtime binaries and installed node_modules from git",
+    "private local configs, credentials, tasks, feedback, and avatar assets from both Git and clean installation ZIP"
+  ],
+  "evidence_boundary": "Package integrity and isolated tests do not certify every avatar or model service.",
+  "fresh_verification": {
+    "date": "2026-10-22",
+    "isolated_tests": 42,
+    "result": "PASS",
+    "command": "runtime/python/python.exe -X utf8 -B -m unittest discover -s verification -p \"test_*.py\"",
+    "package_crc_and_manifest_hashes": "PASS",
+    "tests_run_from": "Extracted corresponding full distribution, with its bundled runtime",
+    "model_inference": "NOT_RUN",
+    "avatar_edit_build_upload": "NOT_RUN"
+  },
+  "edition_directory": "editions/codex",
+  "publication_scope": "Public source, installer, documentation and full package plus checksum; private screenshots and avatar source assets are not included."
+}

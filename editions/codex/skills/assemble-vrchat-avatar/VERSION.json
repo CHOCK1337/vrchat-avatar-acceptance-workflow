@@ -1,0 +1,10 @@
+{
+  "package": "vrchat-workflow-streamlined",
+  "version": "0.3.2-local5-codex1",
+  "date": "2026-10-21",
+  "base": "installed 0.3.1-local1 with additive conservative final optimization",
+  "live_upstream_commit": null,
+  "status": "Codex project integration; package tests are not avatar visual acceptance",
+  "git_commit": false,
+  "git_push": false
+}

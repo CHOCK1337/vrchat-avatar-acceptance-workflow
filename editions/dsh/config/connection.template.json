@@ -1,0 +1,11 @@
+{
+  "project": "${UNITY_PROJECT}",
+  "binding": "${WORKBENCH_BINDING}",
+  "catalog_file": "${WORKBENCH_EDITOR_DIRECTORY}/sources.json",
+  "storage_root": "${WORKBENCH_DATA}",
+  "unity_mcp": "${BUNDLE_ROOT}/runtime/unity-mcp/build/index.js",
+  "node": "${BUNDLE_ROOT}/runtime/node/node.exe",
+  "python": "${BUNDLE_ROOT}/runtime/python/python.exe",
+  "dsh_home": "${USER_DSH_HOME}",
+  "profile": "desktop"
+}
