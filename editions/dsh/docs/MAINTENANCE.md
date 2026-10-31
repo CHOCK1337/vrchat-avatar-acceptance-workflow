@@ -32,7 +32,7 @@
 
 ```powershell
 python .\tools\prepare_runtime.py
-python .\pack.py --version AvatarWorkbench_DSH_Full_v0.3.0_Win64_20261020 --full
+python .\pack.py --version AvatarWorkbench_DSH_Full_v0.3.5_Win64_20261101 --full
 ```
 
 分发器使用允许清单，排除 local、个人 profile、任务/反馈、截图、模型和 Unity 缓存。ZIP 同时生成 manifest 与 `.sha256`，拒绝覆盖已有同名产物。重新测试后再发新版本，不把用户安装后目录直接压缩发布。

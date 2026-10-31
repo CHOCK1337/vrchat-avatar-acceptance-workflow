@@ -62,7 +62,7 @@ def main():
     out = ROOT.parent / 'deliverables'
     out.mkdir(exist_ok=True)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version', default='AvatarWorkbench_Codex_Full_v0.1.0_Win64_20261021')
+    parser.add_argument('--version', default='AvatarWorkbench_Codex_Full_v0.1.6_Win64_20261101')
     parser.add_argument('--full',action='store_true',help='Include pinned portable Win64 runtimes and compiled MCP')
     args = parser.parse_args()
     for required in ['README.md','START_HERE.md','Setup.cmd','Setup.ps1','Doctor.cmd','Rollback.cmd',
@@ -78,7 +78,7 @@ def main():
         raise ValueError('Clean export already exists; inspect before replacing.')
     clean.mkdir()
     manifest = {'format': 'avatar-workbench-codex-full-v1' if args.full else 'avatar-workbench-codex-source-v1',
-                'created': datetime.now().astimezone().isoformat(timespec='seconds'), 'distribution_version':'0.1.0',
+                'created': datetime.now().astimezone().isoformat(timespec='seconds'), 'distribution_version':'0.1.6',
                 'workflow': '0.3.2-local5-codex1', 'workbench': '0.2.16-codex', 'adapter': '0.2.2-codex',
                 'platform':'win32-x64' if args.full else 'source', 'codex_desktop_included':False,
                 'model_assembly_acceptance':'NOT_RUN: package connection tests do not certify avatar appearance',

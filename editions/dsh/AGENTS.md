@@ -1,6 +1,6 @@
 # Avatar Workbench 的 DSH 执行入口 — 0.3.2-local5-dsh
 
-分发包 0.3.0：首次安装/配置先读 `docs/USER_GUIDE.md`、`docs/MCP_AND_CONFIG.md`；实际改模只需先读本文件、`skills/assemble-vrchat-avatar/SKILL.md` 和 `DEEPSEEK_RULES.md`（核心页）；`docs/AGENT_GUIDE.md` 和 `references/` 下的细则遇到对应情况再读，不预读全部。只做工具安装、打包或文档时不执行下面的 Avatar 修改流程，不把接入授权扩成模型修改。
+分发包 0.3.5：首次安装/配置先读 `docs/USER_GUIDE.md`、`docs/MCP_AND_CONFIG.md`；实际改模只需先读本文件、`skills/assemble-vrchat-avatar/SKILL.md` 和 `DEEPSEEK_RULES.md`（核心页）；`docs/AGENT_GUIDE.md` 和 `references/` 下的细则遇到对应情况再读，不预读全部。只做工具安装、打包或文档时不执行下面的 Avatar 修改流程，不把接入授权扩成模型修改。
 
 沿用原改模方法、作者功能和用户约束；本版本只补 DSH 路由和可验证的检查，不换成完整审计或另一套改模算法。
 

@@ -1,4 +1,4 @@
-Avatar Workbench Codex 完整包 0.1.0
+Avatar Workbench Codex 完整包 0.1.6
 
 完整解压 -> 保存并关闭目标 Unity 工程 -> 双击 Setup.cmd -> 输入工程目录。
 再打开 Unity 等待编译 -> 双击 Doctor.cmd -> 在 Codex 打开同一工程。

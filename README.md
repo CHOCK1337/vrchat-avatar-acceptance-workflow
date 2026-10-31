@@ -10,8 +10,8 @@ DSH 与 Codex 版在本仓库分别维护源码目录和 Release。需要直接�
 
 | 使用宿主 | 源码与文档 | 完整安装包 |
 |---|---|---|
-| DeepSeek Harness（DSH） | [`editions/dsh`](editions/dsh) | [DSH v0.3.0](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.0) |
-| Codex | [`editions/codex`](editions/codex) | [Codex v0.1.0](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.0) |
+| DeepSeek Harness（DSH） | [`editions/dsh`](editions/dsh) | [DSH v0.3.5](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.5) |
+| Codex | [`editions/codex`](editions/codex) | [Codex v0.1.6](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.6) |
 
 安装包包含 Unity 工作台、两个 MCP、便携 Python/Node、配置模板、用户手册、Agent 手册和操作案例；GitHub 自动生成的 Source code ZIP 不含便携运行环境。更多说明见 [`editions/README.md`](editions/README.md)。
 
