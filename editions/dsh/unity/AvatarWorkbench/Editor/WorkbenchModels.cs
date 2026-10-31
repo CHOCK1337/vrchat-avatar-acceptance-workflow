@@ -35,6 +35,15 @@ namespace AvatarWorkbench
                 return File.Exists(established) ? established : configured;
             }
         }
+        // The Skill the installer chose (it may reuse an existing one); handed to Codex by exact path.
+        internal static string CodexSkillPath
+        {
+            get
+            {
+                string path = (string)Read()["skill_path"];
+                return string.IsNullOrWhiteSpace(path) ? DefaultSkill : path;
+            }
+        }
         // DSH uses its explicitly configured package Skill, independently of Codex/API settings.
         internal static string DshSkillPath
         {
@@ -47,8 +56,23 @@ namespace AvatarWorkbench
                 return "";
             }
         }
-        internal static JObject Read() => File.Exists(SettingsFile) ? WorkbenchData.Read(SettingsFile) : new JObject {
-            ["format"] = "avatar-workbench-model-services-v1", ["active"] = "codex", ["vision"] = "", ["skill_path"] = DefaultSkill, ["dsh_skill_path"] = "", ["profiles"] = new JArray() };
+        static string readPath;
+        static DateTime readStamp;
+        static long readLength;
+        static JObject readRecord;
+        internal static JObject Read()
+        {
+            string path = SettingsFile;
+            var info = new FileInfo(path);
+            if (!info.Exists) return new JObject {
+                ["format"] = "avatar-workbench-model-services-v1", ["active"] = "codex", ["vision"] = "", ["skill_path"] = DefaultSkill, ["dsh_skill_path"] = "", ["profiles"] = new JArray() };
+            if (path != readPath || info.LastWriteTimeUtc != readStamp || info.Length != readLength || readRecord == null)
+            {
+                readRecord = WorkbenchData.Read(path);
+                readPath = path; readStamp = info.LastWriteTimeUtc; readLength = info.Length;
+            }
+            return (JObject)readRecord.DeepClone();
+        }
         internal static List<JObject> Profiles() => (Read()["profiles"] as JArray ?? new JArray()).OfType<JObject>().ToList();
         internal static JObject Find(string id) => Profiles().FirstOrDefault(x => (string)x["id"] == id);
         internal static string Active => (string)Read()["active"] ?? "codex";
@@ -96,11 +120,11 @@ namespace AvatarWorkbench
             return WorkbenchData.Text(route?["name"], "未知宿主");
         }
         internal static string ReplyPrefix(JObject route) => RouteName(route) + "：";
-        internal static string SendLabel(string id) => id == DshHost ? "保存给 DSH" : id == CodexHost ? "发送给 Codex" : "发送给 API";
+        internal static string SendLabel(string id) => id == DshHost ? "发送给 DSH" : id == CodexHost ? "发送给 Codex" : "发送给 API";
         internal static string RetryLabel(JObject route)
         {
             string type = (string)route?["type"];
-            return type == "api" ? "重试此 API 请求" : type == DshHost ? "重新保存给 DSH" : "重新发送给 Codex";
+            return type == "api" ? "重试此 API 请求" : type == DshHost ? "重新发送给 DSH" : "重新发送给 Codex";
         }
         internal static void Select(string id, bool vision = false)
         {

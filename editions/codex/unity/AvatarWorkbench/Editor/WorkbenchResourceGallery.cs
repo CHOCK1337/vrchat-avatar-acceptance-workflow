@@ -57,7 +57,7 @@ namespace AvatarWorkbench
             if (!string.IsNullOrEmpty(snapshot)) items.AddRange(JArray.Parse(snapshot).OfType<JObject>().Select(x => new ResourceCard { id = (string)x["id"], name = (string)x["name"], path = (string)x["path"], thumbnail = (string)x["thumbnail"], kind = (string)x["kind"], state = (string)x["state"] }));
             if (!string.IsNullOrEmpty(selected)) picked.UnionWith(JArray.Parse(selected).Values<string>());
             var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-gallery-window");
-            var title = new Label("素材库"); title.AddToClassList("aw-window-title"); title.style.fontSize = 20; title.style.flexShrink = 0; root.Add(title);
+            var title = new Label("素材库"); title.AddToClassList("aw-window-title"); title.style.flexShrink = 0; root.Add(title);
             hint = new Label("卡片只选择和查看。Prefab 可旋转、缩放并对比；unitypackage 未导入时只显示已有封面，不能假装已经穿上角色。"); hint.style.whiteSpace = WhiteSpace.Normal; hint.style.flexShrink = 0; root.Add(hint);
             var filter = new TextField("筛选素材") { name = "gallery-search" }; root.Add(filter);
             grid = new ListView { itemsSource = rows, fixedItemHeight = 262, virtualizationMethod = CollectionVirtualizationMethod.FixedHeight, selectionType = SelectionType.None, name = "local-resource-grid" };
@@ -72,7 +72,7 @@ namespace AvatarWorkbench
                     int n = index * columns + col; if (n >= items.Count) break; var item = items[n];
                     var card = new VisualElement(); card.style.flexGrow = 1; card.style.flexBasis = 0; card.style.minWidth = 0; card.style.marginRight = 7; card.AddToClassList("aw-asset-tile"); card.EnableInClassList("aw-asset-picked", picked.Contains(item.id));
                     var img = new Image { name = "resource-cover", scaleMode = ScaleMode.ScaleToFit, image = Cover(item), userData = item }; img.style.height = Mathf.Max(40, grid.fixedItemHeight - 84); img.style.flexShrink = 0; img.AddToClassList("aw-gallery-cover"); card.Add(img);
-                    var loader = new Label(img.image ? "" : IsProjectAsset(item.path) && Path.GetExtension(item.path).Equals(".prefab", StringComparison.OrdinalIgnoreCase) ? "◌ 正在读取预览…" : "没有已有封面") { name = "cover-loading", enableRichText = false }; loader.style.fontSize = 10; card.Add(loader);
+                    var loader = new Label(img.image ? "" : IsProjectAsset(item.path) && Path.GetExtension(item.path).Equals(".prefab", StringComparison.OrdinalIgnoreCase) ? "◌ 正在读取预览…" : "没有已有封面") { name = "cover-loading", enableRichText = false }; loader.style.fontSize = 11; card.Add(loader);
                     var caption = new Toggle(WorkbenchUiRules.Short(item.name, 25)) { value = picked.Contains(item.id), name = "pick-" + item.id }; caption.AddToClassList("aw-gallery-pick"); caption.tooltip = item.name + "\n" + item.path;
                     caption.RegisterValueChangedCallback(e => { if (e.newValue) picked.Add(item.id); else picked.Remove(item.id); selected = new JArray(picked).ToString(); card.EnableInClassList("aw-asset-picked", e.newValue); UpdateCount(); }); card.Add(caption);
                     var state = new Label(WorkbenchData.StateName(item.state)) { enableRichText = false }; state.style.fontSize = 11; card.Add(state);

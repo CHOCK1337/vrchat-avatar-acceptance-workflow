@@ -171,8 +171,12 @@ class WorkflowTests(unittest.TestCase):
     def test_real_same_process_ack_preserves_candidate(self):
         self.select();self.read()
         self.assertEqual(self.candidate,value(self.ack())["candidate"])
+        with self.assertRaisesRegex(ValueError,"FINISH_CHECK_REQUIRED"):self.ack("addressed")
+        # The Unity hand-in check writes this receipt next to the inbox before a reply.
+        (self.bridge.space/"finish-check.json").write_text(json.dumps({"checked_at":"2999-01-01T00:00:00Z","passed":True,"errors":[],"warnings":[]}),encoding="utf-8")
         addressed=value(self.ack("addressed"))
         self.assertEqual(self.candidate,addressed["candidate"])
+        self.assertEqual("PASS",addressed["finish_check"]["status"])
         self.assertNotIn("visual_checked",addressed)
 
     def test_explicit_storage_root_uses_its_own_namespace(self):

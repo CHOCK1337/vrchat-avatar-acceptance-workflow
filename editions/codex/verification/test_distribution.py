@@ -90,9 +90,21 @@ class DistributionTests(unittest.TestCase):
         with self.assertRaises(ValueError) as error: self.plan()
         self.assertNotIn('secret-example',str(error.exception))
         self.assertIn('INVALID_TOML',str(error.exception))
-    def test_conflicting_global_mcp_refused(self):
+    def test_other_global_unity_mcp_kept_and_ours_added_beside_it(self):
         path=self.profile/'config.toml'
-        before=b'[mcp_servers.unityMCP]\ncommand="unknown"\nargs=[]\n'
+        for before in (b'[mcp_servers.unityMCP]\ncommand="unknown"\nargs=[]\n', b'[mcp_servers.unityMCP]\nurl="http://127.0.0.1:8080/mcp"\n'):
+            with self.subTest(existing=before):
+                self.put(path,before)
+                report=self.apply()
+                text=(self.project/'.codex/config.toml').read_text()
+                self.assertIn('[mcp_servers.unityMCPVRC]',text)
+                self.assertNotIn('[mcp_servers.unityMCP]',text)
+                self.assertEqual(before,path.read_bytes())
+                self.assertIn(self.apply()['status'],('UNCHANGED','INSTALLED_NOT_UNITY_VERIFIED'))
+                self.assertEqual('PASS',check(report['config'])['status'])
+    def test_conflicting_global_workbench_mcp_refused(self):
+        path=self.profile/'config.toml'
+        before=b'[mcp_servers.avatarWorkbench]\ncommand="unknown"\nargs=["workbench_mcp.py"]\n'
         self.put(path,before)
         with self.assertRaisesRegex(ValueError,'MCP_CONFLICT'): self.plan()
         self.assertEqual(before,path.read_bytes())
@@ -119,6 +131,22 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(str(skill),report['skill'])
         self.assertFalse((self.project/'.agents/skills/assemble-vrchat-avatar/SKILL.md').exists())
         self.assertEqual(content,skill.read_bytes())
+    def test_older_global_skill_gaps_reported_not_patched(self):
+        # 2026-10-31: the reused global Skill predated finish-check.md, and nothing said so.
+        skill=self.profile/'skills/assemble-vrchat-avatar/SKILL.md'
+        content=b'---\nname: assemble-vrchat-avatar\n---\nOlder workflow; references/optimization.md\n'
+        self.put(skill,content)
+        self.put(skill.parent/'references/optimization.md',b'old reference')
+        self.put(skill.parent/'scripts/optimization.py',b'# old helper')
+        self.put(skill.parent/'VERSION.json',b'{"version": "0.3.2-local1"}')
+        before={p:p.read_bytes() for p in skill.parent.rglob('*') if p.is_file()}
+        report=self.apply()
+        self.assertEqual('EXISTING_REUSED',report['skill_mode'])
+        self.assertEqual('0.3.2-local1',report['skill_version'])
+        self.assertIn('references/finish-check.md',report['skill_missing_files'])
+        self.assertIn('Assets/AvatarWorkbench/Tools/finish-check.md',report['skill_note'])
+        self.assertTrue((self.project/'Assets/AvatarWorkbench/Tools/finish-check.md').is_file())
+        self.assertEqual(before,{p:p.read_bytes() for p in skill.parent.rglob('*') if p.is_file()})
     def test_managed_block_user_edit_refused(self):
         self.apply()
         path=self.project/'.codex/config.toml'

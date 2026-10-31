@@ -210,7 +210,7 @@ namespace AvatarWorkbench
         }
         void UseSceneTarget()
         {
-            if (IsBusy()) { Toast("执行宿主正在修改现场，先保留当前画面。"); return; }
+            if (IsBusy()) { Toast("AI 正在修改模型，先保留当前画面。"); return; }
             followScene = true; sceneBindingPending = true; BindSceneIfAvailable(); ClearHistory();
             LoadPreview(); SaveState(); UpdateLabels();
             if (!target) Toast(sceneBindingNotice);

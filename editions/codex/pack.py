@@ -16,7 +16,7 @@ ROOT_FILES = {'README.md','START_HERE.md','开始使用.txt','AGENTS.md','CODEX_
               'THIRD_PARTY_NOTICES.md','MIGRATION.md','PREREQUISITES.md',
               'Setup.cmd','Setup.ps1','Doctor.cmd','Rollback.cmd','Rollback.ps1',
               'Verify-Package.cmd','pack.py'}
-CHECK_FILES = {'test_workflow.py','test_notifications.py','test_distribution.py','DISTRIBUTION_VERIFIED.md'}
+CHECK_FILES = {'test_workflow.py','test_notifications.py','test_distribution.py','test_version.py','test_finish_gate.py','DISTRIBUTION_VERIFIED.md'}
 SKIP_DIRS = {'local', 'runtime', 'node_modules', '__pycache__', '.git', 'Library', 'Temp', 'tests'}
 SKIP_FILES = {'LOCAL_UPDATE.json', 'MANIFEST.sha256', 'LOCAL_CONTEXT.md', 'MANIFEST.json'}
 
@@ -79,7 +79,7 @@ def main():
     clean.mkdir()
     manifest = {'format': 'avatar-workbench-codex-full-v1' if args.full else 'avatar-workbench-codex-source-v1',
                 'created': datetime.now().astimezone().isoformat(timespec='seconds'), 'distribution_version':'0.1.0',
-                'workflow': '0.3.2-local5-codex1', 'workbench': '0.2.13-codex', 'adapter': '0.2.2-codex',
+                'workflow': '0.3.2-local5-codex1', 'workbench': '0.2.16-codex', 'adapter': '0.2.2-codex',
                 'platform':'win32-x64' if args.full else 'source', 'codex_desktop_included':False,
                 'model_assembly_acceptance':'NOT_RUN: package connection tests do not certify avatar appearance',
                 'excluded': ['private local configuration', 'credentials', 'sessions', 'task and feedback data',

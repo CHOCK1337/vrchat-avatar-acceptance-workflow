@@ -23,7 +23,7 @@ namespace AvatarWorkbench
         public void CreateGUI()
         {
             Release(); var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-screenshots-window");
-            var title = new Label("截图记录"); title.AddToClassList("aw-window-title"); title.style.fontSize = 20; root.Add(title);
+            var title = new Label("截图记录"); title.AddToClassList("aw-window-title"); root.Add(title);
             var note = new Label("这些是已有截图。已回应只表示收到答复，不表示修复通过；打开旧图仍保留原候选身份。"); note.style.whiteSpace = WhiteSpace.Normal; root.Add(note);
             var items = string.IsNullOrEmpty(recordJson) ? new List<JObject>() : JArray.Parse(recordJson).OfType<JObject>().ToList();
             if (items.Count == 0) { root.Add(new Label("还没有截图；先在工作台冻结真实画面，或打开已有截图清单。")); return; }

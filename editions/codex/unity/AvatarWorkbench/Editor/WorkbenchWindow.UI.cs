@@ -35,15 +35,16 @@ namespace AvatarWorkbench
             var brand = Row(); brand.AddToClassList("aw-brand");
             var mark = new Label("AW"); mark.AddToClassList("aw-brand-mark"); brand.Add(mark);
             var brandText = new VisualElement(); var title = new Label("改模工作台"); title.AddToClassList("aw-title"); brandText.Add(title);
-            var english = new Label("AVATAR WORKBENCH · " + WorkbenchWorkflow.PluginVersion); english.AddToClassList("aw-brand-caption"); brandText.Add(english); brand.Add(brandText); header.Add(brand);
-            targetField = new ObjectField("目标角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target };
+            var version = new Label("v" + WorkbenchWorkflow.PluginVersion) { tooltip = "Avatar Workbench " + WorkbenchWorkflow.PluginVersion }; version.AddToClassList("aw-brand-caption"); brandText.Add(version); brand.Add(brandText); header.Add(brand);
+            targetField = new ObjectField("角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target };
             targetField.AddToClassList("aw-target"); targetField.RegisterValueChangedCallback(e => { if (!restoring) SetTarget(e.newValue as GameObject); }); header.Add(targetField);
-            var choose = MakeButton("使用选中角色", UseSelection, "use-selection"); choose.tooltip = "在 Hierarchy 选中角色根物件后点击；也可直接拖到左侧目标角色栏。"; header.Add(choose);
+            var choose = MakeButton("使用选中角色", UseSelection, "use-selection"); choose.tooltip = "在 Hierarchy 选中角色根物件后点击；也可直接拖到左侧角色栏。"; header.Add(choose);
             refreshButton = MakeButton("刷新画面", RefreshAll, "refresh"); refreshButton.tooltip = "重新读取当前角色和任务，不构建或安装素材。"; header.Add(refreshButton);
             header.Add(MakeButton("更多 ▾", ShowMore, "more-menu")); root.Add(header);
             var shell = Row(); shell.AddToClassList("aw-shell"); shell.style.alignItems = Align.Stretch;
             navigationRail = BuildNavigation(); shell.Add(navigationRail);
             workspaceColumn = new VisualElement(); workspaceColumn.AddToClassList("aw-workspace-column"); shell.Add(workspaceColumn);
+            workspaceColumn.Add(BuildStepGuide());
             bodyArea = Row(); bodyArea.AddToClassList("aw-body"); bodyArea.style.alignItems = Align.Stretch;
             materialPanel = BuildMaterials(); bodyArea.Add(materialPanel);
             previewPanel = BuildPreviewPanel(); bodyArea.Add(previewPanel);
@@ -80,10 +81,10 @@ namespace AvatarWorkbench
             var heading = Row(); heading.AddToClassList("aw-preview-heading");
             previewLabel = new Label { enableRichText = false }; previewLabel.AddToClassList("aw-source-badge"); heading.Add(previewLabel);
             sceneSourceLabel = new Label { name = "scene-sync-source", enableRichText = false }; sceneSourceLabel.AddToClassList("aw-scene-source"); sceneSourceLabel.AddToClassList("aw-ellipsis"); sceneSourceLabel.style.flexGrow = 1; heading.Add(sceneSourceLabel);
-            freezeButton = MakeButton("圈出问题位置", BeginFeedback, "freeze-feedback"); freezeButton.tooltip = "冻结这一张真实画面，框选位置后在下方写问题；图片保留当前候选身份。"; freezeButton.AddToClassList("aw-accent-outline"); heading.Add(freezeButton);
+            freezeButton = MakeButton("截图圈问题", BeginFeedback, "freeze-feedback"); freezeButton.tooltip = "截下当前画面，在图上框出问题，再在下方写一句说明。截图会记住当时的模型版本。"; freezeButton.AddToClassList("aw-accent-outline"); heading.Add(freezeButton);
             heading.Add(MakeButton("返回实时画面", LeaveAnnotation, "return-preview"));
             compareButton = MakeButton("前后对比", () => { comparing = !comparing; UpdateLabels(); canvas.MarkDirtyRepaint(); }, "compare"); heading.Add(compareButton);
-            heading.Add(MakeButton("画面来源 ▾", ShowSources, "source-menu")); panel.Add(heading);
+            heading.Add(MakeButton("查看 ▾", ShowSources, "source-menu")); panel.Add(heading);
             panel.Add(BuildPreviewWorkspace());
             roleGuide = Wrapped("拖动旋转、滚轮缩放；右键加 WASD 移动相机。试穿仅操作临时角色。"); roleGuide.style.display = DisplayStyle.None; panel.Add(roleGuide);
             return panel;
@@ -92,9 +93,9 @@ namespace AvatarWorkbench
         VisualElement BuildResultPanel()
         {
             var panel = Pane(0); panel.name = "feedback-panel";
-            panel.Add(Heading("修改进度与回复"));
+            var resultTitle = Heading("进度与回复"); resultTitle.AddToClassList("aw-panel-title"); panel.Add(resultTitle);
             var scroll = new ScrollView(ScrollViewMode.Vertical); scroll.AddToClassList("aw-inner-scroll");
-            activityLabel = Heading("等待修改需求"); activityLabel.style.whiteSpace = WhiteSpace.Normal; scroll.Add(activityLabel);
+            activityLabel = Wrapped(""); activityLabel.AddToClassList("aw-muted"); activityLabel.AddToClassList("aw-activity"); scroll.Add(activityLabel);
             taskLabel = Wrapped(""); taskLabel.AddToClassList("aw-task-summary");
             var taskSummary = new Foldout { text = "本次任务记录", value = false }; taskSummary.Add(taskLabel);
             feedbackPanel = new VisualElement(); feedbackPanel.style.marginTop = 10; scroll.Add(feedbackPanel);
@@ -102,7 +103,7 @@ namespace AvatarWorkbench
             projectLabel = Wrapped(""); candidateLabel = Wrapped("");
             detail.Add(projectLabel); detail.Add(candidateLabel);
             taskDetails = Wrapped(""); detail.Add(taskDetails);
-            detail.Add(Wrapped("画面会注明正在查看现场角色、保存的候选还是临时试穿。换装和圆盘菜单运行在临时角色上；动态预览使用现有 SDK 的 PhysBone。已有回复只表示执行宿主或接口给出了答复，不表示模型已修好。"));
+            detail.Add(Wrapped("画面会注明正在查看现场角色、保存的候选还是临时试穿。换装和圆盘菜单运行在临时角色上；动态预览使用现有 SDK 的 PhysBone。有回复只说明 AI 答复了，不代表模型已经改好。"));
             detail.Add(MakeButton("选择已有任务", PickTask, "choose-task"));
             candidateButton = MakeButton("查看任务保存的角色", UseTaskCandidate, "task-candidate"); detail.Add(candidateButton);
             detail.Add(MakeButton("导出反馈记录", ExportFeedback, "export-feedback"));
@@ -119,6 +120,7 @@ namespace AvatarWorkbench
             draftLabel = new Label { enableRichText = false }; draftLabel.AddToClassList("aw-ellipsis"); draftLabel.style.flexGrow = 1; draftStrip.Add(draftLabel);
             draftStrip.Add(MakeButton("查看圈选", BeginFeedback, "view-draft"));
             draftStrip.Add(MakeButton("取消附件", DiscardDraft, "discard-feedback")); composer.Add(draftStrip);
+            BuildCompatibilityStrip(composer);
             var line = Row(); line.AddToClassList("aw-input-row"); line.style.alignItems = Align.Stretch;
             var inputArea = new VisualElement(); inputArea.AddToClassList("aw-input-area");
             input = new TextField { multiline = true, value = message, maxLength = 5000, name = "feedback-message", tooltip = "例如：把头发改成黑色；或把左侧已选的饰品装到头上。" }; input.AddToClassList("aw-input");
@@ -136,7 +138,7 @@ namespace AvatarWorkbench
         void ApplyLayout(float width, float height)
         {
             if (bodyArea == null || width < 1 || height < 1) return;
-            bool wide = width >= 1420 && height >= 620;
+            bool wide = width >= WorkbenchUiRules.WideWidth && height >= WorkbenchUiRules.WideHeight;
             layoutMode = wide ? "wide" : "compact";
             rootVisualElement.EnableInClassList("aw-wide", wide);
             rootVisualElement.EnableInClassList("aw-compact", !wide);
@@ -178,7 +180,9 @@ namespace AvatarWorkbench
             }
             if (resourceCount != null) resourceCount.text = resources.Count == 0 ? "尚未选择" : "本次 " + resources.Count + " 项 · 本地新增 " + localResources.Count + " 项";
             if (materialTab != null) { materialTab.text = "挑素材"; materialTab.tooltip = "挑选素材 · 本次共有 " + resources.Count + " 项"; }
-            if (emptyResources != null) { emptyResources.style.display = visibleResources.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None; emptyResources.text = resources.Count == 0 ? "还没有素材。\n也可直接在下方写修改需求。" : "当前分类或关键词没有匹配项。\n切回“全部”或清空筛选词；已选素材仍随需求附上。"; }
+            bool noResources = resources.Count == 0;
+            libraryRoot?.EnableInClassList("aw-library-empty", noResources);
+            if (emptyResources != null) { emptyResources.style.display = visibleResources.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None; emptyResources.text = noResources ? "要换衣服、加头发或饰品，先把素材加进来；" + SkipAssetsHint + "这一步。" : "当前分类或关键词没有匹配项。\n切回“全部”或清空筛选词；已选素材仍随需求附上。"; }
             UpdateSelectedResource(); UpdateComposer();
         }
         void UpdateSelectedResource()
@@ -201,14 +205,16 @@ namespace AvatarWorkbench
             draftStrip.style.display = attached ? DisplayStyle.Flex : DisplayStyle.None;
             draftLabel.text = attached ? "已附圈选原图 · " + WorkbenchData.Identity(draft["candidate"] as JObject) : "";
             draftLabel.tooltip = attached ? "此条请求继续关联被冻结的原图与角色版本。即使切换角色也不会自动改绑；取消附件后可提交新的文字请求。" : "";
+            UpdateCompatibilityStrip();
             string activeModel = WorkbenchModels.Active;
+            UpdateStepGuide(target || draft != null ? label : null, selectedCount, WorkbenchModels.SendLabel(activeModel));
             submitButton.text = sendingCodex ? "读取 / 发送中…" : WorkbenchModels.SendLabel(activeModel);
             submitButton.tooltip = activeModel == WorkbenchModels.CodexHost ? "将本次需求交给当前 Codex，沿用原改模流程"
-                : activeModel == WorkbenchModels.DshHost ? "保存到同一任务收件箱，由当前 DSH 读取；不自动唤醒，DSH 回复写回同一条"
+                : activeModel == WorkbenchModels.DshHost ? "发到 DSH 收件箱，并自动复制接手指令；切到 DSH 按 Ctrl+V 后开始处理，回复显示在“看回复”"
                 : "发送到 " + WorkbenchModels.Label(activeModel);
             submitButton.SetEnabled(!sendingCodex && !connectingCodex && !string.IsNullOrWhiteSpace(message) && message.Length <= 5000 && (target || draft != null || !string.IsNullOrEmpty(taskPath)));
             submitButton.tooltip += activeModel == WorkbenchModels.CodexHost ? "。先保存原始请求，Ctrl+Enter 发送；Codex 回复不代表修复通过。"
-                : activeModel == WorkbenchModels.DshHost ? "。先保存原始请求；等待 DSH 读取，回执 waiting_dsh 不等于已读或已执行。"
+                : activeModel == WorkbenchModels.DshHost ? "。也可以按 Ctrl+Enter 发送。"
                 : "。先保存原始请求，Ctrl+Enter 发送；API 回复只代表建议。";
         }
         void SaveAndHandoff()
@@ -256,21 +262,31 @@ namespace AvatarWorkbench
         void ShowMore()
         {
             var menu = new GenericMenu();
+            menu.AddItem(new GUIContent("怎么用（4 步）"), false, ShowHowTo);
+            menu.AddSeparator("");
             if (docked) menu.AddItem(new GUIContent(maximized ? "恢复停靠布局" : "最大化停靠区"), false, () => maximized = !maximized);
             else menu.AddDisabledItem(new GUIContent("最大化停靠区（浮动窗口可拖动边框放大）"));
             menu.AddItem(new GUIContent("选择已有任务…"), false, () => TryAction(PickTask));
             menu.AddItem(new GUIContent("AI 接口与模型设置…"), false, WorkbenchModelSettingsWindow.Open);
-            menu.AddItem(new GUIContent("成品优化（原改模流程）…"), false, WorkbenchOptimizationWindow.Open);
+            menu.AddItem(new GUIContent("优化性能…"), false, WorkbenchOptimizationWindow.Open);
             menu.AddItem(new GUIContent("本地素材大图 / 多素材对比…"), false, OpenResourceGallery);
             menu.AddItem(new GUIContent("截图记录…"), false, OpenScreenshotGallery);
-            menu.AddItem(new GUIContent("切换画面来源 / 已有截图…"), false, () => TryAction(ShowSources));
+            menu.AddItem(new GUIContent("查看历史截图…"), false, () => TryAction(ShowSources));
             menu.AddItem(new GUIContent("跟随场景角色（自动同步）"), followScene && target && !EditorUtility.IsPersistent(target), () => TryAction(UseSceneTarget));
-            menu.AddItem(new GUIContent("复制接管指令（当前执行宿主）"), false, () => TryAction(CopyInstruction));
+            menu.AddItem(new GUIContent("复制接手指令（发给当前 AI）"), false, () => TryAction(CopyInstruction));
             menu.AddItem(new GUIContent("导出本任务反馈记录…"), false, () => TryAction(ExportFeedback));
             menu.AddItem(new GUIContent("查看进度与技术详情"), false, () => { SelectPanel("feedback"); rootVisualElement.Q<Foldout>("technical-details").value = true; });
-            menu.AddSeparator("");
-            menu.AddItem(new GUIContent("操作说明"), false, () => EditorUtility.DisplayDialog("改模工作台怎么用", "1. 在顶部选目标角色；到“挑素材”查看大图，勾选想用的素材并附到需求。\n2. 在“看模型”旋转、试穿或查看姿势；有问题可圈出位置。\n3. 在底部写一句话，点“发送需求”。发送按钮会显示当前执行宿主：Codex 直接发送，DSH 只保存到同一任务收件箱，API 只做答复。\n\n尚未连接时请求仍会保存，并提供接管指令。AI 接口设置只决定需求发往哪里；试穿只改变临时预览。DSH 请求不会自动唤醒，回执 waiting_dsh 不等于已读。", "知道了"));
             menu.ShowAsContext();
         }
+        static void ShowHowTo() => EditorUtility.DisplayDialog("改模工作台怎么用",
+            "1. 选角色：在 Hierarchy 点选角色，或点顶部“使用选中角色”。\n"
+            + "2. 挑素材（可跳过）：在“挑素材”勾选衣服、头发等，点“加入需求”。只想改颜色、修问题可以直接写需求。\n"
+            + (WorkbenchModels.Active == WorkbenchModels.CodexHost
+                ? "3. 写需求并发送：在底部写一句话，点“发送给 Codex”，会直接发到已连接的 Codex 会话。\n"
+                : WorkbenchModels.Active == WorkbenchModels.DshHost
+                ? "3. 写需求并发送：在底部写一句话，点“发送给 DSH”。接手指令会自动复制，切到 DSH 按 Ctrl+V 发送。\n"
+                : "3. 写需求并发送：在底部写一句话，点发送按钮。API 只给答复和建议，不会修改模型。\n")
+            + "4. 看结果：进度和回复在“看回复”。回复不等于已经改好，请在预览里试穿确认；有问题点“截图圈问题”。\n\n"
+            + "试穿和换姿势只作用于临时副本，不会改动你的模型。", "知道了");
     }
 }

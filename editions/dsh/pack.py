@@ -16,7 +16,7 @@ ROOT_FILES = {'README.md','START_HERE.md','开始使用.txt','AGENTS.md','DEEPSE
               'THIRD_PARTY_NOTICES.md','MIGRATION.md','PREREQUISITES.md','DSH_CONNECT.md',
               'ONE_CLICK_DEPLOY_PROMPT.md','DSH_TASK_CARD.md','Setup.cmd','Setup.ps1','Doctor.cmd',
               'Verify-Package.cmd','pack.py'}
-CHECK_FILES = {'test_workflow.py','test_notifications.py','test_distribution.py',
+CHECK_FILES = {'test_workflow.py','test_notifications.py','test_distribution.py','test_version.py','test_finish_gate.py',
                'DISTRIBUTION_VERIFIED.md'}
 SKIP_DIRS = {'local', 'runtime', 'node_modules', '__pycache__', '.git', 'Library', 'Temp', 'tests'}
 SKIP_FILES = {'LOCAL_UPDATE.json', 'MANIFEST.sha256', 'LOCAL_CONTEXT.md', 'MANIFEST.json'}
@@ -75,7 +75,7 @@ def main():
     clean.mkdir()
     manifest = {'format': 'avatar-workbench-dsh-full-v2' if args.full else 'avatar-workbench-dsh-source-v2',
                 'created': datetime.now().astimezone().isoformat(timespec='seconds'), 'distribution_version':'0.3.0',
-                'workflow': '0.3.2-local5-dsh', 'workbench': '0.2.12-dsh', 'adapter': '0.2.1',
+                'workflow': '0.3.2-local5-dsh', 'workbench': '0.2.15-dsh', 'adapter': '0.2.1',
                 'platform':'win32-x64' if args.full else 'source', 'dsh_desktop_included':False,
                 'model_assembly_acceptance':'See docs/EXAMPLES.md; historical supervised case, not a new-user guarantee',
                 'excluded': ['private local configuration', 'credentials', 'sessions', 'task and feedback data',

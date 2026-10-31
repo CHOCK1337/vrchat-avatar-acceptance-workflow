@@ -14,7 +14,7 @@ namespace AvatarWorkbench
         public void SelectResourcesForRequest(string[] ids)
         {
             requestedResourceIds = new HashSet<string>((ids ?? Array.Empty<string>()).Where(x => resources.Any(r => r.id == x)));
-            SaveState(); UpdateComposer(); Toast(draft == null ? "已选择本次需求的 " + requestedResourceIds.Count + " 项素材；没有立即安装。" : "已更新后续需求；当前圈选仍保留冻结时的素材。");
+            SaveState(); UpdateComposer(); Toast(draft == null ? "已把 " + requestedResourceIds.Count + " 项素材加入需求（还没有安装）。" : "已更新后续需求；当前圈选仍保留冻结时的素材。");
         }
         void OpenScreenshotGallery()
         {

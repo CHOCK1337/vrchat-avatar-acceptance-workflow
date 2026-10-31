@@ -96,9 +96,9 @@ namespace AvatarWorkbench
             catalogEmpty = SourceLabel("先在管理来源中选择目录或读取 Mio 素材库。\n已有封面用于浏览，贴图和色卡不作为安装资源。", "aw-source-empty"); results.Add(catalogEmpty);
             var footer = Row(); footer.AddToClassList("aw-source-footer");
             catalogCount = SourceLabel("", "aw-muted"); catalogCount.AddToClassList("aw-catalog-count"); footer.Add(catalogCount);
-            sourceStatus = SourceLabel("点击图片看详情 · 勾选后附到需求", "aw-source-status"); sourceStatus.style.flexGrow = 1; footer.Add(sourceStatus);
+            sourceStatus = SourceLabel("点图片看详情 · 勾选后点“加入需求”", "aw-source-status"); sourceStatus.style.flexGrow = 1; footer.Add(sourceStatus);
             stopSourceButton = MakeButton("取消读取", CancelSourceRead, "cancel-source-read"); stopSourceButton.style.display = DisplayStyle.None; footer.Add(stopSourceButton);
-            addCatalogButton = MakeButton("使用已选素材", AddCatalogPicks, "apply-catalog-picks"); addCatalogButton.AddToClassList("aw-accent-outline"); footer.Add(addCatalogButton); panel.Add(footer);
+            addCatalogButton = MakeButton("加入需求", AddCatalogPicks, "apply-catalog-picks"); addCatalogButton.AddToClassList("aw-accent-outline"); footer.Add(addCatalogButton); panel.Add(footer);
             panel.Add(BuildMioAttribution());
             catalogResize = e => { if (e.target != catalogList || e.newRect.height <= 0) return; int columns = Mathf.Clamp((int)(e.newRect.width / 240), 1, 5); float height = Mathf.Min(330, Mathf.Max(96, Mathf.Floor(e.newRect.height))); bool changed = columns != sourceColumns || catalogList.fixedItemHeight != height; sourceColumns = columns; if (changed) { catalogList.fixedItemHeight = height; RebuildCatalogRows(); } };
             catalogList.RegisterCallback(catalogResize);
@@ -180,8 +180,8 @@ namespace AvatarWorkbench
         VisualElement BuildMioAttribution()
         {
             var row = Row(); row.AddToClassList("aw-mio-credit");
-            var link = MakeButton("分类与素材库交互参考 MioVRC_AssetManager ↗", () => Application.OpenURL(WorkbenchCategories.MioUrl), "mio-reference-link");
-            link.tooltip = "参考来源：MioVRC_AssetManager（CokoIya / 天川澪）。Unity 界面独立实现；Mio 导入记录分别标注来源。改模继续使用原工作流。";
+            var link = MakeButton("交互参考 MioVRC_AssetManager ↗", () => Application.OpenURL(WorkbenchCategories.MioUrl), "mio-reference-link");
+            link.tooltip = "分类与素材库交互参考：MioVRC_AssetManager（CokoIya / 天川澪）。Unity 界面独立实现；Mio 导入记录分别标注来源。改模继续使用原工作流。";
             row.Add(link); return row;
         }
         void RebuildCatalogRows() { catalogRows.Clear(); catalogRows.AddRange(Enumerable.Range(0, (catalogItems.Count + sourceColumns - 1) / sourceColumns)); catalogList?.Rebuild(); sourceCoverAttempts = 0; sourceCovers?.Resume(); }
@@ -201,7 +201,7 @@ namespace AvatarWorkbench
                 var image = new Image { image = LibraryCover(resource), userData = resource, name = "catalog-cover", scaleMode = ScaleMode.ScaleToFit }; image.AddToClassList("aw-tile-image"); cover.Add(image);
                 cover.RegisterCallback<MouseDownEvent>(e => { if (e.button == 0 && !(e.target is Toggle) && (e.target as VisualElement)?.GetFirstAncestorOfType<Toggle>() == null) ShowCatalogDetails(item); });
                 var label = SourceLabel(image.image ? "" : "正在读取预览…", "aw-tile-loading"); label.name = "catalog-cover-state"; cover.Add(label);
-                var pick = new Toggle("选择素材") { value = catalogPicks.Contains(resource.id), tooltip = "选择后点击下方附到需求，不会立即安装：" + resource.name }; pick.AddToClassList("aw-tile-pick"); pick.RegisterValueChangedCallback(e => { if (e.newValue) catalogPicks.Add(resource.id); else catalogPicks.Remove(resource.id); tile.EnableInClassList("aw-asset-picked", e.newValue); UpdateCatalogCount(); QueueSourceSave(); }); cover.Add(pick); tile.Add(cover);
+                var pick = new Toggle("选中") { value = catalogPicks.Contains(resource.id), tooltip = "选中后点下方“加入需求”，不会立即安装：" + resource.name }; pick.AddToClassList("aw-tile-pick"); pick.RegisterValueChangedCallback(e => { if (e.newValue) catalogPicks.Add(resource.id); else catalogPicks.Remove(resource.id); tile.EnableInClassList("aw-asset-picked", e.newValue); UpdateCatalogCount(); QueueSourceSave(); }); cover.Add(pick); tile.Add(cover);
                 var info = compact ? new VisualElement() : tile; if (compact) { info.style.flexGrow = 1; info.style.flexShrink = 1; info.style.minWidth = 0; tile.Add(info); }
                 var title = SourceLabel(resource.name, "aw-tile-title"); title.tooltip = resource.path; info.Add(title);
                 var baseTags = new VisualElement(); baseTags.AddToClassList("aw-card-bases"); var knownBases = WorkbenchCategories.Bases(item).ToArray();
@@ -217,7 +217,7 @@ namespace AvatarWorkbench
             }
             for (int fill = row.childCount; fill < sourceColumns; fill++) { var empty = new VisualElement(); empty.AddToClassList("aw-asset-tile"); empty.style.visibility = Visibility.Hidden; row.Add(empty); }
         }
-        void UpdateCatalogCount() { int total = IndexedCatalog.Count(), count = IndexedCatalog.Count(x => catalogPicks.Contains(WorkbenchData.Text(x["id"]))); catalogCount.text = "显示 " + catalogItems.Count + " / " + total + " · 已选 " + count; addCatalogButton.text = count > 0 ? "使用已选素材（" + count + "）" : "使用已选素材"; addCatalogButton.tooltip = "包括被分类或关键词暂时隐藏的已选素材。只附到本次需求，不会立即导入或安装。"; addCatalogButton.SetEnabled(count > 0 && sourceTask == null); }
+        void UpdateCatalogCount() { int total = IndexedCatalog.Count(), count = IndexedCatalog.Count(x => catalogPicks.Contains(WorkbenchData.Text(x["id"]))); catalogCount.text = "显示 " + catalogItems.Count + " / " + total + " · 已选 " + count; addCatalogButton.text = count > 0 ? "加入需求（" + count + "）" : "加入需求"; addCatalogButton.tooltip = "包括被分类或关键词暂时隐藏的已选素材。只加入本次需求，不会立即导入或安装。"; addCatalogButton.SetEnabled(count > 0 && sourceTask == null); }
         void StartDirectoryRead()
         {
             if (WorkbenchData.Text(CurrentDirectory?["source_kind"]) == "mio_library") { StartMioRead(CurrentDirectory); return; }

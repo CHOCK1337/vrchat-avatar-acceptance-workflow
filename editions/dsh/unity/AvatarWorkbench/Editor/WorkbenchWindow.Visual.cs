@@ -11,7 +11,7 @@ namespace AvatarWorkbench
 {
     public sealed partial class WorkbenchWindow
     {
-        VisualElement navigationRail, workspaceColumn, libraryRoot;
+        VisualElement navigationRail, workspaceColumn, libraryRoot, emptyActions;
         Button cameraViewButton;
         readonly List<int> libraryRows = new List<int>();
         readonly Dictionary<string, Object> libraryAssets = new Dictionary<string, Object>();
@@ -35,14 +35,17 @@ namespace AvatarWorkbench
             materialTab = Navigation("挑素材", "assets", () => SelectPanel("materials"), "tab-materials");
             feedbackTab = Navigation("看回复", "reply", () => SelectPanel("feedback"), "tab-feedback");
             tabBar.Add(previewTab); tabBar.Add(materialTab); tabBar.Add(feedbackTab); rail.Add(tabBar);
-            rail.Add(Navigation("成品优化", "settings", WorkbenchOptimizationWindow.Open, "open-optimization"));
+            rail.Add(Navigation("优化性能", "settings", WorkbenchOptimizationWindow.Open, "open-optimization"));
             var spacer = new VisualElement(); spacer.style.flexGrow = 1; rail.Add(spacer);
             rail.Add(Navigation("截图记录", "images", OpenScreenshotGallery, "open-screenshot-gallery"));
             rail.Add(Navigation("AI 接口", "settings", WorkbenchModelSettingsWindow.Open, "open-model-settings"));
             var project = new Label(Path.GetFileName(WorkbenchData.Project.TrimEnd('\\', '/'))) { tooltip = WorkbenchData.Project, enableRichText = false };
             project.AddToClassList("aw-project-caption"); project.AddToClassList("aw-ellipsis"); rail.Add(project);
             connectionBox = new VisualElement(); connectionBox.AddToClassList("aw-connection");
-            connectionLabel = new Label { enableRichText = false }; connectionLabel.AddToClassList("aw-connection-title"); connectionBox.Add(connectionLabel);
+            var connectionRow = Row(); connectionRow.AddToClassList("aw-connection-row");
+            var dot = new VisualElement { pickingMode = PickingMode.Ignore }; dot.AddToClassList("aw-status-dot"); connectionRow.Add(dot);
+            connectionLabel = new Label { enableRichText = false }; connectionLabel.AddToClassList("aw-connection-title"); connectionRow.Add(connectionLabel); connectionBox.Add(connectionRow);
+            connectionRow.RegisterCallback<ClickEvent>(_ => { if (rootVisualElement.ClassListContains("aw-icon-rail")) TryAction(ConnectSelectedModel); });
             connectionHelp = Wrapped(""); connectionHelp.AddToClassList("aw-connection-help"); connectionBox.Add(connectionHelp);
             helpButton = MakeButton("连接 / 说明", ConnectSelectedModel, "copy-connect"); connectionBox.Add(helpButton); rail.Add(connectionBox);
             return rail;
@@ -90,7 +93,7 @@ namespace AvatarWorkbench
                     var cover = new VisualElement(); cover.AddToClassList("aw-tile-cover"); cover.style.height = Mathf.Max(12, cards.fixedItemHeight - 69);
                     var image = new Image { image = LibraryCover(resource), scaleMode = ScaleMode.ScaleToFit, userData = resource, name = "library-cover" }; image.AddToClassList("aw-tile-image"); cover.Add(image);
                     var loading = new Label(image.image ? "" : "正在读取预览…") { name = "library-cover-state", pickingMode = PickingMode.Ignore }; loading.AddToClassList("aw-tile-loading"); cover.Add(loading);
-                    var pick = new Toggle("附到需求") { value = ResourceRequested(resource), tooltip = "随需求交给当前执行宿主，不会立即安装：" + resource.name, name = "pick-" + resource.id }; pick.AddToClassList("aw-tile-pick");
+                    var pick = new Toggle("加入需求") { value = ResourceRequested(resource), tooltip = "随需求一起发给 AI，不会立即安装：" + resource.name, name = "pick-" + resource.id }; pick.AddToClassList("aw-tile-pick");
                     pick.RegisterValueChangedCallback(e => { var ids = new HashSet<string>(resources.Where(ResourceRequested).Select(x => x.id)); if (e.newValue) ids.Add(resource.id); else ids.Remove(resource.id); card.EnableInClassList("aw-asset-picked", e.newValue); SelectResourcesForRequest(ids.ToArray()); }); cover.Add(pick);
                     var kind = new Label(WorkbenchCategories.Of(resource)) { tooltip = KindName(resource.kind) }; kind.AddToClassList("aw-tile-kind"); cover.Add(kind);
                     image.RegisterCallback<ClickEvent>(_ => { selectedId = resource.id; UpdateSelectedResource(); UpdateComposer(); QueueSave(); }); card.Add(cover);
@@ -102,7 +105,11 @@ namespace AvatarWorkbench
                 for (int fill = row.childCount; fill < libraryColumns; fill++) { var empty = new VisualElement(); empty.AddToClassList("aw-asset-tile"); empty.style.visibility = Visibility.Hidden; row.Add(empty); }
             };
             libraryRoot.Add(cards);
+            var emptyTitle = new Label("还没有素材") { name = "empty-resources-title" }; emptyTitle.AddToClassList("aw-empty-title"); libraryRoot.Add(emptyTitle);
             emptyResources = Wrapped("把本次 Prefab 或素材目录拖到这里。\n也可以直接输入修改需求。"); emptyResources.AddToClassList("aw-empty"); libraryRoot.Add(emptyResources);
+            emptyActions = new VisualElement(); emptyActions.AddToClassList("aw-empty-actions");
+            var pickFile = MakeButton("选择素材文件…", PickResource, "empty-pick-resource"); pickFile.AddToClassList("aw-primary"); pickFile.tooltip = "选择衣服、头发或饰品的 Prefab / unitypackage"; emptyActions.Add(pickFile);
+            emptyActions.Add(MakeButton("打开本地素材库", () => SelectMaterialSource("directory"), "empty-open-directory")); libraryRoot.Add(emptyActions);
             var note = new Label("勾选的素材随请求附上 · 点击只查看 · 不会立即安装"); note.AddToClassList("aw-library-note"); libraryRoot.Add(note);
             libraryRoot.Add(BuildMioAttribution());
             detailLabel = Wrapped(""); detailLabel.style.display = DisplayStyle.None; libraryRoot.Add(detailLabel);

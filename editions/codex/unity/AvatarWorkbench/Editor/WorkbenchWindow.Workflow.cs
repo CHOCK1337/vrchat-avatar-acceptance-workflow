@@ -8,7 +8,8 @@ namespace AvatarWorkbench
 {
     internal static class WorkbenchWorkflow
     {
-        internal const string PluginVersion = "0.2.13-codex";
+        // Must equal package.json "version" + "-codex" and the payload manifest; verification/test_version.py checks it.
+        internal const string PluginVersion = "0.2.16-codex";
 
         // Read only the selected installed Skill of the CURRENT execution host. No installation,
         // configuration or project scan. DSH never falls back to the global Codex Skill.

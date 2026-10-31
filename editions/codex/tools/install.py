@@ -98,6 +98,10 @@ def project_folders(project):
         if (folder/'.git').exists(): return folders[:index+1]
     return [project]
 
+# Another Unity MCP the user already runs (often a URL server) keeps its name; ours is added beside it
+# under this name in the project config, so the two tables never merge and global config stays untouched.
+SIDE_BY_SIDE_UNITY_MCP='unityMCPVRC'
+
 def configure_mcp(project, codex_home, wanted):
     config_path=owned_path(project,'.codex/config.toml')
     original=config_path.read_bytes() if config_path.is_file() else b''
@@ -105,7 +109,7 @@ def configure_mcp(project, codex_home, wanted):
     unmanaged, managed=split_managed(original,config_path)
     if managed:
         previous=parse_toml(managed,config_path).get('mcp_servers',{})
-        if set(previous)-set(wanted): raise ValueError('MANAGED_MCP_EDITED: '+str(config_path))
+        if set(previous)-set(wanted)-{SIDE_BY_SIDE_UNITY_MCP}: raise ValueError('MANAGED_MCP_EDITED: '+str(config_path))
         # An existing managed block may only be replaced if it was recorded by this installer.
         receipt=project/'.avatar-workbench-codex/installation.json'
         recorded=read(receipt).get('managed_mcp_sha256') if receipt.is_file() else None
@@ -130,7 +134,13 @@ def configure_mcp(project, codex_home, wanted):
         if matches:
             path,name,existing=matches[0]
             if not compatible(existing,row,kind):
-                raise ValueError('MCP_CONFLICT: '+kind+' in '+str(path)+'; existing configuration was preserved')
+                taken=any(SIDE_BY_SIDE_UNITY_MCP in config.get('mcp_servers',{}) for _,config in sources)
+                if kind!='unityMCP' or taken:
+                    raise ValueError('MCP_CONFLICT: '+kind+' in '+str(path)+'; existing configuration was preserved')
+                added[SIDE_BY_SIDE_UNITY_MCP]=row
+                effective[kind]=dict(row,name=SIDE_BY_SIDE_UNITY_MCP,config_source=str(config_path),
+                                     coexists_with=name+' in '+str(path))
+                continue
             reused[kind]={'name':name,'config':str(path)}
             effective[kind]={'name':name,'command':existing['command'],'args':existing['args'],
                              'cwd':existing.get('cwd'),'config_source':str(path)}
@@ -150,6 +160,17 @@ def configure_mcp(project, codex_home, wanted):
         updated+=block.encode('utf-8')
     parse_toml(updated,config_path)
     return config_path,updated,sha(block.encode()) if block else None,reused,effective
+
+def skill_version(folder):
+    try: return str(json.loads((folder/'VERSION.json').read_text(encoding='utf-8-sig')).get('version',''))
+    except (OSError,ValueError,AttributeError): return ''
+
+def skill_gaps(skill, root):
+    """Files the packaged Skill has that a reused one lacks. The reused Skill itself is never changed."""
+    packaged=root/'skills'/'assemble-vrchat-avatar'
+    if skill.parent.resolve()==packaged.resolve(): return []
+    return sorted(p.relative_to(packaged).as_posix() for p in packaged.rglob('*')
+                  if p.is_file() and '__pycache__' not in p.parts and p.suffix!='.pyc' and not (skill.parent/p.relative_to(packaged)).is_file())
 
 def plan(args, root=ROOT):
     root,project=root.resolve(),args.project.resolve()
@@ -249,9 +270,19 @@ def plan(args, root=ROOT):
     report={'status':'PREVIEW_ONLY','distribution':VERSION,'workbench':manifest['version'],'project':str(project),
         'writes':len(files),'config':str(config_path),'codex_config':str(toml_path),'skill':str(skill),
         'skill_mode':'EXISTING_REUSED' if skill_candidates else 'PROJECT_INSTALL',
+        'skill_version':skill_version(skill.parent),'packaged_skill_version':skill_version(root/'skills'/skill_name),
         'reused_mcp':reused,'unity_mcp':'EXISTING_REUSED' if existing else 'EMBEDDED_INSTALL',
         'model_and_permissions_preserved':True,'credentials_copied':False,'avatar_modified':False,
         'next':'Open this project in Unity and Codex. Trust it in Codex if asked. Run Doctor after Unity compilation.'}
+    # A reused Skill can predate files the workbench instructions rely on; say so instead of silently
+    # handing Codex an older workflow. The handoff names the Skill and the template by exact path.
+    missing=skill_gaps(skill,root) if skill_candidates else []
+    if missing:
+        report['skill_missing_files']=missing
+        report['skill_note']=('复用了已有的 Skill（'+(report['skill_version'] or '版本未知')+'），它缺少插件自带版本（'+report['packaged_skill_version']+
+            '）里的 '+str(len(missing))+' 个文件，例如 '+'、'.join(sorted(missing,key=lambda p:(p!='references/finish-check.md',p))[:3])+'；插件不会改动它。收尾检查模板随插件装在工程的 '
+            'Assets/AvatarWorkbench/Tools/finish-check.md，接手指令会写出 Skill 和模板的确切路径。想改用插件自带的 Skill，重新安装时加 --skill "'+
+            str(root/'skills'/skill_name/'SKILL.md')+'"。')
     return files,report
 
 def apply_files(files,report,root=ROOT):

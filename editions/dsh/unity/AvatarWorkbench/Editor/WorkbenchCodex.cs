@@ -142,9 +142,10 @@ namespace AvatarWorkbench
         public static string Prompt(string binding, JObject entry)
         {
             string file = Path.Combine(WorkbenchData.Inbox(binding), WorkbenchData.Text(entry["id"]) + ".json");
-            return "这是用户从 Unity 改模工作台直接提交到本会话的请求。请继续现有工作流，先读取下面这一条反馈文件，核对它冻结时的目标、候选、素材和图片；实际读取后回写 seen，实际回应后回写 addressed。不要把发送回执当成已读或修复完成。\n"
+            return "这是用户从 Unity 改模工作台直接提交到本会话的请求。请继续现有工作流，先读取下面这一条反馈文件，核对它冻结时的目标、候选、素材和图片；实际读取后回写 seen，实际回应后回写 addressed。不要把发送回执当成已读或修复完成。请求带 compatibility 字段时按其中的 decision 执行。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n"
                 + "用户原话：\n" + WorkbenchData.Text(entry["message"]) + "\n\n"
                 + "工程：" + WorkbenchData.Text(entry["project_path"]) + "\n绑定路径：" + binding + "\n反馈文件：" + file + "\n反馈 ID：" + WorkbenchData.Text(entry["id"])
+                + "\nSkill：" + WorkbenchModels.CodexSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath
                 + "\n候选：" + WorkbenchData.Identity(entry["candidate"] as JObject)
                 + "\n自动附带的完整上下文：\n" + entry.ToString(Formatting.Indented)
                 + "\n若包含 workflow_request，请核对其中 installed_skill 的实际路径、当前版本与哈希，并使用这套现有 assemble-vrchat-avatar 工作流；不要把 GUI 请求当成已执行的优化。operation=check_connection 或 check_only=true 时仅确认接入并回写回应，禁止改模型、构建或上传。operation=optimize 时按原工作流进行一次保守优化，遵守 texture_policy 和 allow_sdk_build；GUI 不直接执行 AAO、修改参数或替换材质。"

@@ -26,7 +26,7 @@ namespace AvatarWorkbench
         {
             lifetime?.Cancel(); lifetime?.Dispose(); lifetime = new CancellationTokenSource();
             var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-settings-window");
-            var title = new Label("模型与 API"); title.AddToClassList("aw-window-title"); title.style.fontSize = 20; root.Add(title);
+            var title = new Label("模型与 API"); title.AddToClassList("aw-window-title"); root.Add(title);
             var list = WorkbenchModels.Profiles(); var names = new List<string> { "＋ 新建接口配置" }; names.AddRange(list.Select(x => (string)x["name"] + " · " + (string)x["model"]));
             int index = list.FindIndex(x => (string)x["id"] == profileId) + 1;
             var choices = new PopupField<string>("接口配置", names, index); choices.name = "model-profile-picker"; root.Add(choices);

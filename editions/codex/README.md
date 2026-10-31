@@ -7,7 +7,7 @@ Windows x64 的 Unity 改模工作台接入包。双击 `Setup.cmd`，选择自�
 
 先读 [开始使用](START_HERE.md)。本包沿用 DSH 版的工作台与预览实现，新增 Codex 专用安装、配置、检查和回滚入口。它是本地集成 ZIP，不是 Codex 插件商店安装项。
 
-包含 Unity 插件 0.2.13-codex、工作流 0.3.2-local5-codex1、Workbench MCP、UnityMCP Editor/服务端、Node 24.15.0、Python 3.13.16、Unity Newtonsoft JSON 3.2.1、源代码、许可证、校验清单和文档。安装工具本身不需要 npm/pip 或在线下载。Unity、Codex、账号、VRChat SDK、模型、衣服、Shader 和作者要求的适配插件由使用者准备。
+包含 Unity 插件 0.2.16-codex、工作流 0.3.2-local5-codex1、Workbench MCP、UnityMCP Editor/服务端、Node 24.15.0、Python 3.13.16、Unity Newtonsoft JSON 3.2.1、源代码、许可证、校验清单和文档。安装工具本身不需要 npm/pip 或在线下载。Unity、Codex、账号、VRChat SDK、模型、衣服、Shader 和作者要求的适配插件由使用者准备。
 
 | 入口 | 用途 |
 |---|---|

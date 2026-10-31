@@ -48,29 +48,32 @@ namespace AvatarWorkbench
         {
             string skill = WorkbenchModels.DshSkillPath;
             EditorUtility.DisplayDialog("DSH 接入说明",
-                "此接入使用本机收件箱，不会自动启动或唤醒 DSH。\n\n"
-                + "1. 选择“当前 DSH”后，请求写入同一任务收件箱：\n" + WorkbenchData.Inbox(BindingPath) + "\n"
-                + "2. 回执记为 waiting_dsh：只表示已保存，不表示 DSH 已读或已执行。\n"
-                + "3. DSH 读取后回写 seen，处理中回写 processing_feedback，答复后回写 addressed；三种状态都不等于修复通过。\n"
-                + "4. 通知日志不等于自动唤醒；工作台不常驻轮询，也不会另起客户端。\n\n"
+                "工作台不能自动唤醒 DSH，所以每次需要你在 DSH 里粘贴一次接手指令。\n\n"
+                + "1. 底部选“发送到：当前 DSH”，写好需求后点“发送给 DSH”。需求保存到本机收件箱，接手指令自动复制。\n"
+                + "2. 切到 DSH 按 Ctrl+V 发送，DSH 才会开始处理。\n"
+                + "3. 进度显示在“看回复”：已发出 → AI 已读 → 正在修改 → 已回复。回复不等于已经改好，请在预览里确认。\n\n"
+                + "收件箱位置：" + WorkbenchData.Inbox(BindingPath) + "\n"
                 + "DSH 使用的改模 Skill：" + (string.IsNullOrWhiteSpace(skill) ? "尚未指定。" + WorkbenchModels.DshSkillHint : skill),
                 "知道了");
         }
         void ApplyModelLabels()
         {
             string active = WorkbenchModels.Active;
-            if (modelChoice != null) { modelChoice.text = "发送到：" + WorkbenchUiRules.Short(WorkbenchModels.Label(active), 23) + " ▾"; modelChoice.tooltip = "选择接收需求的执行宿主或接口：" + WorkbenchModels.Label(active); modelChoice.SetEnabled(!sendingCodex); }
+            // One state per box: green for a linked Codex session, amber for an unlinked one, neutral for DSH/API.
+            connectionBox?.EnableInClassList("aw-connected", active == WorkbenchModels.CodexHost && codexLink != null);
+            connectionBox?.EnableInClassList("aw-connection-neutral", active != WorkbenchModels.CodexHost);
+            if (modelChoice != null) { modelChoice.text = "发送到：" + WorkbenchUiRules.Short(WorkbenchModels.Label(active), 23) + " ▾"; modelChoice.tooltip = "选择需求发给谁：" + WorkbenchModels.Label(active); modelChoice.SetEnabled(!sendingCodex); }
             if (active == WorkbenchModels.DshHost)
             {
-                connectionLabel.text = sendingCodex ? "正在保存本次请求" : "已选择 DSH · 请求写入同一任务收件箱";
-                connectionHelp.text = "请求保存在本机。首次使用请复制接手指令到当前 DSH 会话；读取和回复会更新到这里。保存请求不会自动唤醒 DSH。";
-                helpButton.text = "DSH 说明"; helpButton.SetEnabled(!sendingCodex); connectionBox.EnableInClassList("aw-connected", false);
+                connectionLabel.text = sendingCodex ? "正在保存本次请求" : "发给 DSH";
+                connectionHelp.text = "点“发送给 DSH”后接手指令会自动复制，切到 DSH 按 Ctrl+V；读取和回复会显示在这里。";
+                helpButton.text = "DSH 说明"; helpButton.SetEnabled(!sendingCodex);
                 return;
             }
             if (active == WorkbenchModels.CodexHost) return;
             connectionLabel.text = sendingCodex ? apiReceipt != null ? "API 正在读取本次请求…" : "正在把原候选交给本机宿主…" : "已选择 API · " + WorkbenchModels.Label(active);
             connectionHelp.text = "需求、素材与截图送到你选择的接口。回复与建议不等于已改模；继续处理时可再选择交给 Codex 还是 DSH。";
-            helpButton.text = "API 设置"; helpButton.SetEnabled(!sendingCodex); connectionBox.EnableInClassList("aw-connected", false);
+            helpButton.text = "API 设置"; helpButton.SetEnabled(!sendingCodex);
         }
         void StopApiRequest()
         {

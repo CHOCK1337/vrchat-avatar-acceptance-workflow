@@ -18,7 +18,7 @@ namespace AvatarWorkbench
         Button send, check;
         string DraftPath => Path.Combine(Path.GetDirectoryName(WorkbenchData.WindowFile), "optimization-draft.json");
 
-        [MenuItem("Tools/改模工作台 · 成品优化", false, 2101)]
+        [MenuItem("Tools/改模工作台 · 优化性能", false, 2101)]
         public static void Open()
         {
             var window = GetWindow<WorkbenchOptimizationWindow>();
@@ -67,7 +67,7 @@ namespace AvatarWorkbench
             var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-optimization-window");
             root.style.paddingLeft = root.style.paddingRight = 16;
             root.style.paddingTop = root.style.paddingBottom = 12;
-            var heading = Text("成品优化"); heading.style.fontSize = 22; heading.style.unityFontStyleAndWeight = FontStyle.Bold; root.Add(heading);
+            var heading = Text("成品优化"); heading.AddToClassList("aw-window-title"); root.Add(heading);
             hostNote = Text(""); hostNote.name = "optimization-host"; root.Add(hostNote);
             var picker = new ObjectField("目标角色") { objectType = typeof(GameObject), allowSceneObjects = true, value = target, name = "optimization-target" };
             picker.RegisterValueChangedCallback(e => { target = e.newValue as GameObject; RefreshInfo(); }); root.Add(picker);

@@ -130,9 +130,9 @@ namespace AvatarWorkbench
         }
         void CreateGUI()
         {
-            var root = rootVisualElement; root.Clear();
+            var root = rootVisualElement; root.Clear(); WorkbenchTheme.Apply(this, "aw-settings-window");
             root.style.paddingLeft = root.style.paddingRight = 18; root.style.paddingTop = root.style.paddingBottom = 14;
-            var title = new Label("中文找素材，不必通过 Codex"); title.style.fontSize = 20; title.style.unityFontStyleAndWeight = FontStyle.Bold; root.Add(title);
+            var title = new Label("中文找素材，不必通过 Codex"); title.style.fontSize = 18; title.style.unityFontStyleAndWeight = FontStyle.Bold; root.Add(title);
             var scroll = new ScrollView(); scroll.style.flexGrow = 1; root.Add(scroll);
             var status = new Label(); status.style.whiteSpace = WhiteSpace.Normal; status.style.marginTop = 10;
             JObject data;

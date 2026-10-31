@@ -1,5 +1,5 @@
 {
-  "version": "0.2.12-dsh",
+  "version": "0.2.15-dsh",
   "payload_files": {
     "BOOTH_NOTICE.md": "a153a58c6232c125826ddd2caef0888451e16b74d85fc032c76aca9b54e61582",
     "BOOTH_NOTICE.md.meta": "ca68654d04ef1fe1b0b1e014cdc2488851339dce812383fdda49ea748694c0ba",
@@ -23,9 +23,9 @@
     "Editor/WorkbenchBaiduShare.cs.meta": "9c77988f460c5e8f1e155b82a92ca78ebe552b4fbb09ecb2a2fa3c6832cac79c",
     "Editor/WorkbenchBooth.cs": "1cca7857e1e977f3f3161881026c5cad22fc68491462dabc562979354bb24bec",
     "Editor/WorkbenchBooth.cs.meta": "8834c8d3c68b7fc067da229c74ef2b559e6b384d2c66f09d6e9b4e8628fbb68f",
-    "Editor/WorkbenchBoothImageWindow.cs": "cd5f04abe6c4c84447717fcb530f9eb197b60f5f0673ad44b79e3052925db3e5",
+    "Editor/WorkbenchBoothImageWindow.cs": "0596f21ea97cdb967f826df6c36950e25000b8ab5056359fa782dcec6bb5f329",
     "Editor/WorkbenchBoothImageWindow.cs.meta": "84c1f5a2f94d9cd7600e70f520e1c0e60a6c171a7bd7ea1129354f117048c32b",
-    "Editor/WorkbenchBoothSearchSettings.cs": "373704fdd6628cfdd558ac99dfcd3859fbadaa2036faea51b9782ec66b126d9c",
+    "Editor/WorkbenchBoothSearchSettings.cs": "beb341b23f549c40178d671960ac418b3ee53929f25327297458d8d0763a0d88",
     "Editor/WorkbenchBoothSearchSettings.cs.meta": "17b28afdbefaa7dbd6845217fde5c9e6ec2621739698ce51d8bd9cccefc1276a",
     "Editor/WorkbenchCatalogDetailWindow.cs": "8ebc8fe90b918a6bcdf7451b77acec20f10bfefa6ed8bbdd7f77fed380045def",
     "Editor/WorkbenchCatalogDetailWindow.cs.meta": "daf62c3b65eddae8efa306ee054611dab14377867c9f1059fdfd581241e0e692",
@@ -33,87 +33,97 @@
     "Editor/WorkbenchCatalogMetadata.cs.meta": "29ef28d228e22bc3e2b62c363937fc2bac2fa761389024c99b42ae879475476c",
     "Editor/WorkbenchCategories.cs": "72847782c2846515f7e202705ecc75a77767e332dd88889d280fb48fb3794f69",
     "Editor/WorkbenchCategories.cs.meta": "b7338406e77d3a1a0e064beecfca2b20fa86cb18c7f99d918acfb13651d0fa48",
-    "Editor/WorkbenchCategoryBar.cs": "270b6f4e602730e794d0d20811b86ad9d4cc6a4476bc57aafa9ed1bb2d5f9a6f",
+    "Editor/WorkbenchCategoryBar.cs": "716b903f35e21496c62cb74d8413b354c969931dafb4b16e71b5b5bbbeef869c",
     "Editor/WorkbenchCategoryBar.cs.meta": "46461329b2dda9c1339dec818efadec67595f257a6be4605e996b7fc20877404",
-    "Editor/WorkbenchCodex.cs": "2716600226913f5e19f1d64af5b5060d496901eb72c8c52698b5aa823324bf92",
+    "Editor/WorkbenchCodex.cs": "dcf5036db6e16906da833785cb437554627a2158df3405610c09e1bf8283f9ab",
     "Editor/WorkbenchCodex.cs.meta": "d9a5a46f47f8b0bcc364f5fe63ec6a6ba65d284457189d34ff7b40f8af9d18d1",
     "Editor/WorkbenchCoverImage.cs": "7fde42817e3ee74bf113758e40bf0a94176a0613819250a1859b5e21a9e0e021",
     "Editor/WorkbenchCoverImage.cs.meta": "8fcdeb108587929095750733634b5b184a2bfab322aa93bcead7e9ea47faae5e",
-    "Editor/WorkbenchData.cs": "f154cb52654482536c749b315febe12363ea860a9867c26da4f0d1f58ce265f5",
+    "Editor/WorkbenchData.cs": "76c0cafce3fd9f9bfc0327b4a8a9976687781b4858428f6083631500141d063c",
     "Editor/WorkbenchData.cs.meta": "59442a36ff0354332fd44ebf1721d0712fce23850b4ab8d71dd6d7ea23c697e4",
     "Editor/WorkbenchGesturePreview.cs": "98f0172c9c0fe4d84284df7d8704834de985d1f7c9ada88d8e1bb1cefffa205c",
     "Editor/WorkbenchGesturePreview.cs.meta": "5a0d182fb06c3e218bf5b2050eff8fcf91ad309770accc3a18864ffdc1813ae6",
     "Editor/WorkbenchLibraryFilters.cs": "bffe37a6b1d0695b703d1f0368fd028904891752c3c0353dd2145fb00460c957",
     "Editor/WorkbenchLibraryFilters.cs.meta": "d9df2e2f66452d301fc725965fca2bcd37eccf54d5cca727d9326c0d2558cead",
-    "Editor/WorkbenchModels.cs": "f0933c075038cf110c0f2079dbcf31d2184d4f47feb5f0f478e19691c1bd38b6",
+    "Editor/WorkbenchModels.cs": "663a8a66656d4c0552eef0d41a1eb967b4416aa6783e71fc5f04136ab5785fa2",
     "Editor/WorkbenchModels.cs.meta": "93c4b947e0c103f8badfd1006f35e057a33f6bd10746800982d0c1c810fe3f47",
-    "Editor/WorkbenchModelSettingsWindow.cs": "9fdd356119625fd46c559e1515d47b273a67d2c1e57c9ac6fd7f842f038163b1",
+    "Editor/WorkbenchModelSettingsWindow.cs": "fdd8c2239ece7498db2c45400e00cc60ba288dc625f26dd860230ed6881acf64",
     "Editor/WorkbenchModelSettingsWindow.cs.meta": "c0ea73fc9da22d3cbeeecf246e3e5fc15058cf6b30da96bdc5ce592ae211cf76",
-    "Editor/WorkbenchOptimizationWindow.cs": "463f281a2025d737eeb0f0629f6ceeb700bc7ae5a0e5dc8fb5c2b444290f2321",
+    "Editor/WorkbenchOptimizationWindow.cs": "261e7b8962fa89d79cf8a7cdea473cc193f3ac32c52d2e4e969c22f565dd0ab6",
     "Editor/WorkbenchOptimizationWindow.cs.meta": "00c750669d5d3f3147450c72f47534794b7d877ab6cae97591782dc5d17453db",
     "Editor/WorkbenchPhysicsPreview.cs": "a298a8d69232a415c3b3be7dc55eecad726963d3d5240008bfacfa3c0de67fcb",
     "Editor/WorkbenchPhysicsPreview.cs.meta": "9945395cee6d3902cb90a3d06aa9f82c8ee0d27164f5c25c5302ec4dfa79b477",
-    "Editor/WorkbenchPreview.cs": "37cfc9187932d29c958de5e8a94eb7422cb30776289a7aa8b707d776c94d696c",
+    "Editor/WorkbenchPreview.cs": "70c4df6c321a04cc4697964ff0639c75beeba0f2dab147ccd758c02bcd7d7e61",
     "Editor/WorkbenchPreview.cs.meta": "10acc34fd966d24811e8cf794eb7d2a9ae0f1d020bd65895e88b188014646f31",
     "Editor/WorkbenchRadialPreview.cs": "05e1f5b9419e4a6c6ab23b8cbc95f296a5c6df143b736e555c4f59456fca1e64",
     "Editor/WorkbenchRadialPreview.cs.meta": "063af8ceb618e282f76e53d6b771d2e8a1d2b8d29bb57c2d67db57e4039631e3",
-    "Editor/WorkbenchResourceGallery.cs": "2aaf44dc3f97ac7f2b1693b9c93b2a74275e42b79ae58f031ccb7fd104b95878",
+    "Editor/WorkbenchResourceGallery.cs": "7510341492c505d5641a53f82ebde3022ab0213b9089eab47f2164e76a23c6f8",
     "Editor/WorkbenchResourceGallery.cs.meta": "be8ff5fbf4638a66ca6bed55496e42da9c59cd26544f4635d0ed7294062b2531",
-    "Editor/WorkbenchSceneSync.cs": "16893be3c7e188de3dc1152d2d66df3d9f4da7d43d32747dc2012bcbb1c88649",
+    "Editor/WorkbenchSceneSync.cs": "9dd9dd98f35d7e49bccefceb1e9cf35c52b0df8fc58a4439df903927bd296d94",
     "Editor/WorkbenchSceneSync.cs.meta": "8c75810d8a5a2e82b0001a47308bdec8e6ed41dc7bbf6aa2b379b399fd60ed4a",
-    "Editor/WorkbenchScreenshotGallery.cs": "5903dfc53c6e99f4c9cd494e21d71865c02abc9a3bac54e60c32df3740dea991",
+    "Editor/WorkbenchScreenshotGallery.cs": "7f16bca58c66a2f06f1720a2db543b70457083b822575fcb854a1167797de220",
     "Editor/WorkbenchScreenshotGallery.cs.meta": "de1fd4f5e11499f4891930594ceb5806f195d6a5b22688f38cc9326353af8e4f",
     "Editor/WorkbenchSources.cs": "9cf56fc0fb7963b811696e23bb8f983583183702cb8d4247ff31c92b38fd55c1",
     "Editor/WorkbenchSources.cs.meta": "d6e20bf632f837575bc3f029d69b02027486fbcc205bb2f433b44ee302872e08",
-    "Editor/WorkbenchStyles.uss": "67bc08f94dacc3a52241d21b21e79c0640f6cdb8330d3aa4b3d2302747fd9c0b",
+    "Editor/WorkbenchStyles.uss": "ad753e7c2e31b464215bd89adff42e8801786a26b607fa5106d8afff93525205",
     "Editor/WorkbenchStyles.uss.meta": "cbcffa5ed7576a53e88afce86d8ca5f67355295667faa4f7916cff9ee5c9af4a",
-    "Editor/WorkbenchTheme.cs": "e6af6641369811ed227c77cb08f063d2c2156d8a602ceaa6c31544e263b0b9fd",
+    "Editor/WorkbenchTheme.cs": "22af9cb230edca305e05c782915563fe0ed0e9f1942574b43ac103155388d884",
     "Editor/WorkbenchTheme.cs.meta": "cd72cc568633f51bb0fac7f66a1acde25d917d8d97c0f3615edc03422f0b3283",
-    "Editor/WorkbenchUiRules.cs": "9a9591ce49905a1ad7f9ddfc2fa1638fe5b3e5246adeb26bc321109803b30aaf",
+    "Editor/WorkbenchUiRules.cs": "810423672ffcbc3291511dd13a52815c70c0d510d14b33bb6d73013b8cd8d8bb",
     "Editor/WorkbenchUiRules.cs.meta": "0d2495c531869f8cb06c73914bd24e7440aeb895c582c3759ed943955295e602",
-    "Editor/WorkbenchWindow.Booth.cs": "817d189e934cd81fee7107dac63ebe2b7a37df253ff343fb477ae5941f8a7bf2",
+    "Editor/WorkbenchWindow.Booth.cs": "5815261aea81ef693e26fe142c0f0a545abf45053020588a596346c9906e7ad1",
     "Editor/WorkbenchWindow.Booth.cs.meta": "65f2f08966fcf5f5134d81f43c997b6e4bc20560ef8fcd42a3ab65345f9a640b",
     "Editor/WorkbenchWindow.Camera.cs": "ae4f6b5f113d33748c579f52af5bb6725a0e6ae0ba97f5e88d71b96378c9af87",
     "Editor/WorkbenchWindow.Camera.cs.meta": "6b94f0ab04839f057e94265a23242ec3403787e7dc534fe1b024683f2947bb04",
-    "Editor/WorkbenchWindow.Codex.cs": "4014fd2af902576c794743ca90ea2b7bf370af50875c54c8a3c21b57a53b720f",
+    "Editor/WorkbenchWindow.Codex.cs": "5dc33a9e1cbd633a7f6f4ae79956e7d1eca0fb8a38b4e2e788a0f03132af1f01",
     "Editor/WorkbenchWindow.Codex.cs.meta": "73b3eaa31219c4b676f961733b4b4d547d51e250e72fdaf5c3fbd0542b470dcd",
-    "Editor/WorkbenchWindow.Controls.cs": "634badb3758f1f2cc24917f56c6d112cbe91bcc4f22887261459b52f99218773",
+    "Editor/WorkbenchWindow.Controls.cs": "a2dd18d5714afb79505c4cc92decc5cdb282599a63da22b1e72ed8bdc7b2770e",
     "Editor/WorkbenchWindow.Controls.cs.meta": "7461cf976ead0724f822cd1fcc227113bb595801b3e7ce498f073db94698c494",
-    "Editor/WorkbenchWindow.cs": "e4519db220276a99c0e986eda92bfb0d370780f230a8116e6d2ddb8ecffea418",
+    "Editor/WorkbenchWindow.cs": "f598c95a64dc7f088f8e9720164da25592df1f78b9ded60f344230245faec8ac",
     "Editor/WorkbenchWindow.cs.meta": "f0ce3e88c1918ef057b9d861d26560dbca42ae2358308d3f693527a2c7bdf521",
-    "Editor/WorkbenchWindow.Gallery.cs": "b39752618e106ac55899b3eb9eb3745524b34e8b444205ee1d7a346655e04561",
+    "Editor/WorkbenchWindow.Gallery.cs": "8273bd5a7b60bd74909b1ee834b7832c69a0bf3fb6d8aeb641d6aeb84fbb8a1e",
     "Editor/WorkbenchWindow.Gallery.cs.meta": "20c556780dc200a09be6c436c720b88a44a8af49b9340d2c00722f5fbbe16432",
-    "Editor/WorkbenchWindow.Models.cs": "a6ebe2b85272bd8c57aa36f299363bc85b61362eb028f3375c83433c00f56746",
+    "Editor/WorkbenchWindow.Models.cs": "8a1e6d4cd481fc84e9010c50b63bc1c2303605227111b048a62d8ebb803b7e15",
     "Editor/WorkbenchWindow.Models.cs.meta": "8534e232b525d1dc05ac51b96bece4c7d6696a0595b27fa827afe8fcfcaffacb",
-    "Editor/WorkbenchWindow.PreviewPanel.cs": "41cb0d79d728d9b2cdbf2460c76f54cccf5afc01c6aa287b4dbb40cea26c88fc",
+    "Editor/WorkbenchWindow.PreviewPanel.cs": "34e7ac230fdbee85057f202c0955e9a5953db239c880c85567f5862d2601e2c0",
     "Editor/WorkbenchWindow.PreviewPanel.cs.meta": "58c908e2a7d5054f9b683f7cc2a4f05d6f1e9726a5a71f8c0ca9a678da9e5e8d",
     "Editor/WorkbenchWindow.ProductReferences.cs": "48460463fb82409adbc300538afd93b7d90df34dce0893ad0cd38f1594e33d2d",
     "Editor/WorkbenchWindow.ProductReferences.cs.meta": "a9a96c6d7b8caa1f98a9cb28c51a436bf1eee9ae5611f59bb6e4e3031cd84854",
-    "Editor/WorkbenchWindow.Sources.cs": "495770febb9ceb7bd5dcbd2e5c87955075e56bb745fcda68b4ed78113d8f0c0c",
+    "Editor/WorkbenchWindow.Sources.cs": "c2b8e49da0be3ded54f6bdc53b547bce97c539101e79de603ca9917fbad8c182",
     "Editor/WorkbenchWindow.Sources.cs.meta": "6d94b86856d441fd27b55522ffed535a806ff28977c4e2c3fc55caa9b5d2a655",
-    "Editor/WorkbenchWindow.UI.cs": "8d40cba10c44dbb8a7f21f03c5da9393bbe28245053a01d044ed038e56cc1c23",
+    "Editor/WorkbenchWindow.UI.cs": "6532e1cd069f9e0fd334e0cd97fbaacc638086738375beb046758859513cfafa",
     "Editor/WorkbenchWindow.UI.cs.meta": "a1b167471876333f7e0474fd4281d8cc43473786d974be25aa9a46085b4c2955",
-    "Editor/WorkbenchWindow.Visual.cs": "7dcd5cab00845929d2b378a2837409fd23fba2ba7bc3d8f6597916871d34804a",
+    "Editor/WorkbenchWindow.Visual.cs": "1ff93436a41c7ce2478ecb211fe4fa96c75255b1091775d0411f337e620d161e",
     "Editor/WorkbenchWindow.Visual.cs.meta": "9d635a62b8f72443732d472f93ed1d0f344ab66a83f6a56d2b996240ab064962",
-    "Editor/WorkbenchWindow.Workflow.cs": "c8c6a790e25038ef41499a4d67486fac2136c44273b52a71a33c5db48b95c84d",
+    "Editor/WorkbenchWindow.Workflow.cs": "654faef608619f016c10fbe1463aaa18d8b48e1b4dd019e497f653f2c57aea57",
     "Editor/WorkbenchWindow.Workflow.cs.meta": "6aa3492d885a0eeda2a575072f32d6467a3e21fda154a19e428c0b8b2814bba2",
     "Editor.meta": "30a2195586ff2e4340666fc540af9ed56dbd9c824f724fe9f08e6a64f05390de",
     "LICENSE": "0a6fcd017c80afe3259b08dc2e1c18fbd8f0123faf9676c59c762f5db2f11a1c",
     "LICENSE.meta": "d7460f2e02116e920126646b5f352518f31d286176b9f95069b2261c930105db",
     "MIO_REFERENCE.md": "7c7a38e9971ee10e96008ab22727b2de30dd826ce553eb1668be82063de132f4",
     "MIO_REFERENCE.md.meta": "5845341c3ecee41e856bcca23942453f296c8aad2dca2bfa93e617d531ca7ab8",
-    "package.json": "439d55cc17dbe193dd92e02fe6c5a290664538fd8544329bd8bf4d8fadca2eab",
+    "package.json": "2f329a6068480b090df4d058f9822a8a61341a1d695141c03eea8e51f4f3753e",
     "package.json.meta": "c482de9d189653762d95a90059c627523baf50fde8d2c347b26ccb741f524359",
     "README.md": "c9fff699b904a85261dedb3f77d2a5232124393275773fef92b6461aa510e23d",
     "README.md.meta": "89bd6b9064129624e1c701960ca0c72c4ad70023f8b9a28d6443b9ddadda5798",
     "START_HERE.md": "bf6d121efd9adbb266e6a692607abb33f50c26e93afdcdd258b08d24d8a5e97f",
     "START_HERE.md.meta": "0723fcc4c1000fea2ea4b9081cb5c7faf94a45ddf044fa8f54328d417454d92e",
-    "Tools/codex_feedback.py": "8cab5a1800e02d3d83dca42870db22061d6627d12c8f68972e8a5060e8327770",
+    "Tools/codex_feedback.py": "1147eb7f62b3628450ca898972f803c20a085e5860e808b6ab75242747d6be4a",
     "Tools/codex_feedback.py.meta": "7d6480f4eade1e0b33e5f1e91be1f0f452467d9e0e7b7b4a86ca05fdf4ce41a3",
     "Tools.meta": "18c4ae1ecdf25ee570fd218fcff68185f0aea9b5d66b7f7ab35cc2099b0024c9",
     "VERIFIED.md": "6613a52e76e06b1556e60df216fc620829b13a15e78e66c510eb00ca6982c852",
     "VERIFIED.md.meta": "c827f0db3910fd5e8c1d587881e5eae9163d39b87988ad6cbbc56e34dff9213d",
-    "Editor/WorkbenchWindow.Automation.cs": "37b9a7e68052c488c3fb7495179c03900a5f0fa1869406d674c20e7c9d94b824"
+    "Editor/WorkbenchWindow.Automation.cs": "37b9a7e68052c488c3fb7495179c03900a5f0fa1869406d674c20e7c9d94b824",
+    "Editor/WorkbenchFinishCheck.cs": "fe4b2d819754638958b01a806d6511fa7ee6b0ac59ade1f1200f6b8ced350f39",
+    "Editor/WorkbenchFinishCheck.cs.meta": "beb7dd65cce3f00799fcbdbf869cd4bc94db3d142d25bdf462a3bd8528b8131c",
+    "Editor/WorkbenchWindow.Compatibility.cs": "736e7e15fa5aaf1b7e194053332af680b689c29a784cdf654f4271a9cae8fb11",
+    "Editor/WorkbenchWindow.Compatibility.cs.meta": "22cbbb745aa7c7128e6f9d100537d9bbbb59e9b1e06207013c9f9085db35ee8d",
+    "Editor/WorkbenchFinishCheck.Masks.cs": "772885f1c5f74745405c4ccb0eb43c842e0d69530bb762c03f9e1395f9211cc9",
+    "Editor/WorkbenchFinishCheck.Masks.cs.meta": "96c529287904cbffd510423e1e82560395c0df3af867af1f28fb5138929dc784",
+    "Tools/finish-check.md": "17d3c0de8f63e15dc830d423a2b7a26b85c6f53869e5e9d017b05959d7e24210",
+    "Tools/finish-check.md.meta": "07dab33a2560fdbbe49043c882a49d73eca78575d2e50308ff6968a3719cc1fc",
+    "Editor/WorkbenchWindow.Guide.cs": "4e1716b2c665a894cc99e4c429c39178048b0b8ebafd54470a404afc3eab9d2e",
+    "Editor/WorkbenchWindow.Guide.cs.meta": "cf46118dccf53acc77c83e434c86917948af9818e662f6cd286ab86ffaa69103"
   },
   "baseline_files": {
     "BOOTH_NOTICE.md": [
@@ -159,7 +169,11 @@
       "1f774393e8f3677dbb0d8eb5b96f3b0a5949444381b6aef1b0e0577fcc6fc5a2",
       "45c006097099e35e6d862675728e556aaf23b42efad2f657c4598d08f0622d18",
       "47a8f4c07f756341eaf35ced045677b022179971c34940b8b9a4f4c0857d0306",
-      "8df91bdf6af73c6d4ac57896fa9037c7ad171c129b738be99db569b7c42af377"
+      "8df91bdf6af73c6d4ac57896fa9037c7ad171c129b738be99db569b7c42af377",
+      "439d55cc17dbe193dd92e02fe6c5a290664538fd8544329bd8bf4d8fadca2eab",
+      "ad32d6efe15039ae621d9ae7ce67b712ab762907ca9f08ac29a28232c2552b0f",
+      "c3fd224431328500cae944e6d4530e28b6b93476617c37d2d96fe23b3bfe4c0f",
+      "2f329a6068480b090df4d058f9822a8a61341a1d695141c03eea8e51f4f3753e"
     ],
     "package.json.meta": [
       "c482de9d189653762d95a90059c627523baf50fde8d2c347b26ccb741f524359"
@@ -220,27 +234,32 @@
       "8834c8d3c68b7fc067da229c74ef2b559e6b384d2c66f09d6e9b4e8628fbb68f"
     ],
     "Editor/WorkbenchBoothImageWindow.cs": [
-      "cd5f04abe6c4c84447717fcb530f9eb197b60f5f0673ad44b79e3052925db3e5"
+      "cd5f04abe6c4c84447717fcb530f9eb197b60f5f0673ad44b79e3052925db3e5",
+      "0596f21ea97cdb967f826df6c36950e25000b8ab5056359fa782dcec6bb5f329"
     ],
     "Editor/WorkbenchBoothImageWindow.cs.meta": [
       "84c1f5a2f94d9cd7600e70f520e1c0e60a6c171a7bd7ea1129354f117048c32b"
     ],
     "Editor/WorkbenchBoothSearchSettings.cs": [
-      "373704fdd6628cfdd558ac99dfcd3859fbadaa2036faea51b9782ec66b126d9c"
+      "373704fdd6628cfdd558ac99dfcd3859fbadaa2036faea51b9782ec66b126d9c",
+      "beb341b23f549c40178d671960ac418b3ee53929f25327297458d8d0763a0d88"
     ],
     "Editor/WorkbenchBoothSearchSettings.cs.meta": [
       "17b28afdbefaa7dbd6845217fde5c9e6ec2621739698ce51d8bd9cccefc1276a"
     ],
     "Editor/WorkbenchCodex.cs": [
       "679e07c6ab97bdf755163a09c0732f4a63383f5bf9bf4cd1291382dfabe07036",
-      "2716600226913f5e19f1d64af5b5060d496901eb72c8c52698b5aa823324bf92"
+      "2716600226913f5e19f1d64af5b5060d496901eb72c8c52698b5aa823324bf92",
+      "6b0c27e3c402e7c02cac106a1f4c55a3bf4a5d0798c57fb0fdfceb2b58263252",
+      "dcf5036db6e16906da833785cb437554627a2158df3405610c09e1bf8283f9ab"
     ],
     "Editor/WorkbenchCodex.cs.meta": [
       "d9a5a46f47f8b0bcc364f5fe63ec6a6ba65d284457189d34ff7b40f8af9d18d1"
     ],
     "Editor/WorkbenchData.cs": [
       "9b4493a12f24c2c4c56de19dc18232cb294c5b323723901cc5c58646fe7aa1df",
-      "f154cb52654482536c749b315febe12363ea860a9867c26da4f0d1f58ce265f5"
+      "f154cb52654482536c749b315febe12363ea860a9867c26da4f0d1f58ce265f5",
+      "76c0cafce3fd9f9bfc0327b4a8a9976687781b4858428f6083631500141d063c"
     ],
     "Editor/WorkbenchData.cs.meta": [
       "59442a36ff0354332fd44ebf1721d0712fce23850b4ab8d71dd6d7ea23c697e4"
@@ -262,7 +281,9 @@
       "d2e7e392bea60f41969188d1982574385f18f1a4762902281958487cf90adb76",
       "950daeaf5ca386d89f64bfadaa97b7e3f90b54a040dee9423ea02b852f321699",
       "61223f3b904db1d0de44219616b190ac04fb48de43678f6670716a1ebadf766b",
-      "aca362e4026e0804625fe4367d3f181e56baa9c5bd406f47d33d9426263e693f"
+      "aca362e4026e0804625fe4367d3f181e56baa9c5bd406f47d33d9426263e693f",
+      "37cfc9187932d29c958de5e8a94eb7422cb30776289a7aa8b707d776c94d696c",
+      "70c4df6c321a04cc4697964ff0639c75beeba0f2dab147ccd758c02bcd7d7e61"
     ],
     "Editor/WorkbenchPreview.cs.meta": [
       "10acc34fd966d24811e8cf794eb7d2a9ae0f1d020bd65895e88b188014646f31"
@@ -275,7 +296,8 @@
     ],
     "Editor/WorkbenchSceneSync.cs": [
       "097d92b47bb2be4733a3085a8e3eee179bc1f926ba43efd73f80d52f67f5ede3",
-      "16893be3c7e188de3dc1152d2d66df3d9f4da7d43d32747dc2012bcbb1c88649"
+      "16893be3c7e188de3dc1152d2d66df3d9f4da7d43d32747dc2012bcbb1c88649",
+      "9dd9dd98f35d7e49bccefceb1e9cf35c52b0df8fc58a4439df903927bd296d94"
     ],
     "Editor/WorkbenchSceneSync.cs.meta": [
       "8c75810d8a5a2e82b0001a47308bdec8e6ed41dc7bbf6aa2b379b399fd60ed4a"
@@ -287,14 +309,20 @@
       "777182cfbe0402f273403b5e77403469227070a625a9297c18a005f702923533",
       "85dbfdb94044b97fda750435b4195bcf87b4b0c8198f7edaa64ce6e6916b566b",
       "15940f07649647ac2233bb43581007b7160b79358bac00d6ea4df146cdae4363",
-      "67bc08f94dacc3a52241d21b21e79c0640f6cdb8330d3aa4b3d2302747fd9c0b"
+      "67bc08f94dacc3a52241d21b21e79c0640f6cdb8330d3aa4b3d2302747fd9c0b",
+      "ba41068f0e04073e9843a204d79edf3b1954f4948d1b7e29364ab9c24dc03632",
+      "e1157bf743a59425bd3aff000c8be1d030f8d23499851710b6f99a8819dc0dd4",
+      "05dd08c0c6b832b5235ea47a34a0e7343a06f3df344a78882f1d58c9e39944c0",
+      "f2c2bf2dee02a523736aa79888d6cc04f20c243d934dff26dd44d6c931228c46",
+      "ad753e7c2e31b464215bd89adff42e8801786a26b607fa5106d8afff93525205"
     ],
     "Editor/WorkbenchStyles.uss.meta": [
       "cbcffa5ed7576a53e88afce86d8ca5f67355295667faa4f7916cff9ee5c9af4a"
     ],
     "Editor/WorkbenchUiRules.cs": [
       "5d504ef9a2c1b671c83988210e2792b3ce681adf29e582c9bf83e35f2a0397f4",
-      "9a9591ce49905a1ad7f9ddfc2fa1638fe5b3e5246adeb26bc321109803b30aaf"
+      "9a9591ce49905a1ad7f9ddfc2fa1638fe5b3e5246adeb26bc321109803b30aaf",
+      "810423672ffcbc3291511dd13a52815c70c0d510d14b33bb6d73013b8cd8d8bb"
     ],
     "Editor/WorkbenchUiRules.cs.meta": [
       "0d2495c531869f8cb06c73914bd24e7440aeb895c582c3759ed943955295e602"
@@ -302,7 +330,8 @@
     "Editor/WorkbenchWindow.Booth.cs": [
       "af6eb096510679857ffca86d2a1d2d52ec77ae9869243c23249e8bd7caf115c8",
       "242e6806cf87f511b81d9cce0c16d8ae8512a8141f5b6e81f256ab42e99a002f",
-      "817d189e934cd81fee7107dac63ebe2b7a37df253ff343fb477ae5941f8a7bf2"
+      "817d189e934cd81fee7107dac63ebe2b7a37df253ff343fb477ae5941f8a7bf2",
+      "5815261aea81ef693e26fe142c0f0a545abf45053020588a596346c9906e7ad1"
     ],
     "Editor/WorkbenchWindow.Booth.cs.meta": [
       "65f2f08966fcf5f5134d81f43c997b6e4bc20560ef8fcd42a3ab65345f9a640b"
@@ -316,7 +345,8 @@
     "Editor/WorkbenchWindow.Codex.cs": [
       "e02be32b9d4701a58341bd684ad29bebe8bb8cb5cc18c58d7ce99cbec2f2a251",
       "162725e3c42a94cddddda63d60c4cf13bebd8f9f2a036d1c327ee4159e5d1912",
-      "4014fd2af902576c794743ca90ea2b7bf370af50875c54c8a3c21b57a53b720f"
+      "4014fd2af902576c794743ca90ea2b7bf370af50875c54c8a3c21b57a53b720f",
+      "5dc33a9e1cbd633a7f6f4ae79956e7d1eca0fb8a38b4e2e788a0f03132af1f01"
     ],
     "Editor/WorkbenchWindow.Codex.cs.meta": [
       "73b3eaa31219c4b676f961733b4b4d547d51e250e72fdaf5c3fbd0542b470dcd"
@@ -325,7 +355,8 @@
       "0afd19980578cf3451495605d820a2a1786e6c34ab1b9b8dcc5999c39e645286",
       "e0ffc4b21c210d81c50ad1af4685b7280010d426aad275f09f7ebdce212b9cbf",
       "45d974a52b3cce17c13a40a77e9979ad9232d502700ff4c372edc9a14420409a",
-      "634badb3758f1f2cc24917f56c6d112cbe91bcc4f22887261459b52f99218773"
+      "634badb3758f1f2cc24917f56c6d112cbe91bcc4f22887261459b52f99218773",
+      "a2dd18d5714afb79505c4cc92decc5cdb282599a63da22b1e72ed8bdc7b2770e"
     ],
     "Editor/WorkbenchWindow.Controls.cs.meta": [
       "7461cf976ead0724f822cd1fcc227113bb595801b3e7ce498f073db94698c494"
@@ -337,7 +368,14 @@
       "f7cf0dafc27d6bb397bd54b427b008ffd728310965efbaa0c3e1e4bc762b0e66",
       "2d9b24e2217544e25f745a3514a3ebd1ce14033c22eb8dd405b7773c915855ef",
       "0f38c306b100838b383235f46fbaa2ec1196081680b5f444f2739548c99fd842",
-      "e4519db220276a99c0e986eda92bfb0d370780f230a8116e6d2ddb8ecffea418"
+      "e4519db220276a99c0e986eda92bfb0d370780f230a8116e6d2ddb8ecffea418",
+      "a8ee1df95987675310fd1115c790f972b6d69950237dc76def2f7af343f969df",
+      "226171594d246ac166fb38210666290beda27e52e1ed8a9c4a94f20cf3d80655",
+      "4e7dedb690b940ec6956bfb6c82a00f5ad0359da9949195b2dd319c6b63a6511",
+      "dae18f4c07463f60209659618eda5a56f97ff6605c3f3d95ccf80bb08f237eb9",
+      "7b39fc67227954ff02fc8d9f7960c6aafdb4249f81bba845e4ca8e9080020259",
+      "68f5f5c88aac49da119d6771882ba0a6354bba190b255c8d19f64b7e5e00a0fd",
+      "f598c95a64dc7f088f8e9720164da25592df1f78b9ded60f344230245faec8ac"
     ],
     "Editor/WorkbenchWindow.cs.meta": [
       "f0ce3e88c1918ef057b9d861d26560dbca42ae2358308d3f693527a2c7bdf521"
@@ -345,7 +383,8 @@
     "Editor/WorkbenchWindow.PreviewPanel.cs": [
       "11e7e0043aaf4c09c10de4f745d5edb0f379119e4a0b998d5ebe81bf79ec32f1",
       "52a18b0091ade636414ea85d6c3a2ac59899861d9303dc60f1ae042679a085ff",
-      "41cb0d79d728d9b2cdbf2460c76f54cccf5afc01c6aa287b4dbb40cea26c88fc"
+      "41cb0d79d728d9b2cdbf2460c76f54cccf5afc01c6aa287b4dbb40cea26c88fc",
+      "34e7ac230fdbee85057f202c0955e9a5953db239c880c85567f5862d2601e2c0"
     ],
     "Editor/WorkbenchWindow.PreviewPanel.cs.meta": [
       "58c908e2a7d5054f9b683f7cc2a4f05d6f1e9726a5a71f8c0ca9a678da9e5e8d"
@@ -364,13 +403,20 @@
       "3ed9e49e2b448888bf33e11cf2107c6ef5b41e0d33dc37790004de4c0908f7d4",
       "cdc4eec572c1842d32e92a7d6e556edd3e24097156b553582a858f1379181a08",
       "2fb03a5a71e031a098cf6d31c5ac3846a9634a199c6c35c3dc2b6f323ffb7433",
-      "8d40cba10c44dbb8a7f21f03c5da9393bbe28245053a01d044ed038e56cc1c23"
+      "8d40cba10c44dbb8a7f21f03c5da9393bbe28245053a01d044ed038e56cc1c23",
+      "a0326997e232fffae41344f45d5effcc86b901b7ce07a3d651d77b286d3e9501",
+      "24106a6147ece46b93bafdc40e51c9c8c07f9e56d39f4087f5958007c30c0821",
+      "3964d8374974c5eafa1c2afb90754210439239b03b1ed670751f317cc7d47c12",
+      "c3665dade6b83ae2bea25a3c83adf6770370e93e6c8d9c355213bd8301414b13",
+      "6532e1cd069f9e0fd334e0cd97fbaacc638086738375beb046758859513cfafa"
     ],
     "Editor/WorkbenchWindow.UI.cs.meta": [
       "a1b167471876333f7e0474fd4281d8cc43473786d974be25aa9a46085b4c2955"
     ],
     "Tools/codex_feedback.py": [
-      "8cab5a1800e02d3d83dca42870db22061d6627d12c8f68972e8a5060e8327770"
+      "8cab5a1800e02d3d83dca42870db22061d6627d12c8f68972e8a5060e8327770",
+      "b4baaf43cb81752f932673431943cd526d7503bc72e675bbef7cd88e802f54a2",
+      "1147eb7f62b3628450ca898972f803c20a085e5860e808b6ab75242747d6be4a"
     ],
     "Tools/codex_feedback.py.meta": [
       "7d6480f4eade1e0b33e5f1e91be1f0f452467d9e0e7b7b4a86ca05fdf4ce41a3"
@@ -416,7 +462,10 @@
     "Editor/WorkbenchModels.cs": [
       "b908b7d19f3b43752eeaca3d0b44d387561f25cfea13100a2627e34429c8ac94",
       "cb2b95c59ec4db0912edd54f513464d97712c8705fa2a0e82f5890df308841bb",
-      "f0933c075038cf110c0f2079dbcf31d2184d4f47feb5f0f478e19691c1bd38b6"
+      "f0933c075038cf110c0f2079dbcf31d2184d4f47feb5f0f478e19691c1bd38b6",
+      "dfe7244deb21d5255762e22100fe91ac883e1643dc446deecb07c93f26fc6daf",
+      "8cf682549795b001fa9efc36e72f845a93f95b5c7420f35961a1930bf03e92ac",
+      "663a8a66656d4c0552eef0d41a1eb967b4416aa6783e71fc5f04136ab5785fa2"
     ],
     "Editor/WorkbenchModels.cs.meta": [
       "93c4b947e0c103f8badfd1006f35e057a33f6bd10746800982d0c1c810fe3f47"
@@ -424,27 +473,31 @@
     "Editor/WorkbenchModelSettingsWindow.cs": [
       "571c4a5d4b05d623c02fa3ba23cd311f34970b5c04c40c68366451f8d50ba4f9",
       "dc27973377b90cfde80cbac2827d6ef707ee5c7a789220c90c267aa8fc44e081",
-      "9fdd356119625fd46c559e1515d47b273a67d2c1e57c9ac6fd7f842f038163b1"
+      "9fdd356119625fd46c559e1515d47b273a67d2c1e57c9ac6fd7f842f038163b1",
+      "fdd8c2239ece7498db2c45400e00cc60ba288dc625f26dd860230ed6881acf64"
     ],
     "Editor/WorkbenchModelSettingsWindow.cs.meta": [
       "c0ea73fc9da22d3cbeeecf246e3e5fc15058cf6b30da96bdc5ce592ae211cf76"
     ],
     "Editor/WorkbenchResourceGallery.cs": [
       "d99e884d3f7a64f1caf050e1e411fbc2583f8858e1820ba789c5be193f7355dc",
-      "2aaf44dc3f97ac7f2b1693b9c93b2a74275e42b79ae58f031ccb7fd104b95878"
+      "2aaf44dc3f97ac7f2b1693b9c93b2a74275e42b79ae58f031ccb7fd104b95878",
+      "7510341492c505d5641a53f82ebde3022ab0213b9089eab47f2164e76a23c6f8"
     ],
     "Editor/WorkbenchResourceGallery.cs.meta": [
       "be8ff5fbf4638a66ca6bed55496e42da9c59cd26544f4635d0ed7294062b2531"
     ],
     "Editor/WorkbenchScreenshotGallery.cs": [
       "26048415202b5d500cc6db1bc1c7f85c878026d97bc83bada9855e3cdf1828f4",
-      "5903dfc53c6e99f4c9cd494e21d71865c02abc9a3bac54e60c32df3740dea991"
+      "5903dfc53c6e99f4c9cd494e21d71865c02abc9a3bac54e60c32df3740dea991",
+      "7f16bca58c66a2f06f1720a2db543b70457083b822575fcb854a1167797de220"
     ],
     "Editor/WorkbenchScreenshotGallery.cs.meta": [
       "de1fd4f5e11499f4891930594ceb5806f195d6a5b22688f38cc9326353af8e4f"
     ],
     "Editor/WorkbenchWindow.Gallery.cs": [
-      "b39752618e106ac55899b3eb9eb3745524b34e8b444205ee1d7a346655e04561"
+      "b39752618e106ac55899b3eb9eb3745524b34e8b444205ee1d7a346655e04561",
+      "8273bd5a7b60bd74909b1ee834b7832c69a0bf3fb6d8aeb641d6aeb84fbb8a1e"
     ],
     "Editor/WorkbenchWindow.Gallery.cs.meta": [
       "20c556780dc200a09be6c436c720b88a44a8af49b9340d2c00722f5fbbe16432"
@@ -452,7 +505,12 @@
     "Editor/WorkbenchWindow.Models.cs": [
       "e35b1e9cdfa0edf11a74b90547fe71a3d46d3ff3703dcbbe3b75fdbf03d62bf4",
       "240fa14b5aa383baa2d7f98f2be22a0e10f9676ee831988d0d9fc70e1d4ffa06",
-      "a39cd4c9aca74114bc2e5b1a95a200f4c44556a5402f9dc21c9643cfe77f16cd"
+      "a39cd4c9aca74114bc2e5b1a95a200f4c44556a5402f9dc21c9643cfe77f16cd",
+      "a6ebe2b85272bd8c57aa36f299363bc85b61362eb028f3375c83433c00f56746",
+      "38c4f276c179bb257f2cfd90106ff5718f84a1d9755fb645059f14c793f30158",
+      "a1e7adcf898f223614fac0d7b63535d9c85d4262ab8f3ef8561882dd53074664",
+      "16713d1485c904bee2268b3ff4b3b48e27a837ebd8353c61a8b058ae4e25a81f",
+      "8a1e6d4cd481fc84e9010c50b63bc1c2303605227111b048a62d8ebb803b7e15"
     ],
     "Editor/WorkbenchWindow.Models.cs.meta": [
       "8534e232b525d1dc05ac51b96bece4c7d6696a0595b27fa827afe8fcfcaffacb"
@@ -470,7 +528,10 @@
     ],
     "Editor/WorkbenchTheme.cs": [
       "03387b5a88042c7f569e6df181dc627df4eb39e60db6981131859bdc97699b6b",
-      "e6af6641369811ed227c77cb08f063d2c2156d8a602ceaa6c31544e263b0b9fd"
+      "e6af6641369811ed227c77cb08f063d2c2156d8a602ceaa6c31544e263b0b9fd",
+      "f86e092efdd2ae9373ed7c8fdc492e630f6da503dec61fc19c41d776893f225e",
+      "727d559f76c3834ec39351f526e9a4f828d0cc0d03839d6e28344947186d9906",
+      "22af9cb230edca305e05c782915563fe0ed0e9f1942574b43ac103155388d884"
     ],
     "Editor/WorkbenchTheme.cs.meta": [
       "cd72cc568633f51bb0fac7f66a1acde25d917d8d97c0f3615edc03422f0b3283"
@@ -482,7 +543,11 @@
       "0ad2aa5932b1c9ea0f1d67e379ac73a304ae6fa5ac601d631b694dc27d0d3730",
       "c44c018a8eeb88209fd9166e6097cb4f1adaeeaddddaa33c9499fed33b0f4875",
       "1781e7b4c50c798f944061786e697422e8f9c540b206dfacc7958a1503dcbea0",
-      "7dcd5cab00845929d2b378a2837409fd23fba2ba7bc3d8f6597916871d34804a"
+      "7dcd5cab00845929d2b378a2837409fd23fba2ba7bc3d8f6597916871d34804a",
+      "482f2795cfc5144bc6b8b8718ec544a80b7de24dfae98b3c5ca03ae2e7dc9c4f",
+      "8f2ac0c73fc8331500ee0eb9fd4a5a1241a8a7b77f6b6d19f5156b6a8a87222c",
+      "3dac9b2275124192627d502e3907b3c1b1ecd90e454d6ca124f264408d54192c",
+      "1ff93436a41c7ce2478ecb211fe4fa96c75255b1091775d0411f337e620d161e"
     ],
     "Editor/WorkbenchWindow.Visual.cs.meta": [
       "9d635a62b8f72443732d472f93ed1d0f344ab66a83f6a56d2b996240ab064962"
@@ -506,7 +571,9 @@
       "f01c42ffdd2e14578b2ea02897311222cdfc17031cfd25ce17f2dd5bc30f7595",
       "8313b576c8a474487da9317ec95f3d3f2773d271057c5780a32aff334f77c1a0",
       "a2b05449309b1d47232ce814625881f206abbc10846c9dc54c8117d285bb171d",
-      "495770febb9ceb7bd5dcbd2e5c87955075e56bb745fcda68b4ed78113d8f0c0c"
+      "495770febb9ceb7bd5dcbd2e5c87955075e56bb745fcda68b4ed78113d8f0c0c",
+      "7fc6cee7b36518e775e16bd1342407856ff160e9b9cde1f6927e6c77ae3cb691",
+      "c2b8e49da0be3ded54f6bdc53b547bce97c539101e79de603ca9917fbad8c182"
     ],
     "Editor/WorkbenchWindow.Sources.cs.meta": [
       "6d94b86856d441fd27b55522ffed535a806ff28977c4e2c3fc55caa9b5d2a655"
@@ -534,7 +601,9 @@
     ],
     "Editor/WorkbenchOptimizationWindow.cs": [
       "0e2ef90f91740091d0b5121831d617c02e7173f35658253de6498bb52f1a9658",
-      "463f281a2025d737eeb0f0629f6ceeb700bc7ae5a0e5dc8fb5c2b444290f2321"
+      "463f281a2025d737eeb0f0629f6ceeb700bc7ae5a0e5dc8fb5c2b444290f2321",
+      "81f94de578b5fb3e844ebc0dc46b2389c995a74b3592216aa4f5fa2577dd693d",
+      "261e7b8962fa89d79cf8a7cdea473cc193f3ac32c52d2e4e969c22f565dd0ab6"
     ],
     "Editor/WorkbenchOptimizationWindow.cs.meta": [
       "00c750669d5d3f3147450c72f47534794b7d877ab6cae97591782dc5d17453db"
@@ -543,7 +612,11 @@
       "3c8ef6cdbefcfbdd13c4ac98dd1b70e73fb05ce9a5bf60e8e1e534f312853289",
       "5ff3fda250c92397e14c6225d05d24f2e8a4c7e8043b799ea54fc20ef7df4565",
       "65d89de5162e19404ac4a80a1b428ec7400d39a8c5eafcd616bdee8bdc1a22c1",
-      "416807e85ba9095bc38766b7c0e5f144ec1ab382028217ccf4aa263fbf619f90"
+      "416807e85ba9095bc38766b7c0e5f144ec1ab382028217ccf4aa263fbf619f90",
+      "c8c6a790e25038ef41499a4d67486fac2136c44273b52a71a33c5db48b95c84d",
+      "ac4ec3f5cecbf434d90d6083dc7f3b1f683c76a2f97f2c212992109c2ae6ac9a",
+      "3a41b06c519f225eb145eefae0d88a7eb10649a3a0fe8151a36e1914ea1b019c",
+      "654faef608619f016c10fbe1463aaa18d8b48e1b4dd019e497f653f2c57aea57"
     ],
     "Editor/WorkbenchWindow.Workflow.cs.meta": [
       "6aa3492d885a0eeda2a575072f32d6467a3e21fda154a19e428c0b8b2814bba2"
@@ -556,7 +629,8 @@
       "b7338406e77d3a1a0e064beecfca2b20fa86cb18c7f99d918acfb13651d0fa48"
     ],
     "Editor/WorkbenchCategoryBar.cs": [
-      "270b6f4e602730e794d0d20811b86ad9d4cc6a4476bc57aafa9ed1bb2d5f9a6f"
+      "270b6f4e602730e794d0d20811b86ad9d4cc6a4476bc57aafa9ed1bb2d5f9a6f",
+      "716b903f35e21496c62cb74d8413b354c969931dafb4b16e71b5b5bbbeef869c"
     ],
     "Editor/WorkbenchCategoryBar.cs.meta": [
       "46461329b2dda9c1339dec818efadec67595f257a6be4605e996b7fc20877404"
@@ -567,6 +641,40 @@
     ],
     "Editor/WorkbenchLibraryFilters.cs.meta": [
       "d9df2e2f66452d301fc725965fca2bcd37eccf54d5cca727d9326c0d2558cead"
+    ],
+    "Editor/WorkbenchFinishCheck.cs": [
+      "2a04f4b617690130e180de441268878251df353c9c4270744f90470e91f30edc",
+      "7d0c33ad814da5fd030b5d3702ac2720522925f58418c506a082dd258c6c209b",
+      "fe4b2d819754638958b01a806d6511fa7ee6b0ac59ade1f1200f6b8ced350f39"
+    ],
+    "Editor/WorkbenchFinishCheck.cs.meta": [
+      "beb7dd65cce3f00799fcbdbf869cd4bc94db3d142d25bdf462a3bd8528b8131c"
+    ],
+    "Editor/WorkbenchWindow.Compatibility.cs": [
+      "736e7e15fa5aaf1b7e194053332af680b689c29a784cdf654f4271a9cae8fb11"
+    ],
+    "Editor/WorkbenchWindow.Compatibility.cs.meta": [
+      "22cbbb745aa7c7128e6f9d100537d9bbbb59e9b1e06207013c9f9085db35ee8d"
+    ],
+    "Editor/WorkbenchFinishCheck.Masks.cs": [
+      "772885f1c5f74745405c4ccb0eb43c842e0d69530bb762c03f9e1395f9211cc9"
+    ],
+    "Editor/WorkbenchFinishCheck.Masks.cs.meta": [
+      "96c529287904cbffd510423e1e82560395c0df3af867af1f28fb5138929dc784"
+    ],
+    "Tools/finish-check.md": [
+      "17d3c0de8f63e15dc830d423a2b7a26b85c6f53869e5e9d017b05959d7e24210"
+    ],
+    "Tools/finish-check.md.meta": [
+      "07dab33a2560fdbbe49043c882a49d73eca78575d2e50308ff6968a3719cc1fc"
+    ],
+    "Editor/WorkbenchWindow.Guide.cs": [
+      "029021f583286eaae4b02870d7301b6b8d9baf26b088c7566fa42bd77d0d3b1a",
+      "90fd33f2f40ad9ed47ef0ae9adb0c4c51165ffb936994a25777bfd7ba94bc315",
+      "4e1716b2c665a894cc99e4c429c39178048b0b8ebafd54470a404afc3eab9d2e"
+    ],
+    "Editor/WorkbenchWindow.Guide.cs.meta": [
+      "cf46118dccf53acc77c83e434c86917948af9818e662f6cd286ab86ffaa69103"
     ]
   }
 }
