@@ -179,17 +179,31 @@ namespace AvatarWorkbench
                 pair.Value.localPosition = pair.Key.localPosition;
                 pair.Value.localRotation = pair.Key.localRotation; pair.Value.localScale = RenderableScale(pair.Key.localScale);
             }
+            // Runs at the preview tick rate: reuse buffers and write only values that changed.
             foreach (var pair in liveRenderers)
             {
                 if (!pair.Key || !pair.Value) continue;
                 CopyVisibilityAndProperties(pair.Key, pair.Key, pair.Value);
-                var materials = pair.Key.sharedMaterials;
-                var previous = pair.Value.sharedMaterials;
-                if (!materials.SequenceEqual(previous)) pair.Value.sharedMaterials = materials;
+                pair.Key.GetSharedMaterials(materialScratch);
+                pair.Value.GetSharedMaterials(copyMaterialScratch);
+                if (!SameMaterials(materialScratch, copyMaterialScratch)) pair.Value.sharedMaterials = materialScratch.ToArray();
                 if (pair.Key is SkinnedMeshRenderer sourceSkin && pair.Value is SkinnedMeshRenderer shownSkin && sourceSkin.sharedMesh)
-                    for (int i = 0; i < sourceSkin.sharedMesh.blendShapeCount; i++) shownSkin.SetBlendShapeWeight(i, sourceSkin.GetBlendShapeWeight(i));
+                {
+                    int shapes = sourceSkin.sharedMesh.blendShapeCount;
+                    for (int i = 0; i < shapes; i++)
+                    {
+                        float weight = sourceSkin.GetBlendShapeWeight(i);
+                        if (shownSkin.GetBlendShapeWeight(i) != weight) shownSkin.SetBlendShapeWeight(i, weight);
+                    }
+                }
             }
             Dirty = true;
+        }
+        static bool SameMaterials(List<Material> a, List<Material> b)
+        {
+            if (a.Count != b.Count) return false;
+            for (int i = 0; i < a.Count; i++) if (a[i] != b[i]) return false;
+            return true;
         }
 
         public void SampleGesturePose()
@@ -234,14 +248,20 @@ namespace AvatarWorkbench
             for (var t = renderer.transform; t; t = t.parent) if (!t.gameObject.activeSelf) return false;
             return true;
         }
+        static MaterialPropertyBlock scratchBlock;
+        static readonly List<Material> materialScratch = new List<Material>(), copyMaterialScratch = new List<Material>();
         static void CopyVisibilityAndProperties(Renderer original, Renderer shown, Renderer copy)
         {
             copy.enabled = SourceVisible(shown) && (EditorUtility.IsPersistent(original) || !SceneVisibilityManager.instance.IsHidden(original.gameObject));
             // NDMF suppresses proxies outside its camera callback. That transient flag is not
             // a menu state; the isolated copy uses the proxy's real enabled state.
             copy.forceRenderingOff = false;
-            var block = new MaterialPropertyBlock(); shown.GetPropertyBlock(block); copy.SetPropertyBlock(block);
-            for (int i = 0; i < shown.sharedMaterials.Length; i++)
+            // SetPropertyBlock copies the values, so one block can be reused for every renderer.
+            var block = scratchBlock ?? (scratchBlock = new MaterialPropertyBlock());
+            block.Clear(); shown.GetPropertyBlock(block); copy.SetPropertyBlock(block);
+            shown.GetSharedMaterials(materialScratch);
+            int slots = materialScratch.Count;
+            for (int i = 0; i < slots; i++)
             {
                 block.Clear(); shown.GetPropertyBlock(block, i);
                 // Empty slot blocks must not override renderer-wide animated properties.

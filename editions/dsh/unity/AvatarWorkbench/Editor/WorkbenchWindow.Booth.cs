@@ -601,7 +601,7 @@ namespace AvatarWorkbench
         void CreateGUI() { BuildContent(); }
         void BuildContent()
         {
-            var root = rootVisualElement; root.Clear(); root.style.paddingLeft = root.style.paddingRight = 12; root.style.paddingTop = root.style.paddingBottom = 10;
+            var root = rootVisualElement; root.Clear(); WorkbenchTheme.ApplyFont(root); root.style.paddingLeft = root.style.paddingRight = 12; root.style.paddingTop = root.style.paddingBottom = 10;
             var title = new Label(ReadableTitle(heading)) { enableRichText = false, tooltip = heading }; title.style.whiteSpace = WhiteSpace.Normal; title.style.unityFontStyleAndWeight = FontStyle.Bold; title.style.marginBottom = 8; title.style.maxHeight = 44; title.style.flexShrink = 0; title.style.overflow = Overflow.Hidden; root.Add(title);
             var scroll = new ScrollView(ScrollViewMode.Vertical); scroll.style.flexGrow = 1; scroll.style.minHeight = 0; scroll.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
             scroll.contentContainer.style.width = new StyleLength(new Length(100, LengthUnit.Percent));

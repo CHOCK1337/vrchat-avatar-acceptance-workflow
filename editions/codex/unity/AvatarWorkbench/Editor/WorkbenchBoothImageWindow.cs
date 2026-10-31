@@ -61,14 +61,14 @@ namespace AvatarWorkbench
         void BuildInterface()
         {
             loadingAnimation?.Pause(); loadingAnimation = null;
-            var root = rootVisualElement; root.Clear(); root.name = "booth-image-window";
+            var root = rootVisualElement; root.Clear(); root.name = "booth-image-window"; WorkbenchTheme.ApplyFont(root);
             root.style.flexDirection = FlexDirection.Column; root.style.flexGrow = 1; root.style.minHeight = 0; root.style.minWidth = 0;
             root.style.paddingLeft = root.style.paddingRight = 12; root.style.paddingTop = root.style.paddingBottom = 10;
             root.style.backgroundColor = (Color)new Color32(20, 27, 36, 255); root.style.color = (Color)new Color32(233, 240, 246, 255);
 
             var kind = Text("商品图片 / 作者宣传图", "booth-image-kind"); kind.style.fontSize = 12; kind.style.color = (Color)new Color32(145, 217, 219, 255); root.Add(kind);
             var title = Text(WorkbenchBoothInfoWindow.ReadableTitle(Value(product, "name", "未选择商品")), "booth-image-title");
-            title.tooltip = Value(product, "name", ""); title.style.fontSize = 16; title.style.unityFontStyleAndWeight = FontStyle.Bold;
+            title.tooltip = Value(product, "name", ""); title.style.fontSize = 15; title.style.unityFontStyleAndWeight = FontStyle.Bold;
             title.style.whiteSpace = WhiteSpace.Normal; title.style.maxHeight = 46; title.style.overflow = Overflow.Hidden; title.style.marginTop = 5; title.style.marginBottom = 6; root.Add(title);
             var identity = Row();
             var id = Text("BOOTH 号：" + Value(product, "id", "未提供"), "booth-image-product-id"); id.style.flexGrow = 1; id.style.fontSize = 13; identity.Add(id);

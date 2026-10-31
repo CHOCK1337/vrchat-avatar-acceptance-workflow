@@ -94,10 +94,6 @@ namespace AvatarWorkbench
         {
             if (activePanel != "preview") { previewExpanded = false; StopPreviewCamera(); CloseRadialMenu(); }
             rootVisualElement.EnableInClassList("aw-preview-expanded", previewExpanded);
-            var header = rootVisualElement.Q<VisualElement>(className: "aw-header");
-            if (header != null) header.style.display = previewExpanded ? DisplayStyle.None : DisplayStyle.Flex;
-            if (connectionBox != null) connectionBox.style.display = previewExpanded ? DisplayStyle.None : DisplayStyle.Flex;
-            if (composer != null) composer.style.display = previewExpanded ? DisplayStyle.None : DisplayStyle.Flex;
             if (previewExpanded)
             {
                 tabBar.style.display = DisplayStyle.None;

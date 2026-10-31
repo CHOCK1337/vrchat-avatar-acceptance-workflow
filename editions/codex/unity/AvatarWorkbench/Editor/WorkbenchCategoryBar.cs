@@ -36,10 +36,14 @@ namespace AvatarWorkbench
                 entry.Value.text = entry.Key + " " + Count(entry.Key);
                 entry.Value.tooltip = entry.Key == "材质" ? "材质、妆容、皮肤等资源包；单张图片不作为安装资源。" : "查看已索引的" + entry.Key + "素材；不扫描、不安装。";
                 entry.Value.EnableInClassList("aw-category-selected", entry.Key == selected);
+                // Empty categories are noise; keep "all" and the current choice reachable.
+                bool shown = entry.Key == WorkbenchCategories.All || entry.Key == selected || Count(entry.Key) > 0;
+                entry.Value.style.display = shown ? DisplayStyle.Flex : DisplayStyle.None;
             }
             bool secondary = !buttons.ContainsKey(selected);
             more.text = secondary ? selected + " " + Count(selected) + " ▾" : "更多分类 ▾";
             more.EnableInClassList("aw-category-selected", secondary);
+            more.style.display = secondary || counts.Any(x => x.Value > 0 && !buttons.ContainsKey(x.Key)) ? DisplayStyle.Flex : DisplayStyle.None;
         }
         int Count(string key) => counts.TryGetValue(key, out var count) ? count : 0;
         void ShowMore()
@@ -47,7 +51,8 @@ namespace AvatarWorkbench
             var menu = new UnityEditor.GenericMenu();
             foreach (string category in WorkbenchCategories.Order.Concat(counts.Keys.OrderBy(x => x, StringComparer.Ordinal)).Append(selected).Distinct().Where(x => !buttons.ContainsKey(x)))
             {
-                string value = category; menu.AddItem(new GUIContent(value + "  " + Count(value)), value == selected, () => choose(value));
+                string value = category; if (Count(value) == 0 && value != selected) continue;
+                menu.AddItem(new GUIContent(value + "  " + Count(value)), value == selected, () => choose(value));
             }
             menu.DropDown(more.worldBound);
         }

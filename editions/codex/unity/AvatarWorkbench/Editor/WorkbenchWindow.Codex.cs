@@ -117,8 +117,11 @@ namespace AvatarWorkbench
                 ["note"] = "DSH 没有推送接口：请求已保存到同一任务收件箱，由 DSH 读取后把回复写回同一条反馈。本机读取，不自动唤醒，不起第二个客户端；通知日志不等于自动唤醒。" };
             try { WorkbenchData.Write(deliveryFile, receipt); }
             catch (Exception e) { Toast("请求已保存，但 DSH 回执未写入：" + e.Message + " 可稍后重试写入回执。"); UpdateLabels(); RenderFeedback(); return; }
+            // DSH has no push channel, so hand the user the takeover text right away instead of
+            // leaving it behind the More menu.
+            CopyDshInstruction(binding);
             UpdateLabels(); RenderFeedback();
-            ToastReceipt("已保存给 DSH：请求在收件箱等待 DSH 读取，不会自动唤醒；DSH 回复会写回同一条。", id);
+            ToastReceipt("已发出，接手指令已复制：切到 DSH 按 Ctrl+V 发送，DSH 才会开始处理。", id);
         }
         void RetryRequest(string binding, JObject entry)
         {

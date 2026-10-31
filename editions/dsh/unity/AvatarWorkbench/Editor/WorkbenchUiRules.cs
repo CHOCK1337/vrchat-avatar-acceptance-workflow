@@ -5,7 +5,9 @@ namespace AvatarWorkbench
     // Pure presentation rules; no scene, task, account or execution mutations.
     internal static class WorkbenchUiRules
     {
-        public const float WideWidth = 1180f;
+        // Three panes fit from here: a docked window beside Hierarchy/Inspector on a 1920 screen
+        // keeps materials, preview and progress visible instead of collapsing to one tab.
+        public const float WideWidth = 1280f;
         public const float WideHeight = 620f;
         public const float MediumWidth = 900f;
         public const float MediumHeight = 560f;
@@ -21,10 +23,10 @@ namespace AvatarWorkbench
             switch (status)
             {
                 case "received": return "等待读取";
-                case "waiting_dsh": return "等待 DSH 读取（不自动唤醒）";
-                case "seen": return "已读";
-                case "processing_feedback": return "处理中";
-                case "addressed": return "已有回复";
+                case "waiting_dsh": return "已发出 · 等 DSH 读取";
+                case "seen": return "AI 已读";
+                case "processing_feedback": return "正在修改";
+                case "addressed": return "已回复 · 请你确认效果";
                 default: return "状态未记录";
             }
         }

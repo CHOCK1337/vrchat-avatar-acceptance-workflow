@@ -4,7 +4,7 @@
 
 | 路径 | 内容 |
 |---|---|
-| `unity/AvatarWorkbench` | Unity Editor 工作台 0.2.12-dsh；安装至工程 `Assets/AvatarWorkbench` |
+| `unity/AvatarWorkbench` | Unity Editor 工作台 0.2.15-dsh；安装至工程 `Assets/AvatarWorkbench` |
 | `dependencies/UnityMCP-VRC` | 固定快照的 UnityMCP Editor 插件、Node 源码与许可 |
 | `runtime/unity-mcp/build/index.js` | 已编译 Unity MCP；生产依赖已带入，不在用户机器运行 npm install |
 | `adapter/workbench_mcp.py` | 工作台上下文、目录、任务、冻结图、反馈与单写入租约；标准库 Python |

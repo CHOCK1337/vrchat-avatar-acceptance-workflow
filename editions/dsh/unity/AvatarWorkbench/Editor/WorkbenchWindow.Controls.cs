@@ -60,7 +60,7 @@ namespace AvatarWorkbench
             endTrialButton.SetEnabled(preview?.Gesture != null && !busy && !frozen && !historical);
             outfitButton.text = preview?.Gesture?.Moving == true ? "切换衣服中…" : "试穿衣服 ▾";
             poseButton.text = preview?.Gesture?.Moving == true ? "切换姿势中…" : "预览姿势 ▾";
-            string reason = frozen ? "圈选原图已经冻结；先返回模型预览。" : historical ? "历史图片不能换装或改变姿势。" : busy ? "Unity 或执行宿主正在操作；保留当前画面。" : controlsUnavailable;
+            string reason = frozen ? "圈选原图已经冻结；先返回模型预览。" : historical ? "历史图片不能换装或改变姿势。" : busy ? "Unity 或 AI 正在操作；先保留当前画面。" : controlsUnavailable;
             bool cameraReady = target && preview != null && !frozen && !historical && !busy;
             cameraViewButton?.SetEnabled(cameraReady); rootVisualElement.Q<Button>("preview-reset-camera")?.SetEnabled(cameraReady);
             if (cameraViewButton != null) cameraViewButton.tooltip = cameraReady ? "选择正、侧、背面或聚焦部位，只移动预览相机。" : string.IsNullOrEmpty(reason) ? "先选择角色并显示真实预览。" : reason;

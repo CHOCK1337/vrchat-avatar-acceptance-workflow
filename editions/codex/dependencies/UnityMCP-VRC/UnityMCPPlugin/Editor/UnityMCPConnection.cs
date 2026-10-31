@@ -149,11 +149,13 @@ namespace UnityMCP.Editor
             isLoggingEnabled = true;
 
             Debug.Log("[UnityMCP] Plugin initialized");
-            EditorApplication.delayCall += () =>
-            {
-                Debug.Log("[UnityMCP] Starting MCP server");
-                StartServer();
-            };
+            // Start immediately. delayCall waits for an editor tick, and Unity barely ticks while its
+            // window is unfocused, so a project opened in the background stayed unreachable until
+            // someone clicked it. The listener runs off the main thread; commands still queue for a tick.
+            Debug.Log("[UnityMCP] Starting MCP server");
+            try { StartServer(); }
+            catch (Exception e) { Debug.LogWarning("[UnityMCP] Immediate start failed; retrying on the next editor tick: " + e.Message); }
+            EditorApplication.delayCall += StartServer;
             AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
             // Remove our discovery record when the Editor exits so MCP servers stop offering this
             // instance. A crash skips this; the MCP side self-heals by dropping records whose port

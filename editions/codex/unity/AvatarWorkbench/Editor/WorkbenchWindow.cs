@@ -32,7 +32,7 @@ namespace AvatarWorkbench
         string toastFeedbackId = "";
         bool toastIsReceipt;
         DateTime taskTime;
-        int historyIndex = -1;
+        int historyIndex = -1, addressedSeen = -1;
         ObjectField targetField;
         Label projectLabel, candidateLabel, connectionLabel, previewLabel, detailLabel, taskLabel, noticeLabel, emptyResources;
         VisualElement feedbackPanel, previewPanel;
@@ -130,7 +130,7 @@ namespace AvatarWorkbench
         public void SetTarget(GameObject go) => SetTargetSource(go, "editing_state");
         void SetTargetSource(GameObject go, string kind)
         {
-            if (IsBusy()) { Toast("执行宿主正在修改现场，先保留当前画面。稍后刷新目标。"); targetField?.SetValueWithoutNotify(target); return; }
+            if (IsBusy()) { Toast("AI 正在修改模型，先保留当前画面。稍后刷新目标。"); targetField?.SetValueWithoutNotify(target); return; }
             if (go && !go.GetComponentsInChildren<Renderer>(true).Any()) throw new InvalidOperationException("所选对象没有模型网格，请选择 Avatar 根对象。");
             sceneBindingNotice = "";
             target = go; sourceKind = go && EditorUtility.IsPersistent(go) ? "candidate_prefab" : kind;
@@ -258,7 +258,7 @@ namespace AvatarWorkbench
         void RefreshAll()
         {
             ReadTask(); LoadManifest(); if (followScene) BindSceneIfAvailable(); if (!historical) LoadPreview(); RenderFeedback(); UpdateLabels();
-            Toast(IsBusy() ? "执行宿主正在修改现场，显示上一份稳定预览。" : "已刷新本次任务与目标；没有运行构建。");
+            Toast(IsBusy() ? "AI 正在修改模型，显示上一份稳定预览。" : "已刷新本次任务与目标；没有运行构建。");
         }
 
         public void AddDroppedPaths(string[] paths)
@@ -374,7 +374,7 @@ namespace AvatarWorkbench
                 try { bool wasEmpty = preview.Frame == null; texture = preview.Render(comparing ? new Rect(0, 0, area.width * .5f - 2, area.height) : area); if (wasEmpty && texture != null) rootVisualElement.schedule.Execute(UpdateLabels); }
                 catch (Exception e) { Toast("预览未完成：" + e.Message); }
             }
-            if (!texture) { GUI.Label(new Rect(14, 22, area.width - 28, 80), busy ? "执行宿主正在修改现场。暂无可复用的稳定画面。" : sceneBindingPending ? "正在读取当前场景角色…" : sceneBindingNotice, EditorStyles.wordWrappedLabel); return; }
+            if (!texture) { GUI.Label(new Rect(14, 22, area.width - 28, 80), busy ? "AI 正在修改模型。暂无可复用的稳定画面。" : sceneBindingPending ? "正在读取当前场景角色…" : sceneBindingNotice, EditorStyles.wordWrappedLabel); return; }
             Rect currentArea = area;
             if (comparing && before && !frozen)
             {
@@ -448,7 +448,7 @@ namespace AvatarWorkbench
             string file = Path.Combine(folder, Guid.NewGuid().ToString("N") + ".png"); File.WriteAllBytes(file, bytes);
             image["path"] = file; image["sha256"] = WorkbenchData.Hash(bytes); image["width"] = frozen.width; image["height"] = frozen.height;
             context["image"] = image; context["frozen_at"] = WorkbenchData.Now; draft = context; annotation = new Rect(); comparing = false;
-            SaveState(); UpdateLabels(); Toast("画面已冻结。拖动圈出问题，下面写一句说明，再保存。"); canvas.MarkDirtyRepaint();
+            SaveState(); UpdateLabels(); Toast("已截图。在图上拖出问题区域，下面写一句说明，再发送。"); canvas.MarkDirtyRepaint();
         }
         void LeaveAnnotation() { DestroyTexture(ref frozen); ClearHistory(); UpdateLabels(); canvas.MarkDirtyRepaint(); Toast(draft != null ? "未提交的圈选与原图已保留；“指出问题”可继续。" : "返回模型预览。"); }
         void DiscardDraft() { draft = null; annotation = new Rect(); DestroyTexture(ref frozen); SaveState(); UpdateLabels(); canvas.MarkDirtyRepaint(); Toast("已放弃本条未提交圈选；原图和已保存反馈保留。"); }
@@ -468,6 +468,7 @@ namespace AvatarWorkbench
                 ["target"] = context["target"]?.DeepClone(), ["selected_resources"] = context["selected_resources"]?.DeepClone(),
                 ["selected_product_references"] = context["selected_product_references"]?.DeepClone() ?? new JArray(),
                 ["selected_source_references"] = context["selected_source_references"]?.DeepClone() ?? new JArray(),
+                ["compatibility"] = draft != null ? null : CompatibilityRecord(),
                 ["resource_id"] = context["resource_id"]?.DeepClone(), ["image"] = image?.DeepClone(), ["known_controls"] = context["known_controls"]?.DeepClone(),
                 ["rect"] = image != null && annotation.width > .001f && annotation.height > .001f ? new JObject { ["x"] = annotation.x, ["y"] = annotation.y, ["w"] = annotation.width, ["h"] = annotation.height } : null,
                 ["category"] = image == null ? "change" : "visual", ["message"] = message, ["status"] = "received", ["execution_started"] = false,
@@ -477,11 +478,13 @@ namespace AvatarWorkbench
             if (entry["rect"] is JObject rect) entry["pixel_rect"] = new JObject { ["x"] = Mathf.RoundToInt((float)rect["x"] * (int)image["width"]), ["y"] = Mathf.RoundToInt((float)rect["y"] * (int)image["height"]), ["w"] = Mathf.RoundToInt((float)rect["w"] * (int)image["width"]), ["h"] = Mathf.RoundToInt((float)rect["h"] * (int)image["height"]) };
             WorkbenchData.Write(Path.Combine(WorkbenchData.Inbox(binding), id + ".json"), entry);
             draft = null; annotation = new Rect(); DestroyTexture(ref frozen); message = ""; input?.SetValueWithoutNotify("");
+            allowOtherBody = false; compatKey = "";
             SaveState(); RenderFeedback(); UpdateLabels(); ToastReceipt("已保存，等待 " + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " 读取" + (binding != BindingPath ? "（原图所属任务的收件箱）" : "") + "。", id); canvas?.MarkDirtyRepaint();
             return entry;
         }
 
-        bool IsBusy() => (bool?)WorkbenchData.Consumer(BindingPath)?["busy"] == true || EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode;
+        bool IsBusy() => IsBusy(WorkbenchData.Consumer(BindingPath));
+        static bool IsBusy(JObject consumer) => (bool?)consumer?["busy"] == true || EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode;
         void PollLocalReceipts()
         {
             if (disposed || !windowVisible || rootVisualElement.panel == null) return;
@@ -491,15 +494,26 @@ namespace AvatarWorkbench
             {
                 if (!string.IsNullOrEmpty(taskPath) && File.Exists(taskPath) && File.GetLastWriteTimeUtc(taskPath) != taskTime)
                 {
-                    ReadTask(); QueueSceneRefresh(); Toast("任务有新进展，空闲时自动同步当前角色；圈选原图保留原版本。");
+                    string candidateBefore = CandidatePath, sceneBefore = WorkbenchData.Text(task["new_scene"]);
+                    ReadTask();
+                    // Hosts append validation notes to the task often. Only a changed candidate
+                    // or task scene replaces an active try-on; source edits still reach the watchers.
+                    bool candidateChanged = CandidatePath != candidateBefore || WorkbenchData.Text(task["new_scene"]) != sceneBefore;
+                    bool keepTrial = !candidateChanged && preview?.Gesture != null;
+                    if (!keepTrial) QueueSceneRefresh();
+                    else if (target && !frozen && !historical) stableContext = Context(preview);
+                    Toast(keepTrial ? "任务有新进展；正在试穿的画面保持不变。" : candidateChanged ? "任务换了新的修改版本，空闲时自动刷新画面；圈选截图保留原版本。" : "任务有新进展，空闲时自动刷新画面；圈选截图保留原版本。");
                 }
                 string signature = WorkbenchData.FeedbackSignature(BindingPath);
                 if (signature != receiptSignature)
                 {
-                    receiptSignature = signature; RenderFeedback();
-                    // A read/reply receipt is not a model change. Keep the current trial
-                    // pose; actual source edits still arrive through the source watchers.
-                    if (preview?.Gesture == null) QueueSceneRefresh();
+                    receiptSignature = signature;
+                    var entries = WorkbenchData.Feedback(BindingPath); RenderFeedback(entries);
+                    // Saving a request or a seen/processing receipt is not a model change. Refresh
+                    // the static view once when a host finishes a reply; keep any trial pose.
+                    int addressed = entries.Count(x => WorkbenchData.Text(x["status"]) == "addressed");
+                    if (addressedSeen >= 0 && addressed > addressedSeen && preview?.Gesture == null) QueueSceneRefresh();
+                    addressedSeen = addressed;
                 }
                 UpdateLabels();
             });
@@ -507,10 +521,10 @@ namespace AvatarWorkbench
         void UpdateLabels()
         {
             if (projectLabel == null) return;
-            busy = IsBusy();
-            projectLabel.text = "工程：" + WorkbenchData.Project + "\nUnity：" + Application.unityVersion + "\n任务：" + BindingPath + "\n" + McpStatus();
             var consumer = WorkbenchData.Consumer(BindingPath);
-            connectionBox.EnableInClassList("aw-connected", codexLink != null);
+            busy = IsBusy(consumer);
+            string mcpStatus = McpStatus();
+            projectLabel.text = "工程：" + WorkbenchData.Project + "\nUnity：" + Application.unityVersion + "\n任务：" + BindingPath + "\n" + mcpStatus;
             if (connectingCodex)
             {
                 connectionLabel.text = "正在连接 Codex…"; connectionHelp.text = "核对已绑定的现有会话，不调用模型。";
@@ -522,7 +536,7 @@ namespace AvatarWorkbench
             }
             else if (consumer == null)
             {
-                connectionLabel.text = busy ? "Unity 忙碌 · 暂不刷新画面" : "Codex 尚未连接";
+                connectionLabel.text = busy ? "Unity 忙碌 · 暂不刷新画面" : "Codex 未连接";
                 connectionHelp.text = string.IsNullOrEmpty(codexError) ? "首次绑定会话后可在这里直接发送；未连接时请求仍会保存。" : codexError;
             }
             else
@@ -533,21 +547,23 @@ namespace AvatarWorkbench
             helpButton.text = WorkbenchCodex.Link() == null ? "连接 Codex" : "重新连接";
             helpButton.SetEnabled(!connectingCodex && !sendingCodex);
             ApplyModelLabels();
-            connectionLabel.tooltip = (codexLink != null && WorkbenchModels.Active == WorkbenchModels.CodexHost ? WorkbenchData.Text(codexLink["title"]) + "\n" : "") + connectionHelp.text + "\n" + McpStatus();
+            string connectionTip = (codexLink != null && WorkbenchModels.Active == WorkbenchModels.CodexHost ? WorkbenchData.Text(codexLink["title"]) + "\n" : "") + connectionHelp.text + "\n" + mcpStatus;
+            // The title is cut with an ellipsis in the narrow rail, so both tooltips start with its full text.
+            connectionLabel.tooltip = connectionBox.tooltip = connectionLabel.text + "\n" + connectionTip;
             var shown = (frozen ? draft?["candidate"] : historical ? historicalInfo?["candidate"] : stableContext?["candidate"]) as JObject;
             candidateLabel.text = "画面版本：" + WorkbenchData.Identity(shown ?? WorkbenchData.Candidate(task)) + "\n" + sourceNotice;
-            previewLabel.text = frozen ? "已冻结 · 在图上圈选" : historical ? "已有截图" : busy ? "之前的稳定画面" : preview?.Gesture?.PhysicsRunning == true ? "Unity PhysBone · 运行中" : preview?.Gesture?.Moving == true ? "正在切换 · 保留上次画面" : preview?.Gesture != null ? "试穿与姿势 · 临时预览" : "编辑态快照";
+            previewLabel.text = frozen ? "截图圈问题中" : historical ? "历史截图" : busy ? "AI 修改中 · 显示上一帧" : preview?.Gesture?.PhysicsRunning == true ? "动态预览中" : preview?.Gesture?.Moving == true ? "正在切换…" : preview?.Gesture != null ? "试穿中 · 不改动模型" : "当前模型";
             previewLabel.tooltip = candidateLabel.text;
             if (sceneSourceLabel != null)
             {
                 bool showingPreviousTarget = preview != null && target && previewTargetId != target.GetInstanceID();
-                sceneSourceLabel.text = frozen ? "圈选原图 · 保留原版本" : historical ? "历史截图 · 不跟随现场" : busy ? "正在修改 · 保留上次稳定画面" : showingPreviousTarget ? "旧画面 · " + WorkbenchData.Text(stableContext?["target"]?["name"]) : !target ? sceneBindingNotice : preview?.Gesture != null ? "独立试穿 · " + target.name + " · 非构建" : !EditorUtility.IsPersistent(target) ? (IsPrefabEditingTarget(target) ? "同步 Prefab 编辑模式 · " : "同步场景 · ") + target.name + (preview?.SceneProxyCount > 0 ? " · MA/NDMF 预览" : " · 编辑态") : "磁盘 Prefab · 独立于场景";
+                sceneSourceLabel.text = frozen ? "圈选截图 · 保留当时的版本" : historical ? "历史截图 · 不跟随现场" : busy ? "AI 正在修改 · 先显示上一帧" : showingPreviousTarget ? "旧画面 · " + WorkbenchData.Text(stableContext?["target"]?["name"]) : !target ? sceneBindingNotice : preview?.Gesture != null ? "试穿 · " + target.name + " · 不改动模型" : !EditorUtility.IsPersistent(target) ? (IsPrefabEditingTarget(target) ? "Prefab 编辑中 · " : "当前模型 · ") + target.name + (preview?.SceneProxyCount > 0 ? " · 含 MA 效果" : "") : "保存的版本 · " + target.name;
                 sceneSourceLabel.tooltip = candidateLabel.text;
             }
             compareButton?.SetEnabled(before && !frozen);
             if (compareButton != null) { compareButton.text = comparing ? "退出对比" : "前后对比"; compareButton.tooltip = before ? "与已选择的修改前原图对照" : "没有修改前原图；可从来源菜单打开历史图并设为对照。"; }
             freezeButton?.SetEnabled(frozen || historical || preview?.Frame != null || draft != null);
-            if (freezeButton != null) freezeButton.text = frozen ? "正在圈选" : draft != null ? "继续圈选" : "圈出问题位置";
+            if (freezeButton != null) freezeButton.text = frozen ? "圈选中" : draft != null ? "继续圈选" : "截图圈问题";
             bool canMoveCamera = preview != null && !historical && !frozen && !busy;
             cameraViewButton?.SetEnabled(canMoveCamera);
             foreach (string name in new[] { "view-正面", "view-侧面", "view-背面", "focus-全身", "focus-头部", "focus-上身", "focus-鞋子" }) rootVisualElement.Q<Button>(name)?.SetEnabled(canMoveCamera);
@@ -558,7 +574,8 @@ namespace AvatarWorkbench
             targetField?.SetEnabled(!busy); rootVisualElement.Q<Button>("use-selection")?.SetEnabled(!busy);
             var req = task["explicit_requirements"] as JArray;
             string phase = WorkbenchData.Text(task["phase"] ?? task["status"]);
-            activityLabel.text = string.IsNullOrEmpty(taskPath) ? "从下方写下第一条需求" : WorkbenchUiRules.PhaseLabel(phase);
+            if (!string.IsNullOrEmpty(taskPath)) activityLabel.text = WorkbenchUiRules.PhaseLabel(phase);
+            activityLabel.style.display = string.IsNullOrEmpty(taskPath) ? DisplayStyle.None : DisplayStyle.Flex;
             var parts = new List<string>();
             if (req != null && req.Count > 0) parts.Add(string.Join("\n", req.Take(3).Select(x => "• " + WorkbenchData.Text(x))));
             if (req != null && req.Count > 3) parts.Add("另有 " + (req.Count - 3) + " 项要求，见技术详情。");
@@ -570,10 +587,18 @@ namespace AvatarWorkbench
             taskLabel.tooltip = string.IsNullOrEmpty(taskPath) ? "" : "显示来自原任务的记录，不等于当前画面已经通过验收。";
             UpdateComposer();
         }
+        // Assemblies only change on a domain reload, which also resets these statics.
+        static bool mcpSearched;
+        static Type mcpConnection;
         static string McpStatus()
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) { var type = assembly.GetType("UnityMCP.Editor.UnityMCPConnection"); if (type != null) return (bool?)type.GetProperty("IsListening")?.GetValue(null) == true ? "UnityMCP 已监听" : "UnityMCP 未监听"; }
-            return "当前工程未发现 UnityMCP";
+            if (!mcpSearched)
+            {
+                mcpSearched = true;
+                mcpConnection = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("UnityMCP.Editor.UnityMCPConnection")).FirstOrDefault(t => t != null);
+            }
+            if (mcpConnection == null) return "当前工程未发现 UnityMCP";
+            return (bool?)mcpConnection.GetProperty("IsListening")?.GetValue(null) == true ? "UnityMCP 已监听" : "UnityMCP 未监听";
         }
         void RenderFeedback(List<JObject> entries = null)
         {
@@ -585,18 +610,23 @@ namespace AvatarWorkbench
             {
                 string latestStatus = WorkbenchData.Text(sentEntry["status"]);
                 string routeName = WorkbenchModels.RouteName(sentEntry["model_route"] as JObject);
-                if (latestStatus == "addressed") ToastReceipt(routeName + " 已回应，可在“看回复”查看；回应不代表模型修复通过。", toastFeedbackId);
+                if (latestStatus == "addressed") ToastReceipt(routeName + " 已回复：去“看回复”查看，再在预览里确认效果。", toastFeedbackId);
                 else if (latestStatus == "seen") ToastReceipt(routeName + " 已实际读取，等待后续回应。", toastFeedbackId);
                 else if (latestStatus == "processing_feedback") ToastReceipt(routeName + " 已确认正在处理，请查看实际回应与模型。", toastFeedbackId);
             }
             int waiting = entries.Count(x => WorkbenchData.Text(x["status"]) != "addressed");
+            guideRequests = entries.Count; guideWaiting = waiting; UpdateStepGuide();
             feedbackTab.text = "看回复";
             feedbackTab.tooltip = waiting > 0 ? "修改进度与回复 · " + waiting + " 条等待处理" : "修改进度与真实回复";
-            feedbackPanel.Add(Heading("我的请求"));
             if (entries.Count == 0)
             {
-                var empty = Wrapped("还没有请求。\n在下方写需求并保存，回复会显示在这里。"); empty.AddToClassList("aw-muted"); feedbackPanel.Add(empty); return;
+                var empty = new VisualElement(); empty.AddToClassList("aw-feedback-card"); empty.AddToClassList("aw-empty-card");
+                empty.Add(Heading("还没有请求"));
+                foreach (string line in new[] { "1  在下方输入框写一句话，比如“把头发改成黑色”", "2  点“" + WorkbenchModels.SendLabel(WorkbenchModels.Active) + "”", "3  进度和回复会显示在这里，回复后在预览里试穿确认" })
+                { var step = Wrapped(line); step.AddToClassList("aw-feedback-reply"); empty.Add(step); }
+                feedbackPanel.Add(empty); return;
             }
+            feedbackPanel.Add(Heading("我的请求"));
             foreach (var entry in entries.Take(showAllFeedback ? 30 : 5))
             {
                 var card = new VisualElement(); card.AddToClassList("aw-feedback-card");
@@ -610,16 +640,18 @@ namespace AvatarWorkbench
                 if (!string.IsNullOrEmpty(reply)) { var r = Wrapped(WorkbenchModels.ReplyPrefix(entry["model_route"] as JObject) + WorkbenchUiRules.Short(reply, 135)); r.AddToClassList("aw-feedback-reply"); card.Add(r); }
                 else
                 {
-                    var r = Wrapped(routeType == WorkbenchModels.DshHost ? "已保存到 DSH 收件箱，等待 DSH 读取；不会自动唤醒。" : "已保存。等 " + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " 实际读取后更新状态。");
+                    bool waitingDsh = routeType == WorkbenchModels.DshHost && status == "received";
+                    var r = Wrapped(waitingDsh ? "已发出，等 DSH 读取。还没在 DSH 粘贴接手指令的话，点下面的按钮再复制一次。" : routeType == WorkbenchModels.DshHost ? "DSH 已经接手，回复会显示在这里。" : "已保存。等 " + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " 实际读取后更新状态。");
                     r.AddToClassList("aw-muted"); card.Add(r);
+                    if (waitingDsh) card.Add(MakeButton("复制给 DSH", () => { CopyDshInstruction(BindingPath); Toast("接手指令已复制：切到 DSH 按 Ctrl+V 发送。"); }, "copy-dsh-" + WorkbenchData.Text(entry["id"])));
                 }
                 var detail = new Foldout { text = "查看完整内容", value = false };
                 detail.Add(Wrapped(WorkbenchData.Text(entry["message"])));
                 if (!string.IsNullOrEmpty(reply)) detail.Add(Wrapped("回复：" + reply));
                 detail.Add(Wrapped("对应画面：" + WorkbenchData.Identity(entry["candidate"] as JObject)));
-                detail.Add(Wrapped("执行宿主：" + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " · " + stateText));
+                detail.Add(Wrapped("发给：" + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " · " + stateText));
                 if (entry["api_review"] is JObject review) detail.Add(Wrapped("本条依据 API 建议新建；父请求：" + WorkbenchData.Text(review["parent_feedback_id"], "未记录")));
-                detail.Add(Wrapped("有回复不代表修复通过，请查看实际模型。"));
+                detail.Add(Wrapped("有回复不等于已经改好，请在预览里确认。"));
                 if (entry["model_response"] is JObject) { detail.Add(Wrapped("API 仅答复 / 提出步骤；正式模型未由 API 修改。")); detail.Add(MakeButton("继续交给原改模流程…", () => ContinueApiRequest(BindingPath, entry), "continue-workflow-" + WorkbenchData.Text(entry["id"]))); }
                 if (entry["image"] is JObject recorded) detail.Add(MakeButton("查看这条请求的原图", () => ShowRecordedImage(recorded), "request-image-" + WorkbenchData.Text(entry["id"])));
                 bool retryable = (status == "received" || (status == "seen" && routeType == "api"))
@@ -627,6 +659,19 @@ namespace AvatarWorkbench
                     && !(routeType == WorkbenchModels.DshHost && deliveryState == "waiting_dsh");
                 if (retryable)
                     card.Add(MakeButton(WorkbenchModels.RetryLabel(entry["model_route"] as JObject), () => RetryRequest(BindingPath, entry), "retry-" + WorkbenchData.Text(entry["id"])));
+                // The reply gate attaches the Unity hand-in check, so problems show even when a reply omits them.
+                if (entry["finish_check"] is JObject check)
+                {
+                    string checkState = WorkbenchData.Text(check["status"]);
+                    var checkErrors = (check["errors"] as JArray ?? new JArray()).OfType<JObject>().ToList();
+                    var checkWarnings = (check["warnings"] as JArray ?? new JArray()).OfType<JObject>().ToList();
+                    var checkLine = Wrapped(checkState == "PASS" ? "收尾检查：通过" + (checkWarnings.Count > 0 ? "，有 " + checkWarnings.Count + " 条提醒" : "")
+                        : checkState == "FAIL" ? "收尾检查：还有 " + checkErrors.Count + " 个问题，展开“查看完整内容”"
+                        : "收尾检查：未运行（" + WorkbenchUiRules.Short(WorkbenchData.Text(check["reason"]), 60) + "）");
+                    checkLine.AddToClassList(checkState == "PASS" && checkWarnings.Count == 0 ? "aw-muted" : "aw-feedback-state"); card.Add(checkLine);
+                    foreach (var issue in checkErrors) detail.Add(Wrapped("问题：" + WorkbenchData.Text(issue["detail"]) + "（" + WorkbenchData.Text(issue["path"]) + "）"));
+                    foreach (var issue in checkWarnings) detail.Add(Wrapped("提醒：" + WorkbenchData.Text(issue["detail"]) + "（" + WorkbenchData.Text(issue["path"]) + "）"));
+                }
                 card.Add(detail); feedbackPanel.Add(card);
             }
             if (entries.Count > 5) feedbackPanel.Add(MakeButton(showAllFeedback ? "只看最近 5 条" : "显示最近 30 条", () => { showAllFeedback = !showAllFeedback; RenderFeedback(); }, "toggle-feedback-history"));
@@ -634,7 +679,7 @@ namespace AvatarWorkbench
         // Delivery receipt and consumer status are separate facts and stay separate words.
         static string ReceiptState(string status, string deliveryState)
         {
-            if (status == "received" && deliveryState == "waiting_dsh") return "已保存到 DSH 收件箱 · 等待读取（不自动唤醒）";
+            if (status == "received" && deliveryState == "waiting_dsh") return "已发出 · 等 DSH 读取";
             if (status == "received" && deliveryState == "accepted") return "已发送 · 等待读取";
             if (status == "received" && deliveryState == "sending") return "正在发送";
             if (status == "received" && deliveryState == "failed") return "已保存 · 发送未完成";
@@ -651,13 +696,13 @@ namespace AvatarWorkbench
         void CopyInstructionFor(string binding)
         {
             bool dsh = WorkbenchModels.Active == WorkbenchModels.DshHost;
-            if (dsh)
-            {
-                EditorGUIUtility.systemCopyBuffer = "使用 DSH 包内的 assemble-vrchat-avatar Skill 处理本工程的 DSH 请求。先 workbench_status 和 list_unity_instances，使用 context_select 选择下方精确工程、绑定和 storage_root，再 task_read / feedback_read。只处理 model_route.type=dsh 且未回应的请求，遵守每条请求原话、候选和图片身份。读取冻结图用 feedback_image；不能实际看图就标记视觉 NOT_RUN。写入前取得 consumer_lease，实际读取后 ack seen，开始处理后 processing_feedback，回复后 addressed；这些都不表示模型验收通过。完成后释放租约。\n工程：" + WorkbenchData.Project + "\n绑定：" + binding + "\nstorage_root：" + WorkbenchData.DataRoot + "\nSkill：" + WorkbenchModels.DshSkillPath + "\n本条指令不授予上传权限。";
-                return;
-            }
-            string workflow = dsh ? "DSH 包自己的 assemble-vrchat-avatar Skill（不要改读 Codex 的全局 Skill）" : "现有改模工作流";
-            EditorGUIUtility.systemCopyBuffer = "请读取并处理改模工作台中尚未回应的请求。继续使用" + workflow + "和已连接的 UnityMCP，只读取一次相关收件箱，不修改模型配置或扩大测试范围。\n工程：" + WorkbenchData.Project + "\n绑定路径：" + binding + "\n反馈目录：" + WorkbenchData.Inbox(binding) + "\n在实际安装的 AvatarWorkbench/Tools/codex_feedback.py 执行 inbox --task <以上绑定路径>。实际读取后回写 seen，处理中回写 processing_feedback，有答复后回写 addressed；这些状态都不等于修复通过。执行宿主：" + (dsh ? "当前 DSH" : "当前 Codex") + "。此条接手指令本身不授予上传权限，也不会自动唤醒任何会话。";
+            if (dsh) { CopyDshInstruction(binding); return; }
+            string workflow = "现有改模工作流";
+            EditorGUIUtility.systemCopyBuffer = "请读取并处理改模工作台中尚未回应的请求。继续使用" + workflow + "和已连接的 UnityMCP，只读取一次相关收件箱，按每条请求的原话处理（需要改角色时在候选副本上改）；不更改 AI 模型、账号或权限设置，也不扩大测试范围。请求带 compatibility 字段时按其中的 decision 执行。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n工程：" + WorkbenchData.Project + "\n绑定路径：" + binding + "\n反馈目录：" + WorkbenchData.Inbox(binding) + "\nSkill：" + WorkbenchModels.CodexSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath + "\n在实际安装的 AvatarWorkbench/Tools/codex_feedback.py 执行 inbox --task <以上绑定路径>。实际读取后回写 seen，处理中回写 processing_feedback，有答复后回写 addressed；这些状态都不等于修复通过。执行宿主：当前 Codex。此条接手指令本身不授予上传权限，也不会自动唤醒任何会话。";
+        }
+        void CopyDshInstruction(string binding)
+        {
+            EditorGUIUtility.systemCopyBuffer = "使用 DSH 包内的 assemble-vrchat-avatar Skill 处理本工程的 DSH 请求。先 workbench_status 和 list_unity_instances，使用 context_select 选择下方精确工程、绑定和 storage_root，再 task_read / feedback_read。只处理 model_route.type=dsh 且未回应的请求，遵守每条请求原话、候选和图片身份。读取冻结图用 feedback_image；不能实际看图就标记视觉 NOT_RUN。写入前取得 consumer_lease，实际读取后 ack seen，开始处理后 processing_feedback，回复后 addressed；这些都不表示模型验收通过。完成后释放租约。请求带 compatibility 字段时按其中的 decision 执行。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n工程：" + WorkbenchData.Project + "\n绑定：" + binding + "\nstorage_root：" + WorkbenchData.DataRoot + "\nSkill：" + WorkbenchModels.DshSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath + "\n本条指令不授予上传权限。";
         }
         void ExportFeedback()
         {

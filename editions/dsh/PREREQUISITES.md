@@ -4,7 +4,7 @@
 |---|---|---|
 | Windows | Windows 10/11 x64 | 不含系统安装器 |
 | DSH | 已安装并配置可用的工具调用模型；不同版本需现场确认 schema | Skill、MCP 和局部配置生成器，不含桌面应用/账号/额度 |
-| Unity | 现有 VRChat Avatars 工程，使用工程要求的 Editor | Workbench 0.2.12-dsh；缺少 UnityMCP 时安装本包 Editor 插件 |
+| Unity | 现有 VRChat Avatars 工程，使用工程要求的 Editor | Workbench 0.2.15-dsh；缺少 UnityMCP 时安装本包 Editor 插件 |
 | Python/Node | 无需自行安装或设置 PATH | Python 3.13.16、Node 24.15.0，官方档案校验及许可 |
 | SDK/作者依赖 | VRChat SDK、MA/NDMF、Shader、GM、AAO 等按素材和任务需要 | 不复制现有工程依赖，不自动改变它们的版本 |
 | 模型/衣服/道具 | 用户合法取得并按作者说明导入 | 只有操作案例，没有商业素材 |

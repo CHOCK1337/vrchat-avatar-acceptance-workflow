@@ -98,6 +98,37 @@ def export_entries(entries, output):
         temp.unlink(missing_ok=True)
 
 
+FINISH_NOT_RUN = "未运行收尾检查"
+
+
+def finish_gate(space, entry, status, note):
+    """Replying "addressed" needs a Unity hand-in check newer than the request; its result travels with the reply."""
+    if status != "addressed":
+        return {}
+
+    def when(value):
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+
+    check = None
+    receipt = Path(space) / "finish-check.json"
+    if receipt.is_file():
+        try:
+            check = json.loads(receipt.read_text(encoding="utf-8-sig"))
+            if entry.get("created_at") and when(check["checked_at"]) < when(entry["created_at"]):
+                check = None
+        except (ValueError, KeyError, TypeError):
+            check = None
+    if check is None:
+        if FINISH_NOT_RUN in (note or ""):
+            return {"finish_check": {"status": "NOT_RUN", "reason": note}}
+        raise ValueError("FINISH_CHECK_REQUIRED: run AvatarWorkbench.WorkbenchFinishCheck.Run in Unity before replying "
+                         "(template: Assets/AvatarWorkbench/Tools/finish-check.md in the project, same as the Skill's references/finish-check.md). If Unity cannot be reached, write "
+                         "'" + FINISH_NOT_RUN + "：<原因>' in the note.")
+    return {"finish_check": {"status": "PASS" if check.get("passed") else "FAIL", "checked_at": check.get("checked_at"),
+                             "candidate_prefab": check.get("candidate_prefab"),
+                             "errors": check.get("errors", []), "warnings": check.get("warnings", [])}}
+
+
 def main():
     # MCP/PowerShell pipes read UTF-8; Windows' legacy console code page would corrupt Chinese feedback.
     if hasattr(sys.stdout, "reconfigure"):
@@ -138,8 +169,9 @@ def main():
             parser.error("ack 需要真实 --id 与 --status")
         path = inbox / (args.id + ".json")
         entry = read(path)
+        gate = finish_gate(space, entry, args.status, args.note)
         entry.update(status=args.status, reply=args.note, consumer_session=args.session,
-                     execution_started=args.status == "processing_feedback", updated_at=stamp())
+                     execution_started=args.status == "processing_feedback", updated_at=stamp(), **gate)
         write(path, entry)
         print(json.dumps(entry, ensure_ascii=False, indent=2))
         return

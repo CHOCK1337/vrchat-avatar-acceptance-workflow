@@ -2,7 +2,7 @@
 
 当前工作台提供 `WorkbenchWindow.RunPreviewCommand(string json)`，只包装现有换装、姿势和原图捕获，不保存 Avatar、改参数或替换拟合方法。适用于已绑定的持久化处理后候选。编辑态源仍走原工具，不强行冒充候选。
 
-绑定已有任务用工作台的 public `Open()`、实例 `BindTask(string)` 与 `SetTarget(GameObject)`；之后以 inspect 的实际 binding/source_kind/asset_path 为准。MCP context_select 只选择 MCP 会话上下文，不会替 Unity 窗口绑定任务。任务文件更新会重载预览，建议在一组操作结束后更新，再正常开启下一组预览。
+绑定已有任务用工作台的 public `Open()`、实例 `BindTask(string)` 与 `SetTarget(GameObject)`；之后以 inspect 的实际 binding/source_kind/asset_path 为准。MCP context_select 只选择 MCP 会话上下文，不会替 Unity 窗口绑定任务。工作台 0.2.13-dsh 起，往任务文件追加记录不会重置正在进行的试穿；只有任务里的候选路径或场景变了才会重载预览。候选 Prefab 本身被保存时仍会重载，之后重新 inspect。
 
 ## 先分清两种状态
 

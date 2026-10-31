@@ -3,8 +3,8 @@
 先把 DSH 工作区设为本工具包目录。将下文中的两个占位符替换为自己的实际目标；不填密钥。
 
 ```text
-请先读取当前工作区的 docs/AGENT_GUIDE.md、AGENTS.md、DEEPSEEK_RULES.md
-和 skills/assemble-vrchat-avatar/SKILL.md。
+请先读取当前工作区的 AGENTS.md、DEEPSEEK_RULES.md（核心页）
+和 skills/assemble-vrchat-avatar/SKILL.md；其余手册遇到对应情况再读。
 
 我的 Unity 工程是：<实际完整工程路径>
 目标 Avatar 是：<场景根对象名或 Prefab 路径>

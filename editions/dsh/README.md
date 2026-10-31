@@ -24,7 +24,7 @@ DSH 应先用用户自己的账号配置好可调用工具的模型；Unity 工�
 
 ## 版本与边界
 
-分发包 0.3.0；Unity Workbench 0.2.12-dsh；Skill 0.3.2-local5-dsh；Workbench MCP 0.2.1（便携启动修正）；Node 24.15.0；Python 3.13.16。UnityMCP 的精确源码与本地修订见 [SOURCE.md](dependencies/UnityMCP-VRC/SOURCE.md)。
+分发包 0.3.0；Unity Workbench 0.2.15-dsh；Skill 0.3.2-local5-dsh；Workbench MCP 0.2.1（便携启动修正）；Node 24.15.0；Python 3.13.16。UnityMCP 的精确源码与本地修订见 [SOURCE.md](dependencies/UnityMCP-VRC/SOURCE.md)。
 
 Workbench 在 2022.3.22f1 / GM 3.9.8 / SDK 3.10.1 上完成过真实换装、PhysBone 和姿势预览验证。其他版本需按 Doctor 与实际预览结果确认，安装器不强制升级、降级现有工程。
 

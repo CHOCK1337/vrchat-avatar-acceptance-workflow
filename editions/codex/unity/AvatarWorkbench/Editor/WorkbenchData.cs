@@ -84,9 +84,9 @@ namespace AvatarWorkbench
         {
             switch (state) { case "not_started": return "尚未开始"; case "installed": return "已安装（任务记录）";
                 case "processing": return "正在处理"; case "excluded": return "已排除"; case "selected": return "待提交安装";
-                case "received": return "已保存，等待读取"; case "waiting_dsh": return "已保存到 DSH 收件箱，等待读取（不自动唤醒）";
-                case "seen": return "已读（不代表已修改）";
-                case "processing_feedback": return "处理中"; case "addressed": return "已回应 · 修复未验收";
+                case "received": return "已保存，等待读取"; case "waiting_dsh": return "已发出，等 DSH 读取";
+                case "seen": return "AI 已读";
+                case "processing_feedback": return "正在修改"; case "addressed": return "已回复 · 请你确认效果";
                 case "unknown": return "未记录"; default: return state; }
         }
         // Enumerate metadata only while idle; parse records only when this signature changes.
@@ -106,12 +106,23 @@ namespace AvatarWorkbench
                 try { result.Add(Read(file)); } catch (IOException) { } catch (Newtonsoft.Json.JsonException) { }
             return result;
         }
+        // The lease file is checked on every label refresh; parse it again only after it is rewritten.
+        static string consumerPath;
+        static DateTime consumerStamp;
+        static long consumerLength;
+        static JObject consumerRecord;
         public static JObject Consumer(string binding)
         {
             string path = Path.Combine(Space(binding), "consumer.json");
-            if (!File.Exists(path)) return null;
-            try { var c = Read(path); if (DateTime.TryParse(Text(c["expires_at"]), null, System.Globalization.DateTimeStyles.AdjustToUniversal, out var end) && end > DateTime.UtcNow && (bool?)c["active"] == true) return c; }
-            catch (Exception) { }
+            var info = new FileInfo(path);
+            if (!info.Exists) { consumerPath = null; consumerRecord = null; return null; }
+            if (path != consumerPath || info.LastWriteTimeUtc != consumerStamp || info.Length != consumerLength)
+            {
+                consumerPath = path; consumerStamp = info.LastWriteTimeUtc; consumerLength = info.Length;
+                try { consumerRecord = Read(path); } catch (Exception) { consumerRecord = null; }
+            }
+            var c = consumerRecord;
+            if (c != null && DateTime.TryParse(Text(c["expires_at"]), null, System.Globalization.DateTimeStyles.AdjustToUniversal, out var end) && end > DateTime.UtcNow && (bool?)c["active"] == true) return (JObject)c.DeepClone();
             return null;
         }
         public static Texture2D LoadImage(string path)
