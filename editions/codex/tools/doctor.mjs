@@ -28,7 +28,7 @@ function textValue(result) {
   try{return JSON.parse(text);}catch{return {message:text};}
 }
 async function withServer(label,server,callback) {
-  const client=new Client({name:'avatar-workbench-doctor',version:'0.1.0'});
+  const client=new Client({name:'avatar-workbench-doctor',version:'0.1.6'});
   const env={};
   for(const key of ['LOCALAPPDATA','UNITYMCP_REGISTRY_DIR']) if(process.env[key]) env[key]=process.env[key];
   const transport=new StdioClientTransport({command:server.command,args:server.args,cwd:server.cwd||undefined,env,stderr:'pipe'});

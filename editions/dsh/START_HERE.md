@@ -1,4 +1,4 @@
-# 从这里开始 · 完整包 0.3.0
+# 从这里开始 · 完整包 0.3.5
 
 先看 [README.md](README.md)。普通用户按 [用户手册](docs/USER_GUIDE.md) 安装；DSH Agent 按 [Agent 手册](docs/AGENT_GUIDE.md) 操作。
 

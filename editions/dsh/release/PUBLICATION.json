@@ -1,15 +1,16 @@
 {
   "edition": "DSH",
-  "tag": "dsh-v0.3.0",
+  "tag": "dsh-v0.3.5",
   "repo_url": "https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow",
-  "source": "Exact source snapshot of the verified full ZIP; README download notice and repository metadata added.",
+  "source": "Built from this edition directory at the tagged commit with pinned portable runtimes; release records and git metadata are not part of the ZIP.",
   "full_package": {
-    "file": "AvatarWorkbench_DSH_Full_v0.3.0_Win64_20261020.zip",
-    "sha256": "d61dab583f4a105070e08bf3bb23458c2ca14fc71d934831d7734ab13b675e65",
-    "bytes": 55386582,
-    "manifest_files": 5706
+    "file": "AvatarWorkbench_DSH_Full_v0.3.5_Win64_20261101.zip",
+    "sha256": "16e76df3b44b46324c4b0e72eb8d4aeaf8186e4df20160adf973476d31f6e4c4",
+    "bytes": 55402532,
+    "manifest_files": 5724
   },
-  "source_files_copied": 263,
+  "workbench_version": "0.2.15-dsh",
+  "source_files_tracked": 283,
   "secret_pattern_findings": 0,
   "exclusions": [
     "portable runtime binaries and installed node_modules from git",
@@ -17,8 +18,8 @@
   ],
   "evidence_boundary": "Package integrity and isolated tests do not certify every avatar or model service.",
   "fresh_verification": {
-    "date": "2026-10-22",
-    "isolated_tests": 33,
+    "date": "2026-11-01",
+    "isolated_tests": 36,
     "result": "PASS",
     "command": "runtime/python/python.exe -X utf8 -B -m unittest discover -s verification -p \"test_*.py\"",
     "package_crc_and_manifest_hashes": "PASS",
@@ -26,6 +27,7 @@
     "model_inference": "NOT_RUN",
     "avatar_edit_build_upload": "NOT_RUN"
   },
+  "previous_release": "dsh-v0.3.0",
   "edition_directory": "editions/dsh",
   "publication_scope": "Public source, installer, documentation and full package plus checksum; private screenshots and avatar source assets are not included."
 }

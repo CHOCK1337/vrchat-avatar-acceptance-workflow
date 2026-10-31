@@ -102,7 +102,7 @@ def plan(args, root=ROOT):
     config = {'project':str(project),'binding':str(binding),'catalog_file':str(editor/'sources.json'),
               'storage_root':str(storage),'unity_mcp':str(unity_mcp),'dsh_home':str(dsh_home),
               'node':str(node),'python':str(Path(sys.executable).resolve()),'profile':args.profile,
-              'package_root':str(root),'distribution_version':'0.3.0'}
+              'package_root':str(root),'distribution_version':'0.3.5'}
     rows = [
       {'id':'avatar-workbench-skill','name':'@deepseek-ai/dsh-skill-filesystem','config':{
         'providerName':'avatar-workbench','includeDefaultRoots':False,'customSkillDirs':[str(root/'skills')],'watch':False}},
@@ -130,7 +130,7 @@ def plan(args, root=ROOT):
     settings['dsh_skill_path'] = str(root/'skills/assemble-vrchat-avatar/SKILL.md')
     files[settings_path] = encoded(settings)
     files = {p:b for p,b in files.items() if not p.is_file() or p.read_bytes()!=b}
-    report = {'status':'PREVIEW_ONLY','distribution':'0.3.0','workbench':manifest['version'],
+    report = {'status':'PREVIEW_ONLY','distribution':'0.3.5','workbench':manifest['version'],
         'project':str(project),'dsh_profile':str(patch),'writes':len(files),
         'unity_mcp':'EXISTING_REUSED' if existing else 'EMBEDDED_PACKAGE_WILL_BE_INSTALLED',
         'existing_unity_mcp':existing,'binding':str(binding),'model_and_permissions_preserved':True,

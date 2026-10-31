@@ -4,8 +4,8 @@
 
 | 版本 | 用户文档 | Agent 文档 | 操作案例 | Release |
 |---|---|---|---|---|
-| DSH 0.3.0 | [用户手册](dsh/docs/USER_GUIDE.md) | [Agent 手册](dsh/docs/AGENT_GUIDE.md) | [案例](dsh/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.0) |
-| Codex 0.1.0 | [用户手册](codex/docs/USER_GUIDE.md) | [Agent 手册](codex/docs/AGENT_GUIDE.md) | [案例](codex/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.0) |
+| DSH 0.3.5 | [用户手册](dsh/docs/USER_GUIDE.md) | [Agent 手册](dsh/docs/AGENT_GUIDE.md) | [案例](dsh/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.5) |
+| Codex 0.1.6 | [用户手册](codex/docs/USER_GUIDE.md) | [Agent 手册](codex/docs/AGENT_GUIDE.md) | [案例](codex/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.6) |
 
 ## 安装
 
@@ -17,7 +17,7 @@ DSH 的保存操作写入任务收件箱，需要手动将接管指令粘贴到 
 
 ## 版本与来源
 
-`editions/dsh` 对应完整包 0.3.0，`editions/codex` 对应完整包 0.1.0。源码从已核验的完整包提取，下载链接与发布记录适配到本仓库。完整包内的用户/Agent 文档保持随包版本；DSH 界面内仍可能显示原有 `0.2.9-dsh` 标识。
+`editions/dsh` 对应完整包 0.3.5，`editions/codex` 对应完整包 0.1.6。源码从已核验的完整包提取，下载链接与发布记录适配到本仓库。完整包内的用户/Agent 文档保持随包版本；DSH 界面内仍可能显示原有 `0.2.9-dsh` 标识。
 
 各版的 `release/VERIFICATION_20261022.md` 保留发布前验证范围：DSH 33 项、Codex 42 项隔离测试通过。安装与连接测试不代表 Avatar 已修复。本次合入不修改核心判定算法，不执行 Avatar 修改、构建或上传。
 

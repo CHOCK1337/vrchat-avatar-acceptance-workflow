@@ -1,7 +1,7 @@
-> **下载安装请前往 [Release v0.3.0](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.0)。** 下载 `Full...zip` 完整安装包，完整解压后运行 `Verify-Package.cmd`，再按 `START_HERE.md` 使用 `Setup.cmd`。
+> **下载安装请前往 [Release v0.3.5](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.5)。** 下载 `Full...zip` 完整安装包，完整解压后运行 `Verify-Package.cmd`，再按 `START_HERE.md` 使用 `Setup.cmd`。
 > 本仓库保留对应发行版本的源码、Unity 插件、MCP、配置模板、用户文档和 Agent 文档；GitHub 自动生成的 Source code ZIP 不包含便携 Node/Python 和编译后的 MCP 运行环境，不能代替 Full 安装包。
 
-# DSH 改模完整工具包 · Windows x64 · 0.3.0
+# DSH 改模完整工具包 · Windows x64 · 0.3.5
 
 让已经安装 DSH 的用户，把 Unity 工作台、两个 MCP 和改模 Skill 一起接通。包内提供便携 Node/Python、编译好的 MCP、配置生成器、安装记录、回滚和操作文档。正常安装不需要 npm、pip、Codex 或管理员权限。
 

@@ -12,7 +12,7 @@ import tempfile
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.1.0'
+VERSION = '0.1.6'
 BEGIN = '# BEGIN AvatarWorkbench Codex managed MCP\n'
 END = '# END AvatarWorkbench Codex managed MCP\n'
 
