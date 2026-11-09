@@ -1,0 +1,5 @@
+# The installer verifies exact bytes; keep Unity .meta and payload hashes stable.
+AvatarWorkbench/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Unity emits spaces after empty YAML values; preserve existing GUID files verbatim.
+AvatarWorkbench/*.meta whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+AvatarWorkbench/**/*.meta whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

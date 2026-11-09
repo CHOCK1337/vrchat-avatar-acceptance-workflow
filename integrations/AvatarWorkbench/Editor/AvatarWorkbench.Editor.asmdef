@@ -1,0 +1,7 @@
+{
+  "name": "AvatarWorkbench.Editor",
+  "rootNamespace": "AvatarWorkbench",
+  "references": ["Unity.Newtonsoft.Json"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}
