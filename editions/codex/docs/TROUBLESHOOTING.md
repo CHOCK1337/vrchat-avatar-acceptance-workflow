@@ -19,3 +19,13 @@
 | 回滚报 `LATER_EDIT_DETECTED` | 安装后有编辑。查看报告并保留改动；回滚不会部分覆盖后续文件 |
 
 反馈问题时提供错误码、Doctor 中的阶段状态、Unity/插件版本和工程选择是否一致即可。安装回滚备份、API 设置、登录配置、任务图片都是本地私有资料，不要直接随发行包分享。
+
+## 旧版操作锁
+
+若旧版桥接进程异常退出后持续报告 `ANOTHER_OPERATION_ACTIVE` 或 `ANOTHER_DSH_OPERATION_ACTIVE`，先关闭正在访问该绑定的旧 Codex、DSH 写入进程。安装本修订后，在包目录用以下命令处理历史空锁。传入报错绑定的完整路径，自定义存储位置时同时传 `--storage`。
+
+```powershell
+.\runtime\python\python.exe .\unity\AvatarWorkbench\Tools\codex_feedback.py recover-legacy-lock --binding "本次任务的完整路径" --legacy-writers-stopped
+```
+
+命令将该绑定的旧空锁改名留存。租约、反馈和候选继续保留。新版进程异常退出后，下一个正常操作会自动接续。尚在有效期内的其他会话租约仍由原会话释放或自然到期。

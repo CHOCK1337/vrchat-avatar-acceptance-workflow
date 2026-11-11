@@ -86,7 +86,7 @@ namespace AvatarWorkbench
                 case "processing": return "正在处理"; case "excluded": return "已排除"; case "selected": return "待提交安装";
                 case "received": return "已保存，等待读取"; case "waiting_dsh": return "已发出，等 DSH 读取";
                 case "seen": return "AI 已读";
-                case "processing_feedback": return "正在修改"; case "addressed": return "已回复 · 请你确认效果";
+                case "processing_feedback": return "正在修改"; case "waiting_user": return "等你手动操作"; case "addressed": return "已回复 · 请你确认效果";
                 case "unknown": return "未记录"; default: return state; }
         }
         // Enumerate metadata only while idle; parse records only when this signature changes.
@@ -106,6 +106,72 @@ namespace AvatarWorkbench
                 try { result.Add(Read(file)); } catch (IOException) { } catch (Newtonsoft.Json.JsonException) { }
             return result;
         }
+        public static bool AwaitingAgent(JObject entry)
+        {
+            string status = (string)entry["status"];
+            return status != "addressed" && status != "waiting_user";
+        }
+
+        // Same byte range and legacy marker as codex_feedback.py. Closing the
+        // stream releases ownership on both ordinary return and process exit.
+        static T WithOperationLock<T>(string binding, Func<T> action)
+        {
+            string space = Space(binding);
+            Directory.CreateDirectory(space);
+            using (var guard = new FileStream(Path.Combine(space, ".workbench-operation.guard"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                guard.Lock(0, 1);
+                string marker = Path.Combine(space, ".dsh-operation.lock");
+                Directory.CreateDirectory(marker);
+                try { return action(); }
+                finally { Directory.Delete(marker); }
+            }
+        }
+
+        public static T WithConsumerLock<T>(string binding, string session, Func<JObject, T> write)
+        {
+            if (string.IsNullOrWhiteSpace(session)) throw new ArgumentException("会话不能为空。");
+            return WithOperationLock(binding, () => {
+                var owner = Consumer(binding);
+                if (owner != null && (string)owner["session"] != session) throw new InvalidOperationException("ANOTHER_CONSUMER_ACTIVE");
+                return write(owner);
+            });
+        }
+
+        public static bool UserEditing(string binding) => File.Exists(Path.Combine(Space(binding), "user-editing.json"));
+
+        public static void ReleaseConsumer(string binding, JObject owner)
+        {
+            owner["active"] = false; owner["busy"] = false; owner["updated_at"] = Now;
+            Write(Path.Combine(Space(binding), "consumer.json"), owner);
+        }
+
+        // Only a deliberate Workbench action sets or clears the user's reservation.
+        public static void SetUserEditing(string binding, bool enable)
+        {
+            WithOperationLock(binding, () => {
+                string flag = Path.Combine(Space(binding), "user-editing.json");
+                if (!enable) { File.Delete(flag); return false; }
+                Write(flag, new JObject { ["requested_at"] = Now });
+                var owner = Consumer(binding);
+                if (owner != null && (bool?)owner["busy"] != true) ReleaseConsumer(binding, owner);
+                return true;
+            });
+        }
+
+        public static void ReleaseStoppedWriter(string binding, JObject shownOwner)
+        {
+            WithOperationLock(binding, () => {
+                var owner = Consumer(binding);
+                if (!UserEditing(binding) || owner == null || !JToken.DeepEquals(shownOwner, owner))
+                    throw new InvalidOperationException("占用状态已经变化，请查看当前工作台状态。");
+                if (EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode)
+                    throw new InvalidOperationException("Unity 正在编译、导入或运行。结束后再接管。");
+                ReleaseConsumer(binding, owner);
+                return true;
+            });
+        }
+
         // The lease file is checked on every label refresh; parse it again only after it is rewritten.
         static string consumerPath;
         static DateTime consumerStamp;
@@ -161,7 +227,7 @@ namespace AvatarWorkbench
             foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<WorkbenchWindow>()) window.ReconnectCodex();
             return new JObject { ["state"] = "binding_pending", ["thread_id"] = link["thread_id"]?.DeepClone() };
         }
-        public static object ReadPending(string binding) => new JArray(WorkbenchData.Feedback(binding).Where(x => WorkbenchData.Text(x["status"]) != "addressed"));
+        public static object ReadPending(string binding) => new JArray(WorkbenchData.Feedback(binding).Where(WorkbenchData.AwaitingAgent));
         // Notification only. The existing workflow owns the actual scene/candidate edits.
         public static object NotifyTargetChanged(string binding, string targetGlobalId)
         {
@@ -175,19 +241,34 @@ namespace AvatarWorkbench
         public static object Acknowledge(string binding, string id, string status, string note, string session)
         {
             if (!System.Text.RegularExpressions.Regex.IsMatch(id ?? "", "^[a-f0-9]{32}$")) throw new ArgumentException("反馈 id 无效。");
-            if (!new[] { "seen", "processing_feedback", "addressed" }.Contains(status)) throw new ArgumentException("仅支持 seen / processing_feedback / addressed；投递等待状态不是读取确认。");
-            if (string.IsNullOrWhiteSpace(session)) throw new ArgumentException("请记录实际读取反馈的执行宿主会话。");
-            string file = Path.Combine(WorkbenchData.Inbox(binding), id + ".json"); var entry = WorkbenchData.Read(file);
-            entry["status"] = status; entry["reply"] = note; entry["updated_at"] = WorkbenchData.Now;
-            entry["consumer_session"] = session; entry["execution_started"] = status == "processing_feedback";
-            WorkbenchData.Write(file, entry); return entry;
+            if (!new[] { "seen", "processing_feedback", "waiting_user", "addressed" }.Contains(status)) throw new ArgumentException("仅支持 seen / processing_feedback / waiting_user / addressed；投递等待状态不是读取确认。");
+            return WorkbenchData.WithConsumerLock(binding, session, owner => {
+                string file = Path.Combine(WorkbenchData.Inbox(binding), id + ".json");
+                var entry = WorkbenchData.Read(file);
+                if (status == "processing_feedback" && WorkbenchData.UserEditing(binding)) throw new InvalidOperationException("USER_EDITING");
+                if (status == "waiting_user")
+                {
+                    if (string.IsNullOrWhiteSpace(note)) throw new ArgumentException("请填写候选、手动步骤及复查方式。");
+                    if (owner != null) WorkbenchData.ReleaseConsumer(binding, owner);
+                }
+                entry["status"] = status; entry["reply"] = note; entry["updated_at"] = WorkbenchData.Now;
+                entry["consumer_session"] = session; entry["execution_started"] = status == "processing_feedback";
+                WorkbenchData.Write(file, entry); return entry;
+            });
         }
         public static object SetConsumer(string binding, string session, bool active, bool busy, int leaseSeconds = 120)
         {
-            if (string.IsNullOrWhiteSpace(session)) throw new ArgumentException("会话不能为空。");
-            var c = new JObject { ["active"] = active, ["busy"] = busy, ["session"] = session, ["updated_at"] = WorkbenchData.Now,
-                ["expires_at"] = DateTime.UtcNow.AddSeconds(Mathf.Clamp(leaseSeconds, 10, 3600)).ToString("yyyy-MM-ddTHH:mm:ssZ") };
-            WorkbenchData.Write(Path.Combine(WorkbenchData.Space(binding), "consumer.json"), c); return c;
+            return WorkbenchData.WithConsumerLock(binding, session, owner => {
+                if (active && WorkbenchData.UserEditing(binding))
+                {
+                    if (busy || owner == null) throw new InvalidOperationException("USER_EDITING");
+                    active = false;
+                }
+                var record = new JObject { ["active"] = active, ["busy"] = active && busy, ["session"] = session, ["updated_at"] = WorkbenchData.Now,
+                    ["expires_at"] = DateTime.UtcNow.AddSeconds(Mathf.Clamp(leaseSeconds, 10, 3600)).ToString("yyyy-MM-ddTHH:mm:ssZ") };
+                WorkbenchData.Write(Path.Combine(WorkbenchData.Space(binding), "consumer.json"), record);
+                return record;
+            });
         }
     }
 }

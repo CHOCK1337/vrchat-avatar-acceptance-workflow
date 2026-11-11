@@ -441,7 +441,12 @@ namespace AvatarWorkbench
                     ["candidate"] = context["candidate"]?.DeepClone(), ["source"] = context["target"]?.DeepClone() };
             }
             // Resource selection belongs to this feedback, while target/image belong to the frozen frame.
-            context["selected_resources"] = Context()["selected_resources"]?.DeepClone(); context["resource_id"] = selectedId;
+            var selection = Context();
+            string frozenTarget = WorkbenchData.Text((context["target"] as JObject)?["global_id"]);
+            bool sameTarget = frozenTarget.Length > 0 && frozenTarget == (string)selection["target"]?["global_id"]
+                && (string)context["binding"] == BindingPath && WorkbenchData.SameCandidate(context["candidate"] as JObject, selection["candidate"] as JObject);
+            context["compatibility"] = sameTarget ? CompatibilityRecord()?.DeepClone() : null;
+            context["selected_resources"] = selection["selected_resources"]?.DeepClone(); context["resource_id"] = selectedId;
             context["selected_product_references"] = new JArray(boothReferences.Select(x => x.DeepClone()));
             context["selected_source_references"] = SourceReferences();
             byte[] bytes = frozen.EncodeToPNG(); string folder = Path.Combine(WorkbenchData.Space(WorkbenchData.Text(context["binding"])), "drafts"); Directory.CreateDirectory(folder);
@@ -468,7 +473,7 @@ namespace AvatarWorkbench
                 ["target"] = context["target"]?.DeepClone(), ["selected_resources"] = context["selected_resources"]?.DeepClone(),
                 ["selected_product_references"] = context["selected_product_references"]?.DeepClone() ?? new JArray(),
                 ["selected_source_references"] = context["selected_source_references"]?.DeepClone() ?? new JArray(),
-                ["compatibility"] = draft != null ? null : CompatibilityRecord(),
+                ["compatibility"] = draft != null ? context["compatibility"]?.DeepClone() : CompatibilityRecord()?.DeepClone(),
                 ["resource_id"] = context["resource_id"]?.DeepClone(), ["image"] = image?.DeepClone(), ["known_controls"] = context["known_controls"]?.DeepClone(),
                 ["rect"] = image != null && annotation.width > .001f && annotation.height > .001f ? new JObject { ["x"] = annotation.x, ["y"] = annotation.y, ["w"] = annotation.width, ["h"] = annotation.height } : null,
                 ["category"] = image == null ? "change" : "visual", ["message"] = message, ["status"] = "received", ["execution_started"] = false,
@@ -478,7 +483,7 @@ namespace AvatarWorkbench
             if (entry["rect"] is JObject rect) entry["pixel_rect"] = new JObject { ["x"] = Mathf.RoundToInt((float)rect["x"] * (int)image["width"]), ["y"] = Mathf.RoundToInt((float)rect["y"] * (int)image["height"]), ["w"] = Mathf.RoundToInt((float)rect["w"] * (int)image["width"]), ["h"] = Mathf.RoundToInt((float)rect["h"] * (int)image["height"]) };
             WorkbenchData.Write(Path.Combine(WorkbenchData.Inbox(binding), id + ".json"), entry);
             draft = null; annotation = new Rect(); DestroyTexture(ref frozen); message = ""; input?.SetValueWithoutNotify("");
-            allowOtherBody = false; compatKey = "";
+            compatKey = null;
             SaveState(); RenderFeedback(); UpdateLabels(); ToastReceipt("已保存，等待 " + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " 读取" + (binding != BindingPath ? "（原图所属任务的收件箱）" : "") + "。", id); canvas?.MarkDirtyRepaint();
             return entry;
         }
@@ -523,6 +528,12 @@ namespace AvatarWorkbench
             if (projectLabel == null) return;
             var consumer = WorkbenchData.Consumer(BindingPath);
             busy = IsBusy(consumer);
+            bool manual = WorkbenchData.UserEditing(BindingPath);
+            if (manualControlButton != null)
+            {
+                manualControlButton.text = manual ? "交回 AI" : "我来操作";
+                manualControlButton.tooltip = manual ? "允许 AI 响应后续需求。" : "保留当前候选，暂停 AI 的新写入，自己修改。";
+            }
             string mcpStatus = McpStatus();
             projectLabel.text = "工程：" + WorkbenchData.Project + "\nUnity：" + Application.unityVersion + "\n任务：" + BindingPath + "\n" + mcpStatus;
             if (connectingCodex)
@@ -549,6 +560,12 @@ namespace AvatarWorkbench
             ApplyModelLabels();
             string connectionTip = (codexLink != null && WorkbenchModels.Active == WorkbenchModels.CodexHost ? WorkbenchData.Text(codexLink["title"]) + "\n" : "") + connectionHelp.text + "\n" + mcpStatus;
             // The title is cut with an ellipsis in the narrow rail, so both tooltips start with its full text.
+            if (manual)
+            {
+                connectionLabel.text = (bool?)consumer?["busy"] == true ? "接管中 · 等当前写入结束" : "由你操作";
+                connectionHelp.text = (bool?)consumer?["busy"] == true ? "已停止 AI 续租。若对应宿主已停止，在“更多”中释放遗留占用。" : "改好后点“交回 AI”，再发送复查需求。";
+                connectionTip = connectionHelp.text;
+            }
             connectionLabel.tooltip = connectionBox.tooltip = connectionLabel.text + "\n" + connectionTip;
             var shown = (frozen ? draft?["candidate"] : historical ? historicalInfo?["candidate"] : stableContext?["candidate"]) as JObject;
             candidateLabel.text = "画面版本：" + WorkbenchData.Identity(shown ?? WorkbenchData.Candidate(task)) + "\n" + sourceNotice;
@@ -611,10 +628,12 @@ namespace AvatarWorkbench
                 string latestStatus = WorkbenchData.Text(sentEntry["status"]);
                 string routeName = WorkbenchModels.RouteName(sentEntry["model_route"] as JObject);
                 if (latestStatus == "addressed") ToastReceipt(routeName + " 已回复：去“看回复”查看，再在预览里确认效果。", toastFeedbackId);
+                else if (latestStatus == "waiting_user") ToastReceipt("轮到你操作。去“看回复”查看候选和手动步骤。", toastFeedbackId);
                 else if (latestStatus == "seen") ToastReceipt(routeName + " 已实际读取，等待后续回应。", toastFeedbackId);
                 else if (latestStatus == "processing_feedback") ToastReceipt(routeName + " 已确认正在处理，请查看实际回应与模型。", toastFeedbackId);
             }
-            int waiting = entries.Count(x => WorkbenchData.Text(x["status"]) != "addressed");
+            int waiting = entries.Count(WorkbenchData.AwaitingAgent);
+            guideHandoff = (string)entries.FirstOrDefault()?["status"] == "waiting_user";
             guideRequests = entries.Count; guideWaiting = waiting; UpdateStepGuide();
             feedbackTab.text = "看回复";
             feedbackTab.tooltip = waiting > 0 ? "修改进度与回复 · " + waiting + " 条等待处理" : "修改进度与真实回复";
@@ -644,6 +663,15 @@ namespace AvatarWorkbench
                     var r = Wrapped(waitingDsh ? "已发出，等 DSH 读取。还没在 DSH 粘贴接手指令的话，点下面的按钮再复制一次。" : routeType == WorkbenchModels.DshHost ? "DSH 已经接手，回复会显示在这里。" : "已保存。等 " + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " 实际读取后更新状态。");
                     r.AddToClassList("aw-muted"); card.Add(r);
                     if (waitingDsh) card.Add(MakeButton("复制给 DSH", () => { CopyDshInstruction(BindingPath); Toast("接手指令已复制：切到 DSH 按 Ctrl+V 发送。"); }, "copy-dsh-" + WorkbenchData.Text(entry["id"])));
+                }
+                if (status == "waiting_user")
+                {
+                    card.Add(Wrapped("现在可以在 Unity 修改指定候选。改好后选中当前版本，再发送复查需求。"));
+                    card.Add(MakeButton("准备复查需求", () => {
+                        if (!string.IsNullOrWhiteSpace(message) || draft != null) { Toast("已有草稿。在下方补充本次手动修改后即可发送。"); input?.Focus(); return; }
+                        message = "我已手动处理请求 " + (string)entry["id"] + "。请读取原记录，检查我当前选中的候选及受影响的动作和衣片，保留手动修改。";
+                        input?.SetValueWithoutNotify(message); UpdateComposer(); QueueSave(); input?.Focus();
+                    }, "resume-" + (string)entry["id"]));
                 }
                 var detail = new Foldout { text = "查看完整内容", value = false };
                 detail.Add(Wrapped(WorkbenchData.Text(entry["message"])));
@@ -698,11 +726,11 @@ namespace AvatarWorkbench
             bool dsh = WorkbenchModels.Active == WorkbenchModels.DshHost;
             if (dsh) { CopyDshInstruction(binding); return; }
             string workflow = "现有改模工作流";
-            EditorGUIUtility.systemCopyBuffer = "请读取并处理改模工作台中尚未回应的请求。继续使用" + workflow + "和已连接的 UnityMCP，只读取一次相关收件箱，按每条请求的原话处理（需要改角色时在候选副本上改）；不更改 AI 模型、账号或权限设置，也不扩大测试范围。请求带 compatibility 字段时按其中的 decision 执行。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n工程：" + WorkbenchData.Project + "\n绑定路径：" + binding + "\n反馈目录：" + WorkbenchData.Inbox(binding) + "\nSkill：" + WorkbenchModels.CodexSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath + "\n在实际安装的 AvatarWorkbench/Tools/codex_feedback.py 执行 inbox --task <以上绑定路径>。实际读取后回写 seen，处理中回写 processing_feedback，有答复后回写 addressed；这些状态都不等于修复通过。执行宿主：当前 Codex。此条接手指令本身不授予上传权限，也不会自动唤醒任何会话。";
+            EditorGUIUtility.systemCopyBuffer = "请读取并处理改模工作台中尚未回应的请求。继续使用" + workflow + "和已连接的 UnityMCP，只读取一次相关收件箱，按每条请求的原话处理（需要改角色时在候选副本上改）；不更改 AI 模型、账号或权限设置，也不扩大测试范围。体型适配以本次要求和 compatibility 决定为准；缺字段也可在聊天指定。遇到手动接管先读下方工程模板的“用户接管与复查”，回写 waiting_user 交还编辑权，等用户发起复查。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n工程：" + WorkbenchData.Project + "\n绑定路径：" + binding + "\n反馈目录：" + WorkbenchData.Inbox(binding) + "\nSkill：" + WorkbenchModels.CodexSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath + "\n在实际安装的 AvatarWorkbench/Tools/codex_feedback.py 执行 inbox --task <以上绑定路径>。实际读取后回写 seen，处理中回写 processing_feedback，有答复后回写 addressed；这些状态都不等于修复通过。执行宿主：当前 Codex。此条接手指令本身不授予上传权限，也不会自动唤醒任何会话。";
         }
         void CopyDshInstruction(string binding)
         {
-            EditorGUIUtility.systemCopyBuffer = "使用 DSH 包内的 assemble-vrchat-avatar Skill 处理本工程的 DSH 请求。先 workbench_status 和 list_unity_instances，使用 context_select 选择下方精确工程、绑定和 storage_root，再 task_read / feedback_read。只处理 model_route.type=dsh 且未回应的请求，遵守每条请求原话、候选和图片身份。读取冻结图用 feedback_image；不能实际看图就标记视觉 NOT_RUN。写入前取得 consumer_lease，实际读取后 ack seen，开始处理后 processing_feedback，回复后 addressed；这些都不表示模型验收通过。完成后释放租约。请求带 compatibility 字段时按其中的 decision 执行。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n工程：" + WorkbenchData.Project + "\n绑定：" + binding + "\nstorage_root：" + WorkbenchData.DataRoot + "\nSkill：" + WorkbenchModels.DshSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath + "\n本条指令不授予上传权限。";
+            EditorGUIUtility.systemCopyBuffer = "使用 DSH 包内的 assemble-vrchat-avatar Skill 处理本工程的 DSH 请求。先 workbench_status 和 list_unity_instances，使用 context_select 选择下方精确工程、绑定和 storage_root，再 task_read / feedback_read。只处理 model_route.type=dsh 且未回应的请求，遵守每条请求原话、候选和图片身份。读取冻结图用 feedback_image；不能实际看图就标记视觉 NOT_RUN。写入前取得 consumer_lease，实际读取后 ack seen，开始处理后 processing_feedback，回复后 addressed；这些都不表示模型验收通过。完成后释放租约。体型适配以本次要求和 compatibility 决定为准；缺字段也可在聊天指定。遇到手动接管先读下方工程模板的“用户接管与复查”，回写 waiting_user 交还编辑权，等用户发起复查。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n工程：" + WorkbenchData.Project + "\n绑定：" + binding + "\nstorage_root：" + WorkbenchData.DataRoot + "\nSkill：" + WorkbenchModels.DshSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath + "\n本条指令不授予上传权限。";
         }
         void ExportFeedback()
         {

@@ -142,7 +142,7 @@ namespace AvatarWorkbench
         public static string Prompt(string binding, JObject entry)
         {
             string file = Path.Combine(WorkbenchData.Inbox(binding), WorkbenchData.Text(entry["id"]) + ".json");
-            return "这是用户从 Unity 改模工作台直接提交到本会话的请求。请继续现有工作流，先读取下面这一条反馈文件，核对它冻结时的目标、候选、素材和图片；实际读取后回写 seen，实际回应后回写 addressed。不要把发送回执当成已读或修复完成。请求带 compatibility 字段时按其中的 decision 执行。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n"
+            return "这是用户从 Unity 改模工作台直接提交到本会话的请求。请继续现有工作流，先读取下面这一条反馈文件，核对它冻结时的目标、候选、素材和图片；实际读取后回写 seen，实际回应后回写 addressed。不要把发送回执当成已读或修复完成。体型适配以本次要求和 compatibility 决定为准；缺字段也可在聊天指定。遇到手动接管先读下方工程模板的“用户接管与复查”，回写 waiting_user 交还编辑权，等用户发起复查。回复 addressed 前在 Unity 运行 WorkbenchFinishCheck 收尾检查（模板见下面的收尾检查模板路径），没修好的项在回复里写明。\n"
                 + "用户原话：\n" + WorkbenchData.Text(entry["message"]) + "\n\n"
                 + "工程：" + WorkbenchData.Text(entry["project_path"]) + "\n绑定路径：" + binding + "\n反馈文件：" + file + "\n反馈 ID：" + WorkbenchData.Text(entry["id"])
                 + "\nSkill：" + WorkbenchModels.CodexSkillPath + "\n收尾检查模板：" + WorkbenchFinishCheck.GuidePath

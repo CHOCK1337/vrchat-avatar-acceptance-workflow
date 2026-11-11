@@ -30,9 +30,10 @@ namespace AvatarWorkbench
             {
                 string home = Environment.GetEnvironmentVariable("CODEX_HOME");
                 string configured = Path.Combine(home ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".codex"), "skills", "assemble-vrchat-avatar", "SKILL.md");
-                if (File.Exists(configured)) return configured;
-                const string established = "D:/.codex/skills/assemble-vrchat-avatar/SKILL.md";
-                return File.Exists(established) ? established : configured;
+                string project = Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".agents", "skills", "assemble-vrchat-avatar", "SKILL.md"));
+                if (File.Exists(project)) return project;
+                string user = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".agents", "skills", "assemble-vrchat-avatar", "SKILL.md");
+                return File.Exists(user) ? user : configured;
             }
         }
         // The Skill the installer chose (it may reuse an existing one); handed to Codex by exact path.

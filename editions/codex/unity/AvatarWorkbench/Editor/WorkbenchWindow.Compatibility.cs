@@ -16,37 +16,38 @@ namespace AvatarWorkbench
         static readonly string[] WearableCategories = { "衣服", "头发", "配饰" };
         VisualElement compatStrip;
         Label compatLabel;
-        Toggle compatToggle;
-        bool allowOtherBody;
-        string compatKey = "", compatBase = "";
-        List<BodyMismatch> compatMismatches = new List<BodyMismatch>();
+        static readonly List<string> FitLabels = new List<string> { "按本次需求", "跳过这些素材", "仍然安装（可能不贴合）", "我来手动适配" };
+        static readonly string[] FitDecisions = { "from_request", "skip", "install_anyway", "manual_fit" };
+        PopupField<string> fitChoice;
+        string compatKey;
+        JObject liveCompatibility;
 
         void BuildCompatibilityStrip(VisualElement parent)
         {
             compatStrip = Row(); compatStrip.AddToClassList("aw-draft-strip"); compatStrip.style.display = DisplayStyle.None;
             compatLabel = new Label { enableRichText = false }; compatLabel.AddToClassList("aw-ellipsis"); compatLabel.style.flexGrow = 1; compatStrip.Add(compatLabel);
-            compatToggle = new Toggle("仍然安装（可能不贴合）") { name = "allow-other-body", value = allowOtherBody };
-            compatToggle.RegisterValueChangedCallback(e => allowOtherBody = e.newValue);
-            compatStrip.Add(compatToggle); parent.Add(compatStrip);
+            fitChoice = new PopupField<string>(FitLabels, 0) { name = "other-body-route" };
+            fitChoice.RegisterValueChangedCallback(e => {
+                var record = draft != null ? draft["compatibility"] as JObject : CompatibilityRecord();
+                int index = FitLabels.IndexOf(e.newValue);
+                if (record == null || index < 0) return;
+                record["decision"] = FitDecisions[index];
+                record["note"] = e.newValue;
+                if (draft != null) QueueSave();
+            });
+            compatStrip.Add(fitChoice); parent.Add(compatStrip);
         }
 
         void UpdateCompatibilityStrip()
         {
             if (compatStrip == null) return;
-            var requested = resources.Where(ResourceRequested).ToList();
-            string targetBase = RequestBase(requested);
-            string key = targetBase + "|" + string.Join("|", requested.Select(r => r.path));
-            if (key != compatKey)
-            {
-                compatKey = key; compatBase = targetBase;
-                compatMismatches = string.IsNullOrEmpty(targetBase) ? new List<BodyMismatch>()
-                    : requested.Where(r => WearableCategories.Contains(WorkbenchCategories.Of(r))).Select(r => Mismatch(r, targetBase)).Where(m => m != null).ToList();
-            }
-            bool show = compatMismatches.Count > 0 && draft == null;
-            compatStrip.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
-            compatLabel.text = "本地只有其他体型的版本：" + string.Join("、", compatMismatches.Select(m => m.name + "（" + string.Join("/", m.found) + "）"));
-            compatLabel.tooltip = "目标体型是 " + compatBase + "，但这些素材的文件里只有其他体型的版本。\n不勾选：AI 会跳过它们，并在回复里说明。\n勾选：AI 会照样安装，回复里会提醒贴合风险。";
-            compatToggle.SetValueWithoutNotify(allowOtherBody);
+            var record = draft != null ? draft["compatibility"] as JObject : CompatibilityRecord();
+            compatStrip.style.display = record != null ? DisplayStyle.Flex : DisplayStyle.None;
+            if (record == null) return;
+            compatLabel.text = "其他体型的素材：" + string.Join("、", (record["mismatches"] as JArray ?? new JArray()).OfType<JObject>().Select(m => (string)m["name"]));
+            compatLabel.tooltip = "目标体型：" + (string)record["base"] + "。可以在需求里指定现有适配方法，或选择自己处理。";
+            int index = Array.IndexOf(FitDecisions, (string)record["decision"]);
+            fitChoice.SetValueWithoutNotify(FitLabels[Math.Max(0, index)]);
         }
 
         string RequestBase(List<ResourceCard> requested)
@@ -91,10 +92,17 @@ namespace AvatarWorkbench
         /// <summary>Recorded on the request so every host applies the user's choice the same way.</summary>
         JObject CompatibilityRecord()
         {
-            if (compatMismatches.Count == 0) return null;
-            return new JObject { ["base"] = compatBase, ["decision"] = allowOtherBody ? "install_anyway" : "skip",
-                ["mismatches"] = new JArray(compatMismatches.Select(m => new JObject { ["name"] = m.name, ["path"] = m.path, ["local_versions"] = new JArray(m.found) })),
-                ["note"] = allowOtherBody ? "用户允许使用其他体型的版本；回复里要说明贴合风险。" : "用户没有允许使用其他体型的版本；不要安装这些素材，回复里说明已跳过。" };
+            var requested = resources.Where(ResourceRequested).ToList();
+            string targetBase = RequestBase(requested);
+            string key = BindingPath + "|" + (target ? target.GetInstanceID() : 0) + "|" + targetBase + "|" + string.Join("|", requested.Select(r => r.id + ":" + r.path));
+            if (key == compatKey) return liveCompatibility;
+            compatKey = key;
+            var mismatches = string.IsNullOrEmpty(targetBase) ? new List<BodyMismatch>()
+                : requested.Where(r => WearableCategories.Contains(WorkbenchCategories.Of(r))).Select(r => Mismatch(r, targetBase)).Where(m => m != null).ToList();
+            liveCompatibility = mismatches.Count == 0 ? null : new JObject {
+                ["base"] = targetBase, ["decision"] = "from_request",
+                ["mismatches"] = new JArray(mismatches.Select(m => new JObject { ["name"] = m.name, ["path"] = m.path, ["local_versions"] = new JArray(m.found) })) };
+            return liveCompatibility;
         }
     }
 }

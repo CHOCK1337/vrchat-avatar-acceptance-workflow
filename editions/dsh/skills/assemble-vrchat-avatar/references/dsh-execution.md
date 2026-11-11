@@ -1,4 +1,4 @@
-# DSH 执行补充 — 0.3.2-local5-dsh
+# DSH 执行补充 — 0.3.3-dsh
 
 生产结果按包根 [DEEPSEEK_RULES.md](../../../DEEPSEEK_RULES.md) 执行，先核对源/处理后候选/实际预览身份。
 

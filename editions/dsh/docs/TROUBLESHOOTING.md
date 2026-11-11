@@ -24,3 +24,13 @@
 | SDK 构建成功但 VeryPoor | 多套衣服、隐藏网格和 PB 仍计入性能成本；让用户选择要保留的内容后再做优化，不擅自删掉必选素材 |
 
 诊断路径：文件完整性 → 安装/配置 → 两个 MCP → 准确 Unity 工程 → 工作台加载 → 真实素材/候选 → 实际控件 → 看图 → 最终构建。只解决当前失败层，不重复无关的大范围安装或审计。
+
+## 旧版操作锁
+
+若旧版桥接进程异常退出后持续报告 `ANOTHER_OPERATION_ACTIVE` 或 `ANOTHER_DSH_OPERATION_ACTIVE`，先关闭正在访问该绑定的旧 Codex、DSH 写入进程。安装本修订后，在包目录用以下命令处理历史空锁。传入报错绑定的完整路径，自定义存储位置时同时传 `--storage`。
+
+```powershell
+.\runtime\python\python.exe .\unity\AvatarWorkbench\Tools\codex_feedback.py recover-legacy-lock --binding "本次任务的完整路径" --legacy-writers-stopped
+```
+
+命令将该绑定的旧空锁改名留存。租约、反馈和候选继续保留。新版进程异常退出后，下一个正常操作会自动接续。尚在有效期内的其他会话租约仍由原会话释放或自然到期。

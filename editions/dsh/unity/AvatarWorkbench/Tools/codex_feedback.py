@@ -2,6 +2,8 @@
 """On-demand consumer for the existing AvatarWorkbench feedback inbox. No server/agent."""
 import argparse
 import copy
+from contextlib import contextmanager
+import errno
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
@@ -11,6 +13,7 @@ import re
 import sys
 import tempfile
 import zipfile
+import uuid
 
 
 def stamp():
@@ -44,7 +47,108 @@ def write(path, value):
         temp.unlink(missing_ok=True)
 
 
-def load_entries(inbox, include_addressed=False):
+@contextmanager
+def binding_guard(space):
+    """OS releases the byte-range lock even when its owner exits inside a write."""
+    space.mkdir(parents=True, exist_ok=True)
+    with (space / ".workbench-operation.guard").open("a+b") as guard:
+        guard.seek(0)
+        try:
+            if os.name == "nt":
+                import msvcrt
+                msvcrt.locking(guard.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.lockf(guard, fcntl.LOCK_EX | fcntl.LOCK_NB, 1)
+        except OSError as exc:
+            if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                raise
+            raise ValueError("ANOTHER_OPERATION_ACTIVE: retry after the current write") from exc
+        yield
+
+
+@contextmanager
+def operation_lock(space):
+    with binding_guard(space):
+        # Old bridges use O_EXCL on this name. A directory keeps them out and
+        # distinguishes an interrupted new writer from a live legacy file.
+        marker = space / ".dsh-operation.lock"
+        try:
+            marker.mkdir(exist_ok=True)
+        except FileExistsError as exc:
+            raise ValueError("ANOTHER_OPERATION_ACTIVE: " + str(marker) +
+                             " is a legacy marker. If it persists after older hosts exit, use recover-legacy-lock.") from exc
+        try:
+            yield
+        finally:
+            marker.rmdir()
+
+
+def recover_legacy_lock(space):
+    with binding_guard(space):
+        marker = space / ".dsh-operation.lock"
+        if not marker.exists():
+            return None
+        if marker.is_symlink() or not marker.is_file() or marker.stat().st_size:
+            raise ValueError("EXPECTED_EMPTY_LEGACY_LOCK: " + str(marker))
+        saved = marker.with_name(marker.name + ".recovered-" + uuid.uuid4().hex)
+        marker.rename(saved)
+        return saved
+
+
+def guard_consumer(space, session):
+    if not session.strip() or len(session) > 200:
+        raise ValueError("ACTUAL_SESSION_REQUIRED")
+    path = space / "consumer.json"
+    current = read(path) if path.is_file() else {}
+    if current.get("active") and current.get("session") != session:
+        expiry = datetime.fromisoformat(current.get("expires_at", "").replace("Z", "+00:00"))
+        if expiry > datetime.now(timezone.utc):
+            raise ValueError("ANOTHER_CONSUMER_ACTIVE: " + str(current.get("session")))
+    return current
+
+
+def user_editing(space):
+    return (space / "user-editing.json").is_file()
+
+
+def save_lease(space, current, session, action, seconds):
+    if action not in ("connect", "busy", "idle", "disconnect"):
+        raise ValueError("INVALID_ACTION")
+    if user_editing(space):
+        if action in ("connect", "busy"):
+            raise ValueError("USER_EDITING: use 交回 AI in the Workbench before starting another write")
+        action = "disconnect"
+    current.update(session=session, active=action != "disconnect", busy=action == "busy", updated_at=stamp(),
+                   expires_at=(datetime.now(timezone.utc) + timedelta(seconds=max(10, min(3600, seconds)))).isoformat(timespec="seconds"))
+    write(space / "consumer.json", current)
+    return current
+
+
+ACK_STATUSES = ("seen", "processing_feedback", "waiting_user", "addressed")
+
+
+def save_ack(space, path, entry, status, note, session, current):
+    if status not in ACK_STATUSES:
+        raise ValueError("INVALID_STATUS")
+    if status == "processing_feedback" and user_editing(space):
+        raise ValueError("USER_EDITING: wait for the user to return control")
+    gate = finish_gate(space, entry, status, note)
+    if status == "waiting_user":
+        if not note.strip():
+            raise ValueError("HANDOFF_NOTE_REQUIRED: name the candidate, next manual step and how to resume")
+        # Release first. If the receipt write fails the user can still edit and
+        # the same acknowledgement can be retried without changing ownership.
+        if current.get("session") == session and current.get("active"):
+            current.update(active=False, busy=False, updated_at=stamp())
+            write(space / "consumer.json", current)
+    entry.update(status=status, reply=note, consumer_session=session,
+                 execution_started=status == "processing_feedback", updated_at=stamp(), **gate)
+    write(path, entry)
+    return entry
+
+
+def load_entries(inbox, include_addressed=False, include_waiting_user=False):
     """Keep a single malformed receipt from hiding all valid user feedback."""
     entries = []
     for path in sorted(inbox.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:300]:
@@ -55,7 +159,8 @@ def load_entries(inbox, include_addressed=False):
         except (OSError, ValueError) as error:
             print("FEEDBACK_SKIPPED: " + path.name + ": " + str(error), file=sys.stderr)
             continue
-        if include_addressed or entry.get("status") != "addressed":
+        status = entry.get("status")
+        if include_addressed or status not in ("addressed", "waiting_user") or (include_waiting_user and status == "waiting_user"):
             entries.append(entry)
     return entries
 
@@ -133,17 +238,18 @@ def main():
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["path", "inbox", "ack", "connect", "busy", "disconnect", "export"])
+    parser.add_argument("command", choices=["path", "inbox", "ack", "connect", "busy", "disconnect", "export", "recover-legacy-lock"])
     parser.add_argument("--task", "--binding", dest="binding", required=True, type=Path)
     parser.add_argument("--storage", type=Path)
     parser.add_argument("--id")
-    parser.add_argument("--status", choices=["seen", "processing_feedback", "addressed"])
+    parser.add_argument("--status", choices=ACK_STATUSES)
     parser.add_argument("--note", default="")
     parser.add_argument("--session")
     parser.add_argument("--lease", type=int, default=120)
     parser.add_argument("--value", choices=["true", "false"], default="true")
     parser.add_argument("--all", action="store_true")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--legacy-writers-stopped", action="store_true", help="Confirm all older writers on this binding have exited")
     args = parser.parse_args()
     space = location(args.binding, args.storage)
     inbox = space / "feedback"
@@ -151,7 +257,7 @@ def main():
         print(str(inbox))
         return
     if args.command in ["inbox", "export"]:
-        entries = load_entries(inbox, args.all)
+        entries = load_entries(inbox, args.all, include_waiting_user=args.command == "export")
         if args.command == "inbox":
             print(json.dumps(entries, ensure_ascii=False, indent=2))
             return
@@ -160,28 +266,27 @@ def main():
         export_entries(entries, args.output)
         print(str(args.output))
         return
+    if args.command == "recover-legacy-lock":
+        if not args.legacy_writers_stopped:
+            parser.error("Close both older hosts on this binding first, then pass --legacy-writers-stopped")
+        print(recover_legacy_lock(space) or "NO_LEGACY_LOCK")
+        return
     if not args.session:
         parser.error("消费者操作需要 --session <实际 Codex 会话标识>")
-    if args.command == "ack":
-        if not args.id or not re.fullmatch(r"[a-f0-9]{32}", args.id) or not args.status:
-            parser.error("ack 需要真实 --id 与 --status")
-        path = inbox / (args.id + ".json")
-        entry = read(path)
-        gate = finish_gate(space, entry, args.status, args.note)
-        entry.update(status=args.status, reply=args.note, consumer_session=args.session,
-                     execution_started=args.status == "processing_feedback", updated_at=stamp(), **gate)
-        write(path, entry)
-        print(json.dumps(entry, ensure_ascii=False, indent=2))
-        return
-    consumer_path = space / "consumer.json"
-    consumer = read(consumer_path) if consumer_path.exists() else {}
-    if args.command == "busy" and consumer.get("session") != args.session:
-        raise ValueError("busy 只能更新已连接的同一会话")
-    consumer.update(session=args.session, active=args.command != "disconnect",
-                    busy=args.command == "busy" and args.value == "true", updated_at=stamp(),
-                    expires_at=(datetime.now(timezone.utc) + timedelta(seconds=max(10, min(args.lease, 3600)))).isoformat(timespec="seconds"))
-    write(consumer_path, consumer)
-    print(json.dumps(consumer, ensure_ascii=False, indent=2))
+    with operation_lock(space):
+        consumer = guard_consumer(space, args.session)
+        if args.command == "ack":
+            if not args.id or not re.fullmatch(r"[a-f0-9]{32}", args.id) or not args.status:
+                parser.error("ack 需要真实 --id 与 --status")
+            path = inbox / (args.id + ".json")
+            entry = save_ack(space, path, read(path), args.status, args.note, args.session, consumer)
+            print(json.dumps(entry, ensure_ascii=False, indent=2))
+            return
+        if args.command == "busy" and consumer.get("session") != args.session:
+            raise ValueError("busy 只能更新已连接的同一会话")
+        action = "idle" if args.command == "busy" and args.value == "false" else args.command
+        save_lease(space, consumer, args.session, action, args.lease)
+        print(json.dumps(consumer, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
