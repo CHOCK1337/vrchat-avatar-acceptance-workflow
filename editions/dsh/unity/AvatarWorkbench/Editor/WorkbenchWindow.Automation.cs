@@ -82,6 +82,7 @@ namespace AvatarWorkbench
 
         void GuardPreviewCommand(JObject request)
         {
+            if (WorkbenchData.UserEditing(BindingPath)) throw new InvalidOperationException("USER_EDITING: the user has control of this binding.");
             if (!target || !EditorUtility.IsPersistent(target)) throw new InvalidOperationException("PERSISTENT_CANDIDATE_REQUIRED: bind the exact processed candidate in the existing window.");
             string path = AssetDatabase.GetAssetPath(target), expected = (string)request["expected_asset_path"];
             if (path != expected || AssetDatabase.GetAssetDependencyHash(path).ToString() != (string)request["expected_dependency_hash"])

@@ -20,6 +20,7 @@ namespace AvatarWorkbench
         DropdownField materialModeChoice;
         readonly List<string> materialModeNames = new List<string> { "本次已选", "本地素材库", "百度网盘", "BOOTH 搜索" };
         readonly List<ResourceCard> visibleResources = new List<ResourceCard>();
+        Button manualControlButton;
         Button submitButton, materialTab, previewTab, feedbackTab, helpButton;
         string activePanel = "preview", layoutMode = "", resourceFilter = "";
         bool showAllFeedback, windowVisible = true;
@@ -40,6 +41,8 @@ namespace AvatarWorkbench
             targetField.AddToClassList("aw-target"); targetField.RegisterValueChangedCallback(e => { if (!restoring) SetTarget(e.newValue as GameObject); }); header.Add(targetField);
             var choose = MakeButton("使用选中角色", UseSelection, "use-selection"); choose.tooltip = "在 Hierarchy 选中角色根物件后点击；也可直接拖到左侧角色栏。"; header.Add(choose);
             refreshButton = MakeButton("刷新画面", RefreshAll, "refresh"); refreshButton.tooltip = "重新读取当前角色和任务，不构建或安装素材。"; header.Add(refreshButton);
+            manualControlButton = MakeButton("我来操作", ToggleManualControl, "manual-control");
+            header.Add(manualControlButton);
             header.Add(MakeButton("更多 ▾", ShowMore, "more-menu")); root.Add(header);
             var shell = Row(); shell.AddToClassList("aw-shell"); shell.style.alignItems = Align.Stretch;
             navigationRail = BuildNavigation(); shell.Add(navigationRail);
@@ -259,9 +262,27 @@ namespace AvatarWorkbench
             if (historical) menu.AddItem(new GUIContent("把这张原图设为修改前对照"), false, () => TryAction(SetBeforeImage));
             menu.ShowAsContext();
         }
+        void ToggleManualControl()
+        {
+            bool enable = !WorkbenchData.UserEditing(BindingPath);
+            WorkbenchData.SetUserEditing(BindingPath, enable);
+            UpdateLabels();
+            var owner = WorkbenchData.Consumer(BindingPath);
+            Toast(!enable ? "已交回 AI。发送需求后继续。" : (bool?)owner?["busy"] == true
+                ? "已停止接收新的写入。当前写入结束或租约到期即可操作；若已停止 AI，可在“更多”中释放占用。"
+                : "现在由你操作。改好后点“交回 AI”，再发送复查需求。");
+        }
+
         void ShowMore()
         {
             var menu = new GenericMenu();
+            string binding = BindingPath;
+            var writer = WorkbenchData.Consumer(binding);
+            if (WorkbenchData.UserEditing(binding) && (bool?)writer?["busy"] == true)
+                menu.AddItem(new GUIContent("释放已停止的 AI 占用"), false, () => {
+                    if (EditorUtility.DisplayDialog("释放已停止的写入", "请先停止正在操作此候选的 AI 或关闭对应宿主。确认该写入已结束后，工作台会交还操作。", "写入已停止，接管", "继续等待"))
+                        TryAction(() => { WorkbenchData.ReleaseStoppedWriter(binding, writer); UpdateLabels(); });
+                });
             menu.AddItem(new GUIContent("怎么用（4 步）"), false, ShowHowTo);
             menu.AddSeparator("");
             if (docked) menu.AddItem(new GUIContent(maximized ? "恢复停靠布局" : "最大化停靠区"), false, () => maximized = !maximized);

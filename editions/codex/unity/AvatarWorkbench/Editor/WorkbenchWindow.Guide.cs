@@ -13,6 +13,7 @@ namespace AvatarWorkbench
         Label stepHint, pickStepName;
         // RenderFeedback supplies the counts; UpdateComposer supplies the rest on every refresh.
         int guideRequests, guideWaiting, guidePicked;
+        bool guideHandoff;
         string guideTarget, guideSend, guideShown;
 
         VisualElement BuildStepGuide()
@@ -58,7 +59,7 @@ namespace AvatarWorkbench
         {
             if (stepGuide == null || guideSend == null) return;
             // Called on every keystroke and every receipt poll; only a changed state touches the UI.
-            string state = guideTarget + "|" + guidePicked + "|" + guideRequests + "|" + guideWaiting + "|" + guideSend;
+            string state = guideTarget + "|" + guidePicked + "|" + guideRequests + "|" + guideWaiting + "|" + guideHandoff + "|" + guideSend;
             if (state == guideShown) return;
             guideShown = state;
             bool hasTarget = guideTarget != null;
@@ -75,6 +76,7 @@ namespace AvatarWorkbench
             string write = "下一步：在下方写一句要求，点“" + guideSend + "”。";
             stepHint.text = !hasTarget ? "下一步：在 Hierarchy 点选角色，再点“使用选中角色”。"
                 : guideRequests == 0 ? write + (guidePicked > 0 ? "已勾选的素材会自动附上。" : "要换衣服就先去“挑素材”。")
+                : guideHandoff ? "轮到你操作。到“看回复”查看步骤，改好后发送复查需求。"
                 : guideWaiting > 0 ? "等待回复中：回复会出现在“看回复”。回复后在预览里试穿确认。"
                 : "已有回复：在预览里确认效果；不满意就“截图圈问题”，或继续写下一条。";
             stepHint.tooltip = stepHint.text;

@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -171,6 +172,127 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"CHANGED_SINCE_READ"):
             self.bridge.call("feedback_image",{"id":self.id})
         with self.assertRaisesRegex(ValueError,"CHANGED_SINCE_READ"):self.ack()
+
+    def test_manual_handoff_returns_controls_and_preserves_original(self):
+        self.select()
+        original = self.read()["entries"][0]
+        self.lease("busy")
+        try:
+            handoff = value(self.ack("waiting_user"))
+        except ValueError as error:
+            self.fail(f"Manual handoff was rejected: {error}")
+        self.assertEqual("waiting_user", handoff["status"])
+        self.assertFalse(handoff["execution_started"])
+        self.assertNotIn("finish_check", handoff)
+        for field in ("candidate", "image", "message", "rect"):
+            self.assertEqual(original[field], handoff[field])
+        lease = feedback.read(self.bridge.space / "consumer.json")
+        self.assertFalse(lease["active"] or lease["busy"])
+        self.assertEqual([], value(self.bridge.call("feedback_read", {}))["entries"])
+        self.assertEqual("waiting_user", self.read()["entries"][0]["status"])
+
+    def test_foreign_session_cannot_handoff_a_live_writer(self):
+        self.select()
+        self.read()
+        self.lease("busy")
+        with self.assertRaisesRegex(ValueError, "ANOTHER_CONSUMER_ACTIVE"):
+            self.ack("waiting_user", "another-session")
+        self.assertTrue(feedback.read(self.bridge.space / "consumer.json")["busy"])
+
+    def test_writer_exit_does_not_strand_the_next_operation(self):
+        self.select()
+        child = """
+import os, sys
+sys.path.insert(0, sys.argv[1])
+from workbench_mcp import Bridge
+bridge = Bridge(sys.argv[2])
+bridge.call("context_select", {"project": sys.argv[3]})
+def exit_during_write(session):
+    os._exit(23)
+bridge.guard_consumer = exit_during_write
+bridge.call("consumer_lease", {"action": "connect", "session": "interrupted"})
+"""
+        process = subprocess.run(
+            [sys.executable, "-c", child, str(ROOT / "adapter"), str(self.config), str(self.projects[0])],
+            timeout=20, capture_output=True, text=True)
+        self.assertEqual(23, process.returncode, process.stderr)
+        try:
+            self.assertTrue(value(self.lease("connect"))["active"])
+        except ValueError as error:
+            self.fail(f"Writer exit stranded the binding: {error}")
+
+    def test_live_operation_guard_cannot_be_taken_by_second_process(self):
+        self.select()
+        child = """
+import sys
+sys.path.insert(0, sys.argv[1])
+from workbench_mcp import Bridge
+bridge = Bridge(sys.argv[2])
+bridge.call("context_select", {"project": sys.argv[3]})
+try:
+    bridge.call("consumer_lease", {"action": "connect", "session": "contender"})
+except ValueError as exc:
+    print(exc)
+else:
+    raise SystemExit("Concurrent writer acquired the lease")
+"""
+        with feedback.operation_lock(self.bridge.space):
+            result = subprocess.run([sys.executable, "-c", child, str(ROOT / "adapter"),
+                                     str(self.config), str(self.projects[0])],
+                                    capture_output=True, text=True, timeout=20)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("OPERATION_ACTIVE", result.stdout)
+
+    def test_legacy_lock_recovery_is_explicit_and_binding_scoped(self):
+        self.select()
+        marker = self.bridge.space / ".dsh-operation.lock"
+        marker.touch()
+        with self.assertRaisesRegex(ValueError, "OPERATION_ACTIVE"):
+            self.lease("connect")
+        cli = [sys.executable, str(ROOT / "unity/AvatarWorkbench/Tools/codex_feedback.py"),
+               "recover-legacy-lock", "--binding", str(self.tasks[0]), "--storage", str(self.storage)]
+        self.assertNotEqual(0, subprocess.run(cli, capture_output=True).returncode)
+        self.assertTrue(marker.is_file())
+        result = subprocess.run(cli + ["--legacy-writers-stopped"], capture_output=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(1, len(list(self.bridge.space.glob(".dsh-operation.lock.recovered-*"))))
+        self.assertTrue(value(self.lease("connect"))["active"])
+
+    def test_cli_handoff_respects_live_owner_and_unparks_only_on_user_followup(self):
+        self.select()
+        self.lease("busy")
+        cli = [sys.executable, str(ROOT / "unity/AvatarWorkbench/Tools/codex_feedback.py"),
+               "ack", "--binding", str(self.tasks[0]), "--storage", str(self.storage),
+               "--id", self.id, "--status", "waiting_user", "--note", "Fit the coat on candidate A."]
+        self.assertNotEqual(0, subprocess.run(cli + ["--session", "foreign"], capture_output=True).returncode)
+        self.assertTrue(feedback.read(self.bridge.space / "consumer.json")["busy"])
+        done = subprocess.run(cli + ["--session", "fixture-session"], capture_output=True)
+        self.assertEqual(0, done.returncode, done.stderr)
+        self.assertFalse(feedback.read(self.bridge.space / "consumer.json")["active"])
+        self.assertEqual([], value(self.bridge.call("feedback_read", {}))["entries"])
+        # The user's new request points to the revised candidate. The original stays frozen.
+        next_id = "cd" * 16
+        write(self.bridge.feedback_path(next_id), {"id": next_id, "status": "received",
+              "message": "I finished manual fitting, inspect revision 4.", "candidate": {"revision": 4}})
+        pending = value(self.bridge.call("feedback_read", {}))["entries"]
+        self.assertEqual([next_id], [item["id"] for item in pending])
+        self.assertEqual(self.candidate, self.read()["entries"][0]["candidate"])
+
+    def test_user_takeover_stops_renewal_until_explicit_return(self):
+        self.select()
+        self.lease("busy")
+        manual = self.bridge.space / "user-editing.json"
+        write(manual, {"requested_at": "2026-11-11T10:00:00Z"})
+        before = (self.bridge.space / "consumer.json").read_bytes()
+        with self.assertRaisesRegex(ValueError, "USER_EDITING"):
+            self.lease("busy")
+        self.assertEqual(before, (self.bridge.space / "consumer.json").read_bytes())
+        self.assertTrue(value(self.bridge.call("workbench_status", {}))["user_editing"])
+        self.assertFalse(value(self.lease("idle"))["active"])
+        with self.assertRaisesRegex(ValueError, "USER_EDITING"):
+            self.lease("connect", "second")
+        manual.unlink()
+        self.assertTrue(value(self.lease("connect", "second"))["active"])
 
     def test_foreign_lease_still_rejected(self):
         self.select();self.lease("connect")

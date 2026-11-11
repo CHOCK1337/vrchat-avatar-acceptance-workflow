@@ -10,14 +10,14 @@ DSH 与 Codex 版在本仓库分别维护源码目录和 Release。需要直接�
 
 | 使用宿主 | 源码与文档 | 完整安装包 |
 |---|---|---|
-| DeepSeek Harness（DSH） | [`editions/dsh`](editions/dsh) | [DSH v0.3.5](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.5) |
-| Codex | [`editions/codex`](editions/codex) | [Codex v0.1.6](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.6) |
+| DeepSeek Harness（DSH） | [`editions/dsh`](editions/dsh) | [DSH v0.3.6](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.6) |
+| Codex | [`editions/codex`](editions/codex) | [Codex v0.1.7](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.7) |
 
 安装包包含 Unity 工作台、两个 MCP、便携 Python/Node、配置模板、用户手册、Agent 手册和操作案例；GitHub 自动生成的 Source code ZIP 不含便携运行环境。更多说明见 [`editions/README.md`](editions/README.md)。
 
 DSH 通过“保存给 DSH”保存任务，首次接手需将指令粘贴到 DSH 会话；Codex 直送需绑定真实桌面会话。安装或连接成功之后，仍需在自己的工程内验收实际换装、腿部和动态。
 
-核心验收工作流继续使用下文的规范、脚本和测试。完整工作台随附的 UnityMCP-VRC 受 **CC BY-NC 4.0 非商业许可**约束，各版第三方说明随源码和安装包保留。
+工作台的日常改模按各 edition 的 Skill 执行。这两个正式版加入手动接管，支持在需求中指定已有的适配方法、提供改好的 Prefab，或由用户手动处理后交回复查。根目录的严格验收工具按下文的规范、脚本和测试独立运行。完整工作台随附的 UnityMCP-VRC 受 **CC BY-NC 4.0 非商业许可**约束，各版第三方说明随源码和安装包保留。
 
 ## 解决的问题
 
@@ -33,7 +33,7 @@ DSH 通过“保存给 DSH”保存任务，首次接手需将指令粘贴到 DS
 
 - [`WORKFLOW.md`](WORKFLOW.md)：完整执行规范和状态机。
 - [`references/workflow.md`](references/workflow.md)：任务数据、阶段和统一批量验收规则。
-- [`references/clothing.md`](references/clothing.md)：MA → MochiFitter → 手工适配的衣服路由。
+- [`references/clothing.md`](references/clothing.md)：根目录严格验收流程的原生衣服和 MochiFitter Profile 准入规则。
 - [`references/menu-planning-and-localization.md`](references/menu-planning-and-localization.md)：菜单层级、部件菜单优先和本地化规则。
 - [`references/performance-optimization.md`](references/performance-optimization.md)：PC / Android 分平台性能契约和优化边界。
 - [`references/acceptance.md`](references/acceptance.md)：视觉证据、穿模和最终验收标准。

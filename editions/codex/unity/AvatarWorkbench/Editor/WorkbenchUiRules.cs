@@ -26,6 +26,7 @@ namespace AvatarWorkbench
                 case "waiting_dsh": return "已发出 · 等 DSH 读取";
                 case "seen": return "AI 已读";
                 case "processing_feedback": return "正在修改";
+                case "waiting_user": return "等你手动操作";
                 case "addressed": return "已回复 · 请你确认效果";
                 default: return "状态未记录";
             }

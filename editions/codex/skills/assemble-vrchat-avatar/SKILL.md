@@ -2,7 +2,7 @@
 name: assemble-vrchat-avatar
 description: Use when assembling, fitting, recoloring, repairing, optimizing or publishing a VRChat avatar in an existing Unity project, especially clothing, accessories, author menus and visible assembly defects. Not for worlds, GUI development, new fitting algorithms or release audits.
 ---
-# VRChat 改模 — 0.3.2-local5-codex1 · Codex 工程与可见结果对齐
+# VRChat 改模 — 0.3.3-codex · Codex 工程与可见结果对齐
 
 **Goal:** complete the requested edit with a correct visible result and minimal interruption. Use the existing Unity tools; this Skill does not implement a fitter or certify images. Respect host/project safety rules.
 
@@ -31,7 +31,7 @@ For workbench preview/menu validation, use [the verified preview entry](referenc
 ## Less work, not less truth
 Same relevant inputs/state/view/pipeline and an already inspected result: reuse it. A first observation, changed pose, corrected preview, user defect or changed dependency is a valid reason to inspect. Never rename old pictures as new evidence. A quick final default view catches shared-state regressions. Do not treat every visible body-colored pixel as clipping.
 
-A user's explicit requested method is not overridden by a default route. Explain the specific conflicting evidence once and ask before substituting methods. Never fake a MochiFitter run, change the body identity, or clear all body shapes to make a route look successful.
+When the user takes over, finish the current write and acknowledge `waiting_user` with the candidate, manual step and resume instruction. This releases your lease. Wait for an explicit follow-up before editing that candidate again. The user may specify an available non-MochiFitter method or a manually fitted asset directly in chat. A user's explicit requested method is not overridden by a default route. Explain the specific conflicting evidence once and ask before substituting methods. Never fake a MochiFitter run, change the body identity, or clear all body shapes to make a route look successful.
 
 ## Optional helpers, not new gates
 Use a small `QuickTask.json` outside Assets for continuation; notes must retain the user's explicit requirements. [helper-usage.md](references/helper-usage.md) describes `quickflow.py` for scoped check suggestions, evidence-record reuse and nested execution receipts. Use it when it saves work, not on every tool call. It cannot see Unity or authenticate observations. Its failure must not start a helper-debugging loop.

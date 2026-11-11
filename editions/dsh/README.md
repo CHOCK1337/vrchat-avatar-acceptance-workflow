@@ -1,7 +1,7 @@
-> **下载安装请前往 [Release v0.3.5](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.5)。** 下载 `Full...zip` 完整安装包，完整解压后运行 `Verify-Package.cmd`，再按 `START_HERE.md` 使用 `Setup.cmd`。
+> **下载安装请前往 [Release v0.3.6](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.6)。** 下载 `Full...zip` 完整安装包，完整解压后运行 `Verify-Package.cmd`，再按 `START_HERE.md` 使用 `Setup.cmd`。
 > 本仓库保留对应发行版本的源码、Unity 插件、MCP、配置模板、用户文档和 Agent 文档；GitHub 自动生成的 Source code ZIP 不包含便携 Node/Python 和编译后的 MCP 运行环境，不能代替 Full 安装包。
 
-# DSH 改模完整工具包 · Windows x64 · 0.3.5
+# DSH 改模完整工具包 · Windows x64 · 0.3.6
 
 让已经安装 DSH 的用户，把 Unity 工作台、两个 MCP 和改模 Skill 一起接通。包内提供便携 Node/Python、编译好的 MCP、配置生成器、安装记录、回滚和操作文档。正常安装不需要 npm、pip、Codex 或管理员权限。
 
@@ -24,7 +24,7 @@ DSH 应先用用户自己的账号配置好可调用工具的模型；Unity 工�
 
 ## 版本与边界
 
-分发包 0.3.0；Unity Workbench 0.2.15-dsh；Skill 0.3.2-local5-dsh；Workbench MCP 0.2.1（便携启动修正）；Node 24.15.0；Python 3.13.16。UnityMCP 的精确源码与本地修订见 [SOURCE.md](dependencies/UnityMCP-VRC/SOURCE.md)。
+分发包 0.3.6，Unity Workbench 0.2.16-dsh；Skill 0.3.3-dsh；Workbench MCP 0.2.2；Node 24.15.0；Python 3.13.16。UnityMCP 的精确源码与本地修订见 [SOURCE.md](dependencies/UnityMCP-VRC/SOURCE.md)。
 
 Workbench 在 2022.3.22f1 / GM 3.9.8 / SDK 3.10.1 上完成过真实换装、PhysBone 和姿势预览验证。其他版本需按 Doctor 与实际预览结果确认，安装器不强制升级、降级现有工程。
 

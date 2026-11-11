@@ -19,42 +19,13 @@ from workflow_context import WorkflowContext
 from inbox_notifications import InboxNotifications
 
 
-FINISH_NOT_RUN = "未运行收尾检查"
-
-
-def finish_gate(space, entry, status, note):
-    """Replying "addressed" needs a Unity hand-in check newer than the request; its result travels with the reply."""
-    if status != "addressed":
-        return {}
-
-    def when(value):
-        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-
-    check = None
-    receipt = Path(space) / "finish-check.json"
-    if receipt.is_file():
-        try:
-            check = json.loads(receipt.read_text(encoding="utf-8-sig"))
-            if entry.get("created_at") and when(check["checked_at"]) < when(entry["created_at"]):
-                check = None
-        except (ValueError, KeyError, TypeError):
-            check = None
-    if check is None:
-        if FINISH_NOT_RUN in (note or ""):
-            return {"finish_check": {"status": "NOT_RUN", "reason": note}}
-        raise ValueError("FINISH_CHECK_REQUIRED: run AvatarWorkbench.WorkbenchFinishCheck.Run in Unity before replying "
-                         "(template: Assets/AvatarWorkbench/Tools/finish-check.md in the project, same as the Skill's references/finish-check.md). If Unity cannot be reached, write "
-                         "'" + FINISH_NOT_RUN + "：<原因>' in the note.")
-    return {"finish_check": {"status": "PASS" if check.get("passed") else "FAIL", "checked_at": check.get("checked_at"),
-                             "candidate_prefab": check.get("candidate_prefab"),
-                             "errors": check.get("errors", []), "warnings": check.get("warnings", [])}}
-
-WORKFLOW_VERSION = "0.3.2-local5-codex1"
+WORKFLOW_VERSION = "0.3.3-codex"
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('feedback', ROOT / 'unity/AvatarWorkbench/Tools/codex_feedback.py')
 feedback = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(feedback)
+finish_gate = feedback.finish_gate
 
 def load(path, limit=32 * 1024 * 1024):
     path = Path(path)
@@ -77,7 +48,7 @@ TOOLS = [
     ('catalog_cover', 'Read an existing indexed local cover by item id. Returns pixels only if the file is an image. Explicit request only; this sends image content to the calling model.', schema({'source_id': STRING, 'item_id': STRING}, ['source_id', 'item_id'])),
     ('task_read', 'Read current QuickTask or legacy task without converting or changing it.', schema()),
     ('feedback_read', 'Read original frozen feedback once on task start/resume/resource completion. Reading does NOT acknowledge. Preserve its target/candidate/image identity.', schema({'id': STRING, 'include_addressed': {'type': 'boolean'}})),
-    ('feedback_ack', 'Acknowledge only feedback read through this process; requires unchanged content and the actual Codex session id. addressed means replied, NOT avatar accepted.', schema({'id': STRING, 'session': STRING, 'status': {'type': 'string', 'enum': ['seen', 'processing_feedback', 'addressed']}, 'note': STRING}, ['id', 'session', 'status', 'note'])),
+    ('feedback_ack', 'Acknowledge only feedback read through this process; requires unchanged content and the actual Codex session id. waiting_user hands editing back to the user and releases your lease. Include the candidate, manual step and how to resume. addressed means replied, NOT avatar accepted.', schema({'id': STRING, 'session': STRING, 'status': {'type': 'string', 'enum': list(feedback.ACK_STATUSES)}, 'note': STRING}, ['id', 'session', 'status', 'note'])),
     ('consumer_lease', 'Connect/renew/busy/release the existing consumer lease. Reject another active consumer. Use busy for persistent Avatar writes. BEFORE temporary preview/menu controls set YOUR lease idle: active ownership remains, while busy would block controls and pause animation. Keep idle during settling/capture, disconnect at completion. No automatic polling or wakeup.', schema({'session': STRING, 'action': {'type': 'string', 'enum': ['connect', 'busy', 'idle', 'disconnect']}, 'seconds': {'type': 'integer', 'minimum': 10, 'maximum': 3600}}, ['session', 'action'])),
 ]
 
@@ -115,15 +86,7 @@ class Bridge:
         return [(d, i) for d in data.get('directories', []) for i in d.get('items', []) if isinstance(i, dict)]
 
     def guard_consumer(self, session):
-        if not session.strip() or len(session) > 200:
-            raise ValueError('ACTUAL_SESSION_REQUIRED')
-        path = self.space / 'consumer.json'
-        current = feedback.read(path) if path.exists() else {}
-        if current.get('active') and current.get('session') != session:
-            expiry = datetime.fromisoformat(current.get('expires_at', '').replace('Z', '+00:00'))
-            if expiry > datetime.now(timezone.utc):
-                raise ValueError('ANOTHER_CONSUMER_ACTIVE: ' + str(current.get('session')))
-        return current
+        return feedback.guard_consumer(self.space, session)
 
     def call(self, name, args):
         with self.state_lock:
@@ -144,7 +107,8 @@ class Bridge:
             return text_result(dict(self.context.status(), read_cache_cleared=True))
         if name == 'workbench_status':
             return text_result(dict(self.context.status(),
-                feedback_directory=str(self.space / 'feedback'),
+                feedback_directory=str(self.space / 'feedback'), user_editing=feedback.user_editing(self.space),
+                manual_handoff_guide=str(self.project / 'Assets/AvatarWorkbench/Tools/finish-check.md'),
                 workflow=str(self.config.get('skill_path') or ROOT / 'skills/assemble-vrchat-avatar/SKILL.md'),
                 bundled_workflow_version=WORKFLOW_VERSION,
                 workflow_version=WORKFLOW_VERSION if not self.config.get('skill_path') or
@@ -234,38 +198,19 @@ class Bridge:
             if name != 'consumer_lease' or args.get('action') != 'disconnect':
                 self.context.guard_write()
 
-            # Keep the shared legacy filename so Codex and DSH cannot claim the same lease concurrently.
-            self.space.mkdir(parents=True, exist_ok=True)
-            lock = self.space / '.dsh-operation.lock'
-            try:
-                fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            except FileExistsError:
-                raise ValueError('ANOTHER_OPERATION_ACTIVE: do not bypass the lock')
-            try:
-                os.close(fd)
+            with feedback.operation_lock(self.space):
                 current = self.guard_consumer(args['session'])
                 if name == 'feedback_ack':
                     path = self.feedback_path(args['id'])
                     actual = hashlib.sha256(path.read_bytes()).hexdigest()
                     if self.read_hashes.get(args['id']) != actual:
                         raise ValueError('READ_FEEDBACK_FIRST_OR_CHANGED_SINCE_READ')
-                    if args['status'] not in ('seen', 'processing_feedback', 'addressed'):
-                        raise ValueError('INVALID_STATUS')
-                    entry = feedback.read(path)
-                    gate = finish_gate(self.space, entry, args['status'], args['note'])
-                    entry.update(status=args['status'], reply=args['note'], consumer_session=args['session'], execution_started=args['status'] == 'processing_feedback', updated_at=feedback.stamp(), **gate)
-                    feedback.write(path, entry)
+                    entry = feedback.save_ack(self.space, path, feedback.read(path), args['status'],
+                                              args['note'], args['session'], current)
                     self.read_hashes[args['id']] = hashlib.sha256(path.read_bytes()).hexdigest()
                     return text_result(entry)
-                action = args['action']
-                if action not in ('connect', 'busy', 'idle', 'disconnect'):
-                    raise ValueError('INVALID_ACTION')
-                from datetime import timedelta
-                current.update(session=args['session'], active=action != 'disconnect', busy=action == 'busy', updated_at=feedback.stamp(), expires_at=(datetime.now(timezone.utc) + timedelta(seconds=max(10, min(3600, int(args.get('seconds', 300)))))).isoformat(timespec='seconds'))
-                feedback.write(self.space / 'consumer.json', current)
-                return text_result(current)
-            finally:
-                lock.unlink(missing_ok=True)
+                lease = feedback.save_lease(self.space, current, args['session'], args['action'], int(args.get('seconds', 300)))
+                return text_result(lease)
         raise ValueError('UNKNOWN_TOOL')
 
 def serve(bridge):
@@ -306,7 +251,7 @@ def serve(bridge):
                 continue
             method = request.get('method')
             if method == 'initialize':
-                result = {'protocolVersion': '2024-11-05', 'capabilities': {'tools': {}}, 'serverInfo': {'name': 'avatar-workbench', 'version': '0.2.1'}}
+                result = {'protocolVersion': '2024-11-05', 'capabilities': {'tools': {}}, 'serverInfo': {'name': 'avatar-workbench', 'version': '0.2.3-codex'}}
             elif method == 'ping':
                 result = {}
             elif method == 'tools/list':
