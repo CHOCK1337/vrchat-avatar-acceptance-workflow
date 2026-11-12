@@ -2,7 +2,7 @@
 name: assemble-vrchat-avatar
 description: Use when assembling, fitting, recoloring, repairing, optimizing or publishing a VRChat avatar in an existing Unity project, especially clothing, accessories, author menus and visible assembly defects. Not for worlds, GUI development, new fitting algorithms or release audits.
 ---
-# VRChat 改模 — 0.3.3-dsh · DSH 任务与结果对齐
+# VRChat 改模 — 0.3.4-dsh · DSH 任务与结果对齐
 
 **Goal:** complete the requested edit with a correct visible result and minimal interruption. Use the existing Unity tools; this Skill does not implement a fitter or certify images. Respect host/project safety rules.
 

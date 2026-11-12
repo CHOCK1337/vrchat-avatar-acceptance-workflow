@@ -4,8 +4,8 @@
 
 | 版本 | 用户文档 | Agent 文档 | 操作案例 | Release |
 |---|---|---|---|---|
-| DSH 0.3.6 | [用户手册](dsh/docs/USER_GUIDE.md) | [Agent 手册](dsh/docs/AGENT_GUIDE.md) | [案例](dsh/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.6) |
-| Codex 0.1.7 | [用户手册](codex/docs/USER_GUIDE.md) | [Agent 手册](codex/docs/AGENT_GUIDE.md) | [案例](codex/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.7) |
+| DSH 0.3.7 | [用户手册](dsh/docs/USER_GUIDE.md) | [Agent 手册](dsh/docs/AGENT_GUIDE.md) | [案例](dsh/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/dsh-v0.3.7) |
+| Codex 0.1.8 | [用户手册](codex/docs/USER_GUIDE.md) | [Agent 手册](codex/docs/AGENT_GUIDE.md) | [案例](codex/docs/EXAMPLES.md) | [下载安装包](https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow/releases/tag/codex-v0.1.8) |
 
 ## 安装
 
@@ -17,7 +17,7 @@ DSH 的保存操作写入任务收件箱，需要手动将接管指令粘贴到 
 
 ## 版本与来源
 
-`editions/dsh` 对应完整包 0.3.6，`editions/codex` 对应完整包 0.1.7。对应的 Unity 工作台版本分别为 `0.2.16-dsh` 和 `0.2.17-codex`。
+`editions/dsh` 对应完整包 0.3.7，`editions/codex` 对应完整包 0.1.8。对应的 Unity 工作台版本分别为 `0.2.17-dsh` 和 `0.2.18-codex`。
 
 手动接管的发布验证记录见 [Codex](codex/release/VERIFICATION_20261111.md) 和 [DSH](dsh/release/VERIFICATION_20261111.md)。旧版本的验证记录保留在各自的 `release/` 目录。
 

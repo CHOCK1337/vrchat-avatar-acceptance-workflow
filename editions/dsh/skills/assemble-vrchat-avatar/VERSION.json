@@ -1,7 +1,7 @@
 {
   "package": "vrchat-workflow-streamlined",
-  "version": "0.3.3-dsh",
-  "date": "2026-11-11",
+  "version": "0.3.4-dsh",
+  "date": "2026-11-12",
   "base": "installed 0.3.1-local1 with additive conservative final optimization",
   "live_upstream_commit": null,
   "status": "Manual handoff and current-candidate recheck on the DSH Workbench",

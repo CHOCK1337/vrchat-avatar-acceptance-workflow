@@ -3,10 +3,12 @@
 import base64
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -279,6 +281,65 @@ else:
             self.lease("connect", "second")
         manual.unlink()
         self.assertTrue(value(self.lease("connect", "second"))["active"])
+
+    def test_stale_legacy_lock_recovers_without_manual_command(self):
+        self.select()
+        marker = self.bridge.space / ".dsh-operation.lock"
+        marker.touch()
+        old = time.time() - 300
+        os.utime(marker, (old, old))
+        self.assertTrue(value(self.lease("connect"))["active"])
+        self.assertFalse(marker.exists())
+        self.assertEqual(1, len(list(self.bridge.space.glob(".dsh-operation.lock.recovered-*"))))
+
+    def test_legacy_lock_with_content_is_never_recovered_automatically(self):
+        self.select()
+        marker = self.bridge.space / ".dsh-operation.lock"
+        marker.write_text("unknown owner", encoding="utf-8")
+        old = time.time() - 300
+        os.utime(marker, (old, old))
+        with self.assertRaisesRegex(ValueError, "OPERATION_ACTIVE"):
+            self.lease("connect")
+        self.assertEqual("unknown owner", marker.read_text(encoding="utf-8"))
+
+    def test_unreadable_lease_cannot_block_the_binding(self):
+        self.select()
+        lease = self.bridge.space / "consumer.json"
+        for broken in ('{"active": true, "session": "gone"}',
+                       '{"active": true, "session": "gone", "expires_at": "soon"}',
+                       '{"active": true, "session": "gone", "expires_at": "2020-01-01T00:00:00"}',
+                       '{"active": true, "session"', "[]"):
+            lease.parent.mkdir(parents=True, exist_ok=True)
+            lease.write_text(broken, encoding="utf-8")
+            with self.subTest(lease=broken):
+                self.assertTrue(value(self.lease("connect"))["active"])
+                self.assertFalse(value(self.lease("disconnect"))["active"])
+
+    def test_brief_contention_waits_for_the_other_writer(self):
+        self.select()
+        child = """
+import sys, time
+sys.path.insert(0, sys.argv[1])
+from workbench_mcp import feedback
+from pathlib import Path
+with feedback.operation_lock(Path(sys.argv[2])):
+    print("held", flush=True)
+    time.sleep(0.6)
+"""
+        process = subprocess.Popen([sys.executable, "-c", child, str(ROOT / "adapter"), str(self.bridge.space)],
+                                   stdout=subprocess.PIPE, text=True)
+        try:
+            self.assertEqual("held", process.stdout.readline().strip())
+            self.assertTrue(value(self.lease("connect"))["active"])
+        finally:
+            process.stdout.close()
+            process.wait(timeout=20)
+
+    def test_foreign_lease_error_says_when_it_ends_and_how_the_user_releases_it(self):
+        self.select()
+        self.lease("busy")
+        with self.assertRaisesRegex(ValueError, r"ANOTHER_CONSUMER_ACTIVE: fixture-session until \S+T\S+.*我来操作"):
+            self.lease("connect", "second")
 
     def test_foreign_lease_still_rejected(self):
         self.select();self.lease("connect")

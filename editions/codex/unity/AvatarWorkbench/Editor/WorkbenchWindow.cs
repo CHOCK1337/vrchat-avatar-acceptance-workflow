@@ -483,18 +483,20 @@ namespace AvatarWorkbench
             if (entry["rect"] is JObject rect) entry["pixel_rect"] = new JObject { ["x"] = Mathf.RoundToInt((float)rect["x"] * (int)image["width"]), ["y"] = Mathf.RoundToInt((float)rect["y"] * (int)image["height"]), ["w"] = Mathf.RoundToInt((float)rect["w"] * (int)image["width"]), ["h"] = Mathf.RoundToInt((float)rect["h"] * (int)image["height"]) };
             WorkbenchData.Write(Path.Combine(WorkbenchData.Inbox(binding), id + ".json"), entry);
             draft = null; annotation = new Rect(); DestroyTexture(ref frozen); message = ""; input?.SetValueWithoutNotify("");
-            compatKey = null;
+            compatKey = null; fitDecision = "from_request"; fitDecisionFor = "";
             SaveState(); RenderFeedback(); UpdateLabels(); ToastReceipt("已保存，等待 " + WorkbenchModels.RouteName(entry["model_route"] as JObject) + " 读取" + (binding != BindingPath ? "（原图所属任务的收件箱）" : "") + "。", id); canvas?.MarkDirtyRepaint();
             return entry;
         }
 
+        [NonSerialized] bool takeoverWaiting;
         bool IsBusy() => IsBusy(WorkbenchData.Consumer(BindingPath));
         static bool IsBusy(JObject consumer) => (bool?)consumer?["busy"] == true || EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode;
         void PollLocalReceipts()
         {
             if (disposed || !windowVisible || rootVisualElement.panel == null) return;
             PollSceneSync();
-            bool next = IsBusy(); if (busy != next) { busy = next; UpdateLabels(); canvas?.MarkDirtyRepaint(); }
+            // During a takeover the label counts down, so it refreshes on every poll.
+            bool next = IsBusy(); if (busy != next || (busy && WorkbenchData.UserEditing(BindingPath))) { busy = next; UpdateLabels(); canvas?.MarkDirtyRepaint(); }
             TryAction(() =>
             {
                 if (!string.IsNullOrEmpty(taskPath) && File.Exists(taskPath) && File.GetLastWriteTimeUtc(taskPath) != taskTime)
@@ -532,7 +534,8 @@ namespace AvatarWorkbench
             if (manualControlButton != null)
             {
                 manualControlButton.text = manual ? "交回 AI" : "我来操作";
-                manualControlButton.tooltip = manual ? "允许 AI 响应后续需求。" : "保留当前候选，暂停 AI 的新写入，自己修改。";
+                manualControlButton.tooltip = manual ? "允许 AI 响应后续需求。发送需求时也会自动交回。"
+                    : "保留当前候选，暂停 AI 的新写入，自己修改。AI 正在写入时，最多等 " + WorkbenchData.TakeoverGraceSeconds + " 秒。";
             }
             string mcpStatus = McpStatus();
             projectLabel.text = "工程：" + WorkbenchData.Project + "\nUnity：" + Application.unityVersion + "\n任务：" + BindingPath + "\n" + mcpStatus;
@@ -562,10 +565,16 @@ namespace AvatarWorkbench
             // The title is cut with an ellipsis in the narrow rail, so both tooltips start with its full text.
             if (manual)
             {
-                connectionLabel.text = (bool?)consumer?["busy"] == true ? "接管中 · 等当前写入结束" : "由你操作";
-                connectionHelp.text = (bool?)consumer?["busy"] == true ? "已停止 AI 续租。若对应宿主已停止，在“更多”中释放遗留占用。" : "改好后点“交回 AI”，再发送复查需求。";
+                bool writing = (bool?)consumer?["busy"] == true;
+                // Several paths refresh these labels, so the end of the wait is announced here.
+                if (takeoverWaiting && !writing) Toast("现在可以操作了。改好后直接发送复查需求，操作权会一起交回 AI。");
+                takeoverWaiting = writing;
+                connectionLabel.text = writing ? "接管中 · 约 " + WorkbenchData.LeaseSecondsLeft(consumer) + " 秒后可操作" : "由你操作";
+                connectionHelp.text = writing ? "AI 不能再续租；这次写入结束或倒计时走完，控件自动恢复。AI 已经停了的话，在“更多”里点“立即接管”。"
+                    : "改好后直接发送复查需求，操作权会一起交回 AI。";
                 connectionTip = connectionHelp.text;
             }
+            else takeoverWaiting = false;
             connectionLabel.tooltip = connectionBox.tooltip = connectionLabel.text + "\n" + connectionTip;
             var shown = (frozen ? draft?["candidate"] : historical ? historicalInfo?["candidate"] : stableContext?["candidate"]) as JObject;
             candidateLabel.text = "画面版本：" + WorkbenchData.Identity(shown ?? WorkbenchData.Candidate(task)) + "\n" + sourceNotice;
@@ -749,7 +758,8 @@ namespace AvatarWorkbench
                 var state = new JObject { ["task_path"] = taskPath, ["manifest_path"] = manifestPath, ["message"] = message, ["selected_id"] = selectedId,
                     ["panel_mode"] = activePanel, ["source_kind"] = sourceKind, ["follow_scene"] = followScene, ["target_global_id"] = target ? GlobalObjectId.GetGlobalObjectIdSlow(target).ToString() : "", ["target_asset_path"] = target ? AssetDatabase.GetAssetPath(target) : "",
                     ["local_resources"] = new JArray(localResources.Select(x => x.Json())), ["selected_resource_ids"] = requestedResourceIds == null ? null : new JArray(requestedResourceIds), ["draft"] = draft?.DeepClone(), ["before"] = beforeInfo?.DeepClone(),
-                    ["booth"] = BoothState(), ["booth_references"] = new JArray(boothReferences.Select(x => x.DeepClone())) };
+                    ["booth"] = BoothState(), ["booth_references"] = new JArray(boothReferences.Select(x => x.DeepClone())),
+                    ["fit_decision"] = fitDecision, ["fit_decision_for"] = fitDecisionFor };
                 WorkbenchData.Write(WorkbenchData.WindowFile, state);
                 if (string.IsNullOrEmpty(taskPath)) WorkbenchData.Write(WorkbenchData.SelectionBinding, new JObject { ["format"] = "avatar-workbench-selection-v1", ["project_path"] = WorkbenchData.Project, ["task_id"] = TaskId, ["target"] = target ? new JObject { ["name"] = target.name, ["global_id"] = GlobalObjectId.GetGlobalObjectIdSlow(target).ToString(), ["asset_path"] = AssetDatabase.GetAssetPath(target), ["preview_kind"] = sourceKind } : new JObject() });
             }
@@ -773,6 +783,7 @@ namespace AvatarWorkbench
                 requestedResourceIds = state["selected_resource_ids"] is JArray choices ? new HashSet<string>(choices.Values<string>()) : null;
                 RestoreProductReferences(state["booth_references"] as JArray); RestoreBoothState(state["booth"] as JObject);
                 draft = state["draft"] as JObject; beforeInfo = state["before"] as JObject;
+                fitDecision = WorkbenchData.Text(state["fit_decision"], "from_request"); fitDecisionFor = WorkbenchData.Text(state["fit_decision_for"]);
                 if (draft?["rect"] is JObject r) annotation = new Rect((float?)r["x"] ?? 0, (float?)r["y"] ?? 0, (float?)r["w"] ?? 0, (float?)r["h"] ?? 0);
             }
             catch (Exception e) { toast = "上次界面记录暂不可读：" + e.Message; }

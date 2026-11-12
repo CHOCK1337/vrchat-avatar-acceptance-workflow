@@ -10,8 +10,10 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import sys
 import tempfile
+import time
 import zipfile
 import uuid
 
@@ -49,24 +51,55 @@ def write(path, value):
         temp.unlink(missing_ok=True)
 
 
+# Every write under the operation lock lasts milliseconds, so a short wait
+# spares the caller a retry and an aged legacy marker has no live owner.
+# WorkbenchData.cs uses the same two values.
+OPERATION_WAIT_SECONDS = 2.0
+LEGACY_LOCK_STALE_SECONDS = 30
+
+
+def _lock_guard_byte(guard, acquire):
+    guard.seek(0)
+    if os.name == "nt":
+        import msvcrt
+        msvcrt.locking(guard.fileno(), msvcrt.LK_NBLCK if acquire else msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+        fcntl.lockf(guard, fcntl.LOCK_EX | fcntl.LOCK_NB if acquire else fcntl.LOCK_UN, 1)
+
+
 @contextmanager
 def binding_guard(space):
     """OS releases the byte-range lock even when its owner exits inside a write."""
     space.mkdir(parents=True, exist_ok=True)
     with (space / ".workbench-operation.guard").open("a+b") as guard:
-        guard.seek(0)
+        deadline = time.monotonic() + OPERATION_WAIT_SECONDS
+        while True:
+            try:
+                _lock_guard_byte(guard, True)
+                break
+            except OSError as exc:
+                if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                    raise
+                if time.monotonic() >= deadline:
+                    raise ValueError("ANOTHER_OPERATION_ACTIVE: retry after the current write") from exc
+                time.sleep(0.05)
         try:
-            if os.name == "nt":
-                import msvcrt
-                msvcrt.locking(guard.fileno(), msvcrt.LK_NBLCK, 1)
-            else:
-                import fcntl
-                fcntl.lockf(guard, fcntl.LOCK_EX | fcntl.LOCK_NB, 1)
-        except OSError as exc:
-            if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
-                raise
-            raise ValueError("ANOTHER_OPERATION_ACTIVE: retry after the current write") from exc
-        yield
+            yield
+        finally:
+            _lock_guard_byte(guard, False)
+
+
+def retire_stale_legacy_lock(marker):
+    """Rename an old bridge's leftover marker aside. True when the name is free again."""
+    try:
+        info = marker.lstat()
+    except FileNotFoundError:
+        return True
+    if not stat.S_ISREG(info.st_mode) or info.st_size or time.time() - info.st_mtime < LEGACY_LOCK_STALE_SECONDS:
+        return False
+    marker.rename(marker.with_name(marker.name + ".recovered-" + uuid.uuid4().hex))
+    return True
 
 
 @contextmanager
@@ -75,15 +108,26 @@ def operation_lock(space):
         # Old bridges use O_EXCL on this name. A directory keeps them out and
         # distinguishes an interrupted new writer from a live legacy file.
         marker = space / ".dsh-operation.lock"
-        try:
-            marker.mkdir(exist_ok=True)
-        except FileExistsError as exc:
-            raise ValueError("ANOTHER_OPERATION_ACTIVE: " + str(marker) +
-                             " is a legacy marker. If it persists after older hosts exit, use recover-legacy-lock.") from exc
+        deadline = time.monotonic() + OPERATION_WAIT_SECONDS
+        while True:
+            try:
+                marker.mkdir(exist_ok=True)
+                break
+            except FileExistsError as exc:
+                if retire_stale_legacy_lock(marker):
+                    continue
+                if time.monotonic() >= deadline:
+                    raise ValueError("ANOTHER_OPERATION_ACTIVE: " + str(marker) + " is a legacy marker. An empty one is set aside "
+                                     "automatically after %d seconds; otherwise close the older hosts and use recover-legacy-lock."
+                                     % LEGACY_LOCK_STALE_SECONDS) from exc
+                time.sleep(0.05)
         try:
             yield
         finally:
-            marker.rmdir()
+            try:
+                marker.rmdir()
+            except OSError:
+                pass  # A leftover directory never blocks this version; the next operation removes it.
 
 
 def recover_legacy_lock(space):
@@ -98,15 +142,30 @@ def recover_legacy_lock(space):
         return saved
 
 
+def lease_expiry(lease):
+    """None when the record names no usable end time; nobody can honour or renew such a lease."""
+    try:
+        expiry = datetime.fromisoformat(str(lease.get("expires_at") or "").replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return expiry if expiry.tzinfo else expiry.replace(tzinfo=timezone.utc)
+
+
 def guard_consumer(space, session):
     if not session.strip() or len(session) > 200:
         raise ValueError("ACTUAL_SESSION_REQUIRED")
     path = space / "consumer.json"
-    current = read(path) if path.is_file() else {}
+    try:
+        current = read(path) if path.is_file() else {}
+    except ValueError:
+        current = {}  # Unity reads a damaged record as "no lease" too; the next write replaces it.
+    if not isinstance(current, dict):
+        current = {}
     if current.get("active") and current.get("session") != session:
-        expiry = datetime.fromisoformat(current.get("expires_at", "").replace("Z", "+00:00"))
-        if expiry > datetime.now(timezone.utc):
-            raise ValueError("ANOTHER_CONSUMER_ACTIVE: " + str(current.get("session")))
+        expiry = lease_expiry(current)
+        if expiry and expiry > datetime.now(timezone.utc):
+            raise ValueError("ANOTHER_CONSUMER_ACTIVE: %s until %s. If that session has stopped, the user can release it in the "
+                             "Workbench: 我来操作, then 交回 AI." % (current.get("session"), expiry.isoformat(timespec="seconds")))
     return current
 
 
