@@ -63,7 +63,7 @@ def main():
     out = ROOT.parent / 'deliverables'
     out.mkdir(exist_ok=True)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version', default='AvatarWorkbench_DSH_Full_v0.3.6_Win64_20261111')
+    parser.add_argument('--version', default='AvatarWorkbench_DSH_Full_v0.3.7_Win64_20261112')
     parser.add_argument('--full',action='store_true',help='Include pinned portable Win64 runtimes and compiled MCP')
     args = parser.parse_args()
     version = args.version
@@ -74,8 +74,8 @@ def main():
         raise ValueError('Clean export already exists; inspect before replacing.')
     clean.mkdir()
     manifest = {'format': 'avatar-workbench-dsh-full-v2' if args.full else 'avatar-workbench-dsh-source-v2',
-                'created': datetime.now().astimezone().isoformat(timespec='seconds'), 'distribution_version':'0.3.6',
-                'workflow': '0.3.3-dsh', 'workbench': '0.2.16-dsh', 'adapter': '0.2.2',
+                'created': datetime.now().astimezone().isoformat(timespec='seconds'), 'distribution_version':'0.3.7',
+                'workflow': '0.3.4-dsh', 'workbench': '0.2.17-dsh', 'adapter': '0.2.2',
                 'platform':'win32-x64' if args.full else 'source', 'dsh_desktop_included':False,
                 'model_assembly_acceptance':'See docs/EXAMPLES.md; historical supervised case, not a new-user guarantee',
                 'excluded': ['private local configuration', 'credentials', 'sessions', 'task and feedback data',

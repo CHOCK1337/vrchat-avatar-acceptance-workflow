@@ -19,8 +19,13 @@ namespace AvatarWorkbench
         static readonly List<string> FitLabels = new List<string> { "按本次需求", "跳过这些素材", "仍然安装（可能不贴合）", "我来手动适配" };
         static readonly string[] FitDecisions = { "from_request", "skip", "install_anyway", "manual_fit" };
         PopupField<string> fitChoice;
-        string compatKey;
-        JObject liveCompatibility;
+        // Cache only. Unity keeps a private string across a script reload but not the JObject,
+        // so a surviving key would return a record that no longer exists.
+        [NonSerialized] string compatKey;
+        [NonSerialized] JObject liveCompatibility;
+        // The user's answer for the mismatched items named by fitDecisionFor. Saved with the window
+        // state, so recompiles, restarts and unrelated selection changes keep it.
+        string fitDecision = "from_request", fitDecisionFor = "";
 
         void BuildCompatibilityStrip(VisualElement parent)
         {
@@ -33,7 +38,8 @@ namespace AvatarWorkbench
                 if (record == null || index < 0) return;
                 record["decision"] = FitDecisions[index];
                 record["note"] = e.newValue;
-                if (draft != null) QueueSave();
+                if (draft == null) fitDecision = FitDecisions[index];
+                QueueSave();
             });
             compatStrip.Add(fitChoice); parent.Add(compatStrip);
         }
@@ -99,9 +105,15 @@ namespace AvatarWorkbench
             compatKey = key;
             var mismatches = string.IsNullOrEmpty(targetBase) ? new List<BodyMismatch>()
                 : requested.Where(r => WearableCategories.Contains(WorkbenchCategories.Of(r))).Select(r => Mismatch(r, targetBase)).Where(m => m != null).ToList();
-            liveCompatibility = mismatches.Count == 0 ? null : new JObject {
-                ["base"] = targetBase, ["decision"] = "from_request",
+            if (mismatches.Count == 0) return liveCompatibility = null;
+            // Other mismatched items are a new question. An empty list is not: it also appears while the window restores.
+            string asked = targetBase + "|" + string.Join("|", mismatches.Select(m => m.path));
+            if (asked != fitDecisionFor) { fitDecisionFor = asked; fitDecision = "from_request"; }
+            int choice = Math.Max(0, Array.IndexOf(FitDecisions, fitDecision));
+            liveCompatibility = new JObject {
+                ["base"] = targetBase, ["decision"] = FitDecisions[choice],
                 ["mismatches"] = new JArray(mismatches.Select(m => new JObject { ["name"] = m.name, ["path"] = m.path, ["local_versions"] = new JArray(m.found) })) };
+            if (choice > 0) liveCompatibility["note"] = FitLabels[choice];
             return liveCompatibility;
         }
     }

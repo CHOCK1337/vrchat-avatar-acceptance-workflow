@@ -53,11 +53,21 @@ namespace AvatarWorkbench
             codexLifetime?.Cancel(); codexLifetime?.Dispose(); codexLifetime = null;
             codexLink = null; connectingCodex = false; sendingCodex = false;
         }
+        // A request asks the host to act, which it cannot do while the user's reservation stands.
+        void ReturnControlForRequest(string binding)
+        {
+            if (!WorkbenchData.UserEditing(binding)) return;
+            try { WorkbenchData.SetUserEditing(binding, false); }
+            catch (Exception e) { UnityEngine.Debug.LogWarning("改模工作台：请求已保存，但操作权还没交回 AI（" + e.Message + "）。请点一次“交回 AI”。"); }
+            UpdateLabels(); UpdateComposer();
+        }
+
         async void SendSavedRequest(string binding, JObject entry)
         {
             if (sendingCodex || disposed) return;
             string routeType = (string)entry["model_route"]?["type"] ?? "";
             if (routeType == "api") { SendSavedApiRequest(binding, entry); return; }
+            ReturnControlForRequest(binding);
             if (routeType == WorkbenchModels.DshHost) { SaveDshRequest(binding, entry); return; }
             // Only an explicit Codex route (or a pre-route legacy record) may reach the Codex pipe.
             if (routeType.Length > 0 && routeType != WorkbenchModels.CodexHost)

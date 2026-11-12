@@ -112,20 +112,57 @@ namespace AvatarWorkbench
             return status != "addressed" && status != "waiting_user";
         }
 
-        // Same byte range and legacy marker as codex_feedback.py. Closing the
+        // Same byte range, legacy marker, wait and stale age as codex_feedback.py. Closing the
         // stream releases ownership on both ordinary return and process exit.
+        const double OperationWaitSeconds = 2, LegacyLockStaleSeconds = 30;
         static T WithOperationLock<T>(string binding, Func<T> action)
         {
             string space = Space(binding);
             Directory.CreateDirectory(space);
             using (var guard = new FileStream(Path.Combine(space, ".workbench-operation.guard"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                guard.Lock(0, 1);
-                string marker = Path.Combine(space, ".dsh-operation.lock");
-                Directory.CreateDirectory(marker);
-                try { return action(); }
-                finally { Directory.Delete(marker); }
+                // Writes under this lock last milliseconds, so a short wait beats a failed click.
+                var deadline = DateTime.UtcNow.AddSeconds(OperationWaitSeconds);
+                while (true)
+                {
+                    try { guard.Lock(0, 1); break; }
+                    catch (IOException)
+                    {
+                        if (DateTime.UtcNow >= deadline) throw new InvalidOperationException("另一个写入还没结束，请稍后再试。");
+                        System.Threading.Thread.Sleep(50);
+                    }
+                }
+                try
+                {
+                    string marker = Path.Combine(space, ".dsh-operation.lock");
+                    deadline = DateTime.UtcNow.AddSeconds(OperationWaitSeconds);
+                    while (!RetireStaleLegacyLock(marker))
+                    {
+                        if (DateTime.UtcNow >= deadline)
+                            throw new InvalidOperationException("旧版 AI 桥接留下了占用标记。关闭旧版宿主后等约 " + LegacyLockStaleSeconds + " 秒再试，工作台会自动清理它。");
+                        System.Threading.Thread.Sleep(50);
+                    }
+                    Directory.CreateDirectory(marker);
+                    try { return action(); }
+                    finally
+                    {
+                        // A leftover directory never blocks this version; the next operation removes it.
+                        try { Directory.Delete(marker); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+                    }
+                }
+                finally { guard.Unlock(0, 1); }
             }
+        }
+
+        // Old bridges hold this empty file for milliseconds, so an aged one belongs to a writer that exited.
+        // True when the name is free for the directory marker.
+        static bool RetireStaleLegacyLock(string marker)
+        {
+            var file = new FileInfo(marker);
+            if (!file.Exists) return true;
+            if (file.Length > 0 || (DateTime.UtcNow - file.LastWriteTimeUtc).TotalSeconds < LegacyLockStaleSeconds) return false;
+            file.MoveTo(marker + ".recovered-" + Guid.NewGuid().ToString("N"));
+            return true;
         }
 
         public static T WithConsumerLock<T>(string binding, string session, Func<JObject, T> write)
@@ -146,6 +183,16 @@ namespace AvatarWorkbench
             Write(Path.Combine(Space(binding), "consumer.json"), owner);
         }
 
+        /// <summary>Seconds until the lease ends by itself; 0 when there is none.</summary>
+        public static int LeaseSecondsLeft(JObject owner)
+        {
+            return owner != null && DateTime.TryParse(Text(owner["expires_at"]), null, System.Globalization.DateTimeStyles.AdjustToUniversal, out var end)
+                ? Math.Max(0, (int)Math.Ceiling((end - DateTime.UtcNow).TotalSeconds)) : 0;
+        }
+
+        // The write in flight may finish, but a lease can run for an hour and the AI behind it may be gone.
+        public const int TakeoverGraceSeconds = 60;
+
         // Only a deliberate Workbench action sets or clears the user's reservation.
         public static void SetUserEditing(string binding, bool enable)
         {
@@ -154,7 +201,14 @@ namespace AvatarWorkbench
                 if (!enable) { File.Delete(flag); return false; }
                 Write(flag, new JObject { ["requested_at"] = Now });
                 var owner = Consumer(binding);
-                if (owner != null && (bool?)owner["busy"] != true) ReleaseConsumer(binding, owner);
+                if (owner == null) return true;
+                if ((bool?)owner["busy"] != true) ReleaseConsumer(binding, owner);
+                else if (LeaseSecondsLeft(owner) > TakeoverGraceSeconds)
+                {
+                    // The flag already refuses renewals, so the lease now ends after the grace period.
+                    owner["expires_at"] = DateTime.UtcNow.AddSeconds(TakeoverGraceSeconds).ToString("yyyy-MM-ddTHH:mm:ssZ"); owner["updated_at"] = Now;
+                    Write(Path.Combine(Space(binding), "consumer.json"), owner);
+                }
                 return true;
             });
         }

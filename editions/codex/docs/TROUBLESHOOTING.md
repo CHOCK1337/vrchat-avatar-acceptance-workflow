@@ -22,10 +22,14 @@
 
 ## 旧版操作锁
 
-若旧版桥接进程异常退出后持续报告 `ANOTHER_OPERATION_ACTIVE` 或 `ANOTHER_DSH_OPERATION_ACTIVE`，先关闭正在访问该绑定的旧 Codex、DSH 写入进程。安装本修订后，在包目录用以下命令处理历史空锁。传入报错绑定的完整路径，自定义存储位置时同时传 `--storage`。
+旧版桥接进程异常退出后会留下一个空的 `.dsh-operation.lock`，旧版因此持续报告 `ANOTHER_OPERATION_ACTIVE` 或 `ANOTHER_DSH_OPERATION_ACTIVE`。本版会自动处理：这个空文件存在超过 30 秒后，下一次操作（包括在工作台点“我来操作”）把它改名留存，然后照常继续。旧版一次写入只占用几毫秒，所以放了 30 秒的空锁不会有活着的持有者。
+
+只有两种情况需要手动处理：旧版宿主仍在运行并不断重建这个文件（先关闭它），或者这个文件不是空的（工作台不会自动动它）。关闭正在访问该绑定的旧 Codex、DSH 写入进程后，在包目录运行以下命令。传入报错绑定的完整路径，自定义存储位置时同时传 `--storage`。
 
 ```powershell
 .\runtime\python\python.exe .\unity\AvatarWorkbench\Tools\codex_feedback.py recover-legacy-lock --binding "本次任务的完整路径" --legacy-writers-stopped
 ```
 
-命令将该绑定的旧空锁改名留存。租约、反馈和候选继续保留。新版进程异常退出后，下一个正常操作会自动接续。尚在有效期内的其他会话租约仍由原会话释放或自然到期。
+命令将该绑定的旧空锁改名留存。租约、反馈和候选继续保留。新版进程异常退出后，下一个正常操作会自动接续。
+
+`ANOTHER_CONSUMER_ACTIVE` 表示另一个会话的租约还没到期，报错里写着到期时间。那个会话已经停掉时不必等：在工作台点“我来操作”再点“交回 AI”，旧租约就释放了。租约记录损坏或缺少到期时间时按没有租约处理，不会一直挡住后续操作。

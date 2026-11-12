@@ -19,7 +19,7 @@ from workflow_context import WorkflowContext
 from inbox_notifications import InboxNotifications
 
 
-WORKFLOW_VERSION = "0.3.3-codex"
+WORKFLOW_VERSION = "0.3.4-codex"
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('feedback', ROOT / 'unity/AvatarWorkbench/Tools/codex_feedback.py')

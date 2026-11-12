@@ -1,16 +1,16 @@
 {
   "edition": "DSH",
-  "tag": "dsh-v0.3.6",
+  "tag": "dsh-v0.3.7",
   "repo_url": "https://github.com/CHOCK1337/vrchat-avatar-acceptance-workflow",
   "source": "Built from this edition directory at the tagged commit with pinned portable runtimes; release records and git metadata are not part of the ZIP.",
   "full_package": {
-    "file": "AvatarWorkbench_DSH_Full_v0.3.6_Win64_20261111.zip",
-    "sha256": "e046833af94b224d29854b94256d54f6177b32b8a526df785fa6811e94dddf4f",
-    "bytes": 55410649,
+    "file": "AvatarWorkbench_DSH_Full_v0.3.7_Win64_20261112.zip",
+    "sha256": "448f193a171f4664ad4f0d36b6135c64ffcdd8a8e25b233548dc30a2dd6aff9b",
+    "bytes": 55415218,
     "manifest_files": 5724
   },
-  "workbench_version": "0.2.16-dsh",
-  "source_files_tracked": 288,
+  "workbench_version": "0.2.17-dsh",
+  "source_files_tracked": 283,
   "secret_pattern_findings": 0,
   "exclusions": [
     "portable runtime binaries and installed node_modules from git",
@@ -18,25 +18,24 @@
   ],
   "evidence_boundary": "Package integrity and isolated tests do not certify every avatar or model service.",
   "fresh_verification": {
-    "date": "2026-11-11",
-    "isolated_tests": 43,
+    "date": "2026-11-12",
+    "isolated_tests": 48,
     "result": "PASS",
     "command": "runtime/python/python.exe -X utf8 -B -m unittest discover -s verification -p \"test_*.py\"",
     "package_crc_and_manifest_hashes": "PASS",
     "tests_run_from": "Extracted corresponding full distribution, with its bundled runtime",
     "model_inference": "NOT_RUN",
     "avatar_edit_build_upload": "NOT_RUN",
-    "unity_manual_handoff": "PASS: Unity 2022.3.22f1 isolated Windows project, real workbench controls, synthetic candidates",
+    "unity_manual_handoff": "NOT_RUN: the five changed Workbench C# files are byte-identical to the Codex edition, which was exercised in Unity; offline compile PASS",
     "previous_installer_upgrade": {
-      "previous": "dsh-v0.3.5",
-      "previous_package": "previous full package reconstructed and verified file-by-file against its published manifest",
-      "user_file_and_host_setting": "PRESERVED",
-      "repeat": "UNCHANGED",
-      "installed_payload_files": 123
+      "previous": "dsh-v0.3.6",
+      "method": "new installer planned against the previous release's workbench files in an isolated project",
+      "workbench_files_updated": 9,
+      "user_file": "PRESERVED"
     },
     "pinned_runtime_files_unchanged": 5444
   },
-  "previous_release": "dsh-v0.3.5",
+  "previous_release": "dsh-v0.3.6",
   "edition_directory": "editions/dsh",
   "publication_scope": "Public source, installer, documentation and full package plus checksum; private screenshots and avatar source assets are not included."
 }

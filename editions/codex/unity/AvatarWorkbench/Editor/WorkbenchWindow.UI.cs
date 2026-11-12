@@ -211,7 +211,9 @@ namespace AvatarWorkbench
             UpdateCompatibilityStrip();
             string activeModel = WorkbenchModels.Active;
             UpdateStepGuide(target || draft != null ? label : null, selectedCount, WorkbenchModels.SendLabel(activeModel));
-            submitButton.text = sendingCodex ? "读取 / 发送中…" : WorkbenchModels.SendLabel(activeModel);
+            // Hosts cannot act on a request while the user holds the binding, so sending hands it back.
+            bool returnsControl = (activeModel == WorkbenchModels.CodexHost || activeModel == WorkbenchModels.DshHost) && WorkbenchData.UserEditing(BindingPath);
+            submitButton.text = sendingCodex ? "读取 / 发送中…" : returnsControl ? "交回 AI 并发送" : WorkbenchModels.SendLabel(activeModel);
             submitButton.tooltip = activeModel == WorkbenchModels.CodexHost ? "将本次需求交给当前 Codex，沿用原改模流程"
                 : activeModel == WorkbenchModels.DshHost ? "发到 DSH 收件箱，并自动复制接手指令；切到 DSH 按 Ctrl+V 后开始处理，回复显示在“看回复”"
                 : "发送到 " + WorkbenchModels.Label(activeModel);
@@ -219,6 +221,7 @@ namespace AvatarWorkbench
             submitButton.tooltip += activeModel == WorkbenchModels.CodexHost ? "。先保存原始请求，Ctrl+Enter 发送；Codex 回复不代表修复通过。"
                 : activeModel == WorkbenchModels.DshHost ? "。也可以按 Ctrl+Enter 发送。"
                 : "。先保存原始请求，Ctrl+Enter 发送；API 回复只代表建议。";
+            if (returnsControl) submitButton.tooltip = "你正在手动操作。发送后 AI 才能动手，所以会同时把操作权交回 AI。\n" + submitButton.tooltip;
         }
         void SaveAndHandoff()
         {
@@ -266,11 +269,11 @@ namespace AvatarWorkbench
         {
             bool enable = !WorkbenchData.UserEditing(BindingPath);
             WorkbenchData.SetUserEditing(BindingPath, enable);
-            UpdateLabels();
+            UpdateLabels(); UpdateComposer();
             var owner = WorkbenchData.Consumer(BindingPath);
             Toast(!enable ? "已交回 AI。发送需求后继续。" : (bool?)owner?["busy"] == true
-                ? "已停止接收新的写入。当前写入结束或租约到期即可操作；若已停止 AI，可在“更多”中释放占用。"
-                : "现在由你操作。改好后点“交回 AI”，再发送复查需求。");
+                ? "已请求接管。AI 这次写入最多再占用 " + WorkbenchData.LeaseSecondsLeft(owner) + " 秒，之后控件自动恢复；AI 已经停了的话，在“更多”里点“立即接管”。"
+                : "现在由你操作。改好后直接发送复查需求，操作权会一起交回 AI。");
         }
 
         void ShowMore()
@@ -279,7 +282,7 @@ namespace AvatarWorkbench
             string binding = BindingPath;
             var writer = WorkbenchData.Consumer(binding);
             if (WorkbenchData.UserEditing(binding) && (bool?)writer?["busy"] == true)
-                menu.AddItem(new GUIContent("释放已停止的 AI 占用"), false, () => {
+                menu.AddItem(new GUIContent("立即接管（AI 已停止）"), false, () => {
                     if (EditorUtility.DisplayDialog("释放已停止的写入", "请先停止正在操作此候选的 AI 或关闭对应宿主。确认该写入已结束后，工作台会交还操作。", "写入已停止，接管", "继续等待"))
                         TryAction(() => { WorkbenchData.ReleaseStoppedWriter(binding, writer); UpdateLabels(); });
                 });
